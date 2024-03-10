@@ -98,4 +98,24 @@ To configure a debugger for SpringBoot's Tomcat servlet (i.e. the process you st
 
 Have a look here: https://www.baeldung.com/spring-boot-testing
 
-test insert
+# Protected Branches
+
+`main` branch is protected. Devs need to work on other branch and issue merge
+requests. The following output will be returned when attempting to push to
+`main`:
+
+```plaintext
+$ git push
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 283 bytes | 283.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+remote: error: GH006: Protected branch update failed for refs/heads/main.
+remote: error: Changes must be made through a pull request. Cannot change this locked branch
+To github.com:sopra-fs24-group07/sopra-fs24-group-07-server
+ ! [remote rejected] main -> main (protected branch hook declined)
+error: failed to push some refs to 'github.com:sopra-fs24-group07/sopra-fs24-group-07-server
+```
