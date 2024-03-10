@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * User Service
@@ -25,7 +24,6 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserService {
-
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
   private final UserRepository userRepository;
@@ -66,14 +64,17 @@ public class UserService {
     User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
     User userByName = userRepository.findByName(userToBeCreated.getName());
 
-    String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
+    String baseErrorMessage =
+        "The %s provided %s not unique. Therefore, the user could not be created!";
     if (userByUsername != null && userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format(baseErrorMessage, "username and the name", "are"));
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username and the name", "are"));
     } else if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
     } else if (userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
     }
   }
 }

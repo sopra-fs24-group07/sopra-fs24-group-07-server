@@ -1,9 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 
 /**
  * Internal User Representation
@@ -18,24 +17,17 @@ import java.io.Serializable;
 @Entity
 @Table(name = "USER")
 public class User implements Serializable {
-
   private static final long serialVersionUID = 1L;
 
-  @Id
-  @GeneratedValue
-  private Long id;
+  @Id @GeneratedValue private Long id;
 
-  @Column(nullable = false)
-  private String name;
+  @Column(nullable = false) private String name;
 
-  @Column(nullable = false, unique = true)
-  private String username;
+  @Column(nullable = false, unique = true) private String username;
 
-  @Column(nullable = false, unique = true)
-  private String token;
+  @Column(nullable = false, unique = true) private String token;
 
-  @Column(nullable = false)
-  private UserStatus status;
+  @Column(nullable = false) private UserStatus status;
 
   public Long getId() {
     return id;
