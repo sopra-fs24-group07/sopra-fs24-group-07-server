@@ -30,7 +30,7 @@ public class Task implements Serializable {
   @Column(nullable = false) private TaskStatus status;
 
   // foreign key to Team
-  @OneToOne @JoinColumn(name = "teamId", nullable = false) private Team teamId;
+  @OneToOne @JoinColumn(name = "teamId", nullable = false) private Team team;
 
   public Long getTaskId() {
     return taskId;
@@ -72,11 +72,11 @@ public class Task implements Serializable {
     this.status = status;
   }
 
-  public Team getTeamId() {
-    return teamId;
+  public Team getTeam() {
+    return team;
   }
 
   public void setTeamId(Team teamId) {
-    this.teamId = teamId;
+    this.team = teamId;
   }
 }
