@@ -67,6 +67,7 @@ public class TaskRepositoryIntegrationTest {
     assertEquals(found.get(0).getDescription(), task.getDescription());
     assertEquals(found.get(0).getStatus(), task.getStatus());
     assertEquals(found.get(0).getTeam(), task.getTeam());
+    assertNotNull(found.get(0).getCreationDate());
   }
 
   @Test
@@ -90,5 +91,6 @@ public class TaskRepositoryIntegrationTest {
     assertEquals(found.get(0).getDescription(), task.getDescription());
     assertEquals(found.get(0).getStatus(), task.getStatus());
     assertEquals(found.get(0).getTeam(), task.getTeam());
+    assertNotNull(found.get(0).getCreationDate());
   }
 }

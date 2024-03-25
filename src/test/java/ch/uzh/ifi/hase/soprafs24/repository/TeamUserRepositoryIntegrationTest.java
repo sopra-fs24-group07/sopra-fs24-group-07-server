@@ -66,5 +66,11 @@ public class TeamUserRepositoryIntegrationTest {
     // then
     assertEquals(found.size(), 1);
     assertEquals(found.get(0), teamUser);
+    assertEquals(found.get(0).getTeam(), team);
+    assertEquals(found.get(0).getUser(), user);
+    assertNotNull(found.get(0).getTeamUserId());
+    assertEquals(found.get(0).getTeamUserId().getTeamId(), team.getTeamId());
+    assertEquals(found.get(0).getTeamUserId().getUserId(), user.getUserId());
+    assertNotNull(found.get(0).getCreationTimestamp());
   }
 }

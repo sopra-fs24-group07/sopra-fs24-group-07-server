@@ -72,6 +72,7 @@ public class CommentRepositoryIntegrationTest {
     List<Comment> comments = commentRepository.findAll();
     assertEquals(1, comments.size());
     assertEquals(comments.get(0).getText(), comment.getText());
+    assertNotNull(comments.get(0).getCreationDate());
   }
 
   @Test
@@ -93,6 +94,7 @@ public class CommentRepositoryIntegrationTest {
     assertEquals(found.getText(), comment.getText());
     assertEquals(found.getTask(), comment.getTask());
     assertEquals(found.getUser(), comment.getUser());
+    assertNotNull(found.getCreationDate());
   }
 
   @Test
@@ -114,6 +116,7 @@ public class CommentRepositoryIntegrationTest {
     assertEquals(1, comments.size());
     assertEquals(comments.get(0).getText(), comment.getText());
     assertEquals(comments.get(0).getTask(), task);
+    assertNotNull(comments.get(0).getCreationDate());
   }
 
   @Test
