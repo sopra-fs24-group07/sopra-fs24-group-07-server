@@ -19,22 +19,25 @@ import javax.persistence.*;
 public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @Id @GeneratedValue private Long id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long userId;
 
-  @Column(nullable = false) private String name;
+  @Column(length = 100, nullable = false) private String name;
 
-  @Column(nullable = false, unique = true) private String username;
+  @Column(length = 100, nullable = false, unique = true) private String username;
+
+  // should be hash
+  @Column(nullable = false) private String password;
 
   @Column(nullable = false, unique = true) private String token;
 
-  @Column(nullable = false) private UserStatus status;
+  // TODO image
 
-  public Long getId() {
-    return id;
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public String getName() {
@@ -59,13 +62,5 @@ public class User implements Serializable {
 
   public void setToken(String token) {
     this.token = token;
-  }
-
-  public UserStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(UserStatus status) {
-    this.status = status;
   }
 }
