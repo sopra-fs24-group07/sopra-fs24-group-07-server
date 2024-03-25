@@ -67,7 +67,7 @@ public class UserControllerTest {
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
-    user.getUserId(1L);
+    user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
     user.setToken("1");

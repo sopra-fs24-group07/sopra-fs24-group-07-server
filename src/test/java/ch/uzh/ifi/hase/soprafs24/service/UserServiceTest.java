@@ -25,7 +25,7 @@ public class UserServiceTest {
 
     // given
     testUser = new User();
-    testUser.getUserId(1L);
+    testUser.setUserId(1L);
     testUser.setName("testName");
     testUser.setUsername("testUsername");
 

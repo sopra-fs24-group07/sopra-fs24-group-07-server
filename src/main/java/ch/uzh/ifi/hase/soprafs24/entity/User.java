@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long userId;
+  @Id @GeneratedValue private Long userId;
 
   @Column(length = 100, nullable = false) private String name;
 
@@ -35,7 +35,7 @@ public class User implements Serializable {
     return userId;
   }
 
-  public void getUserId(Long userId) {
+  public void setUserId(Long userId) {
     this.userId = userId;
   }
 
