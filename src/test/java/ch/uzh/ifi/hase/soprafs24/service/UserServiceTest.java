@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +47,6 @@ public class UserServiceTest {
     assertEquals(testUser.getName(), createdUser.getName());
     assertEquals(testUser.getUsername(), createdUser.getUsername());
     assertNotNull(createdUser.getToken());
-    assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
   }
 
   @Test
