@@ -21,6 +21,7 @@ public class UserRepositoryIntegrationTest {
     User user = new User();
     user.setName("Firstname Lastname");
     user.setUsername("firstname@lastname");
+    user.setPassword("1234");
     user.setToken("1");
 
     entityManager.persist(user);
@@ -33,6 +34,7 @@ public class UserRepositoryIntegrationTest {
     assertNotNull(found.getUserId());
     assertEquals(found.getName(), user.getName());
     assertEquals(found.getUsername(), user.getUsername());
+    assertEquals(found.getPassword(), user.getPassword());
     assertEquals(found.getToken(), user.getToken());
   }
 }
