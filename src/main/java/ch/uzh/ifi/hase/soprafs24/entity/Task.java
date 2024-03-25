@@ -76,7 +76,7 @@ public class Task implements Serializable {
     return team;
   }
 
-  public void setTeamId(Team teamId) {
-    this.team = teamId;
+  public void setTeam(Team team) {
+    this.team = team;
   }
 }
