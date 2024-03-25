@@ -5,7 +5,9 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository("commentRepository")
 public interface CommentRepository extends JpaRepository<Comment, Long> {
   /**
    * Finds a comment by its commentId.
