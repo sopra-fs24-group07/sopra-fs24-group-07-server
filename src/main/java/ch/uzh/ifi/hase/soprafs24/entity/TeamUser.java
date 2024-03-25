@@ -14,9 +14,9 @@ public class TeamUser implements Serializable {
   // entity that uses this composite key (TeamUser), annotated with @EmbeddedId
   @EmbeddedId private TeamUserId teamUserId;
 
-  @ManyToOne @MapsId("teamId") @Column(name = "teamId", nullable = false) Team team;
+  @ManyToOne @MapsId("teamId") Team team;
 
-  @ManyToOne @MapsId("userId") @Column(name = "userId", nullable = false) User user;
+  @ManyToOne @MapsId("userId") User user;
 
   @CreationTimestamp @Column(nullable = false) private LocalDateTime creationTimestamp;
 
