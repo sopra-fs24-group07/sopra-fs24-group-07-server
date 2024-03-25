@@ -50,17 +50,21 @@ public class UserServiceTest {
   }
 
   @Test
-  public void createUser_duplicateName_throwsException() {
+  public void createUser_duplicateName_success() {
     // given -> a first user has already been created
     userService.createUser(testUser);
 
-    // when -> setup additional mocks for UserRepository
-    Mockito.when(userRepository.findByName(Mockito.any())).thenReturn(testUser);
+    // when -> no user with same username
     Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
     // then -> attempt to create second user with same user -> check that an error
+    User createdUser = userService.createUser(testUser);
+
     // is thrown
-    assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+    assertEquals(testUser.getUserId(), createdUser.getUserId());
+    assertEquals(testUser.getName(), createdUser.getName());
+    assertEquals(testUser.getUsername(), createdUser.getUsername());
+    assertNotNull(createdUser.getToken());
   }
 
   @Test
@@ -69,7 +73,6 @@ public class UserServiceTest {
     userService.createUser(testUser);
 
     // when -> setup additional mocks for UserRepository
-    Mockito.when(userRepository.findByName(Mockito.any())).thenReturn(testUser);
     Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
     // then -> attempt to create second user with same user -> check that an error
