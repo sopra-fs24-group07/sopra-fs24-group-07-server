@@ -28,7 +28,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
    * @param task
    * @return List<Comment>
    */
-  List<Comment> findByTaskId(Task task);
+  List<Comment> findByTask(Task task);
 
   /**
    * Finds all comments created by a specific user.
@@ -36,11 +36,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
    * Usage:
    * <pre>{@code
    *     User user = userRepository.findById(userId);
-   *     List<Comment> comments = commentRepository.findByCreatedBy(user);
+   *     List<Comment> comments = commentRepository.findByUser(user);
    * }</pre>
    *
-   * @param createdBy The user who created the comments.
+   * @param user The user who created the comments.
    * @return A list of comments created by the given user.
    */
-  List<Comment> findByCreatedBy(User createdBy);
+  List<Comment> findByUser(User user);
 }
