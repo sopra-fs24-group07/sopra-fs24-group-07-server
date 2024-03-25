@@ -40,7 +40,7 @@ public class DTOMapperTest {
     UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
 
     // check content
-    assertEquals(user.getId(), userGetDTO.getId());
+    assertEquals(user.getUserId(), userGetDTO.getUserId());
     assertEquals(user.getName(), userGetDTO.getName());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
   }

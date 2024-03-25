@@ -35,7 +35,7 @@ public class User implements Serializable {
     return userId;
   }
 
-  public void setUserId(Long userId) {
+  public void getUserId(Long userId) {
     this.userId = userId;
   }
 
