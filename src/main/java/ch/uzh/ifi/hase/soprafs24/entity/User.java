@@ -14,11 +14,11 @@ import javax.persistence.*;
  * the primary key
  */
 @Entity
-@Table(name = "USER")
+@Table(name = "users")
 public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @Id @GeneratedValue private Long userId;
+  @Id @GeneratedValue @Column(name = "user_id") private Long userId;
 
   @Column(length = 100, nullable = false) private String name;
 
