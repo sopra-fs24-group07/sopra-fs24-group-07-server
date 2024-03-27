@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+/**
+ * Authorization Service
+ * Check if user exists and if the token is valid
+ */
 @Service
 public class AuthorizationService {
   private final Logger log = LoggerFactory.getLogger(UserService.class);
