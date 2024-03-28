@@ -32,10 +32,6 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  public List<User> getUsers() {
-    return this.userRepository.findAll();
-  }
-
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     checkIfUserExists(newUser);

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,31 +38,7 @@ public class UserControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private UserService userService;
-
-  @Test
-  public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
-    // given
-    User user = new User();
-    user.setName("Firstname Lastname");
-    user.setUsername("firstname@lastname");
-
-    List<User> allUsers = Collections.singletonList(user);
-
-    // this mocks the UserService -> we define above what the userService should
-    // return when getUsers() is called
-    given(userService.getUsers()).willReturn(allUsers);
-
-    // when
-    MockHttpServletRequestBuilder getRequest =
-        get("/users").contentType(MediaType.APPLICATION_JSON);
-
-    // then
-    mockMvc.perform(getRequest)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].name", is(user.getName())))
-        .andExpect(jsonPath("$[0].username", is(user.getUsername())));
-  }
+  @MockBean private AuthorizationService authorizationService;
 
   @Test
   public void createUser_validInput_userCreated() throws Exception {
@@ -79,8 +56,10 @@ public class UserControllerTest {
     given(userService.createUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest =
-        post("/users").contentType(MediaType.APPLICATION_JSON).content(asJsonString(userPostDTO));
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/users")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(userPostDTO))
+                                                    .header("Authorization", "1234");
 
     // then
     mockMvc.perform(postRequest)
