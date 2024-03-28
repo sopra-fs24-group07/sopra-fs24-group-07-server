@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,9 @@ public class AuthorizationService {
    * @return the token of the user, null otherwise
    */
   public String login(String username, String password) {
-    return this.userRepository.findByUsername(username).getPassword().equals(password)
-        ? this.userRepository.findByUsername(username).getToken()
-        : null;
+    User foundUser = userRepository.findByUsername(username);
+    return foundUser != null && foundUser.getPassword().equals(password) ? foundUser.getToken()
+                                                                         : null;
   }
 
   /**
@@ -52,6 +53,7 @@ public class AuthorizationService {
    * @return true if the token belongs to the user with the given username, false otherwise
    */
   public boolean isAuthorized(String token, String username) {
-    return this.userRepository.findByToken(token).getUsername().equals(username);
+    User foundUser = userRepository.findByToken(token);
+    return foundUser != null && foundUser.getUsername().equals(username);
   }
 }
