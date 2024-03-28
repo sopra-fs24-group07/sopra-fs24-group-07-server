@@ -67,4 +67,8 @@ public class UserService {
           HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
     }
   }
+
+  public User findByUsername(String username) {
+    return userRepository.findByUsername(username);
+  }
 }
