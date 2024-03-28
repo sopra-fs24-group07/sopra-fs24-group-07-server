@@ -61,7 +61,7 @@ public class UserController {
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
     // check if username already exists: it will throw an error if the username
-    // already exists, otherwise it will create a new user.
+    // already exists, otherwise it will create a new user!
     User existingUser = userService.findByUsername(userInput.getUsername());
     if (existingUser != null) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
