@@ -20,20 +20,20 @@ public class AuthorizationController {
     this.authorizationService = authorizationService;
   }
 
-  // @PostMapping("/login")
-  // @ResponseBody
-  // @ResponseStatus(HttpStatus.OK)
-  // AuthGetDTO login(@RequestBody LoginPostDTO loginPostDTO) {
-  //   User loginUser = DTOMapper.INSTANCE.convertLoginPostDTOtoEntity(loginPostDTO);
-  //
-  //   String potentialToken =
-  //       authorizationService.login(loginUser.getUsername(), loginUser.getPassword());
-  //
-  //   if (potentialToken != null) {
-  //     return DTOMapper.INSTANCE.convertEntityToAuthGetDTO(potentialToken);
-  //   }
-  //   throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login failed");
-  // }
+  @PostMapping("/login")
+  @ResponseBody
+  @ResponseStatus(HttpStatus.OK)
+  AuthGetDTO login(@RequestBody LoginPostDTO loginPostDTO) {
+    User loginUser = DTOMapper.INSTANCE.convertLoginPostDTOtoEntity(loginPostDTO);
+
+    String potentialToken =
+        authorizationService.login(loginUser.getUsername(), loginUser.getPassword());
+
+    if (potentialToken != null) {
+      return DTOMapper.INSTANCE.convertEntityToAuthGetDTO(potentialToken);
+    }
+    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login failed");
+  }
 
   // @PostMapping("/register")
   // @ResponseBody

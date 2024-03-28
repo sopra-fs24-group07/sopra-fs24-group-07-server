@@ -31,27 +31,6 @@ public class UserController {
     this.authorizationService = authorizationService;
   }
 
-  @GetMapping("/users")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public List<UserGetDTO> getAllUsers(
-      @RequestHeader(value = HttpHeaders.AUTHORIZATION, defaultValue = "") String authToken) {
-    // authenticate
-    if (!authorizationService.isAuthorized(authToken)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed");
-    }
-
-    // fetch all users in the internal representation
-    List<User> users = userService.getUsers();
-    List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-    // convert each user to the API representation
-    for (User user : users) {
-      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-    }
-    return userGetDTOs;
-  }
-
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
