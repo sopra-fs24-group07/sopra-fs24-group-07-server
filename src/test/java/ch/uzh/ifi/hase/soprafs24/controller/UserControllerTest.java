@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,7 @@ public class UserControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private UserService userService;
+  @MockBean private AuthorizationService authorizationService;
 
   @Test
   public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
@@ -50,10 +52,12 @@ public class UserControllerTest {
     // this mocks the UserService -> we define above what the userService should
     // return when getUsers() is called
     given(userService.getUsers()).willReturn(allUsers);
+    // mock auth request (assume is authorized)
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(true);
 
     // when
     MockHttpServletRequestBuilder getRequest =
-        get("/users").contentType(MediaType.APPLICATION_JSON);
+        get("/users").contentType(MediaType.APPLICATION_JSON).header("Authorization", "1234");
 
     // then
     mockMvc.perform(getRequest)
@@ -61,6 +65,28 @@ public class UserControllerTest {
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].name", is(user.getName())))
         .andExpect(jsonPath("$[0].username", is(user.getUsername())));
+  }
+  @Test
+  public void givenUsers_whenGetUsers_butWrongAuth_expectError() throws Exception {
+    // given
+    User user = new User();
+    user.setName("Firstname Lastname");
+    user.setUsername("firstname@lastname");
+
+    List<User> allUsers = Collections.singletonList(user);
+
+    // this mocks the UserService -> we define above what the userService should
+    // return when getUsers() is called
+    given(userService.getUsers()).willReturn(allUsers);
+    // mock auth request (assume is authorized)
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(false);
+
+    // when
+    MockHttpServletRequestBuilder getRequest =
+        get("/users").contentType(MediaType.APPLICATION_JSON).header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -79,8 +105,10 @@ public class UserControllerTest {
     given(userService.createUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest =
-        post("/users").contentType(MediaType.APPLICATION_JSON).content(asJsonString(userPostDTO));
+    MockHttpServletRequestBuilder postRequest = post("/users")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(userPostDTO))
+                                                    .header("Authorization", "1234");
 
     // then
     mockMvc.perform(postRequest)

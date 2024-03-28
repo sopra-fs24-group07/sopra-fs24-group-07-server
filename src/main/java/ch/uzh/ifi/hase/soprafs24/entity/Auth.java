@@ -1,18 +1,18 @@
-package ch.uzh.ifi.hase.soprafs24.rest.dto;
+package ch.uzh.ifi.hase.soprafs24.entity;
 
-public class UserPostDTO {
-  private String name;
+public class Auth {
+  private String token;
 
   private String username;
 
   private String password;
 
-  public String getName() {
-    return name;
+  public String getToken() {
+    return token;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setToken(String token) {
+    this.token = token;
   }
 
   public String getUsername() {
