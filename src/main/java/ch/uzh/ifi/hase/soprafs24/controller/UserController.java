@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
  * UserService and finally return the result.
  */
 @RestController
+@RequestMapping("api/v1")
 public class UserController {
   private final UserService userService;
   private final AuthorizationService authorizationService;
