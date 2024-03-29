@@ -61,8 +61,6 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/21:
   Account Creation tests and docu
 
-  
-    
 ## 30.03.2024 - 05.04.2024
 
 ## 06.04.2024 - 12.04.2024
