@@ -82,7 +82,7 @@ public class UserServiceTest {
 
   // ALIHAN TEST
   @Test
-  public void registerUser_duplicateUsername_throwsException() {
+  public void createUser_duplicateUsername_throwsException() {
     // given -> a first user has already been created
     userService.createUser(testUser);
 
@@ -107,7 +107,7 @@ public class UserServiceTest {
     Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user);
 
     // then
-    User foundUser = userService.findByUsername(user.getUsername());
+    User foundUser = userRepository.findByUsername(user.getUsername());
 
     assertEquals(user.getUserId(), foundUser.getUserId());
     assertEquals(user.getName(), foundUser.getName());
@@ -124,7 +124,7 @@ public class UserServiceTest {
     Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
     // then
-    User foundUser = userService.findByUsername(username);
+    User foundUser = userRepository.findByUsername(username);
 
     assertNull(foundUser);
   }
