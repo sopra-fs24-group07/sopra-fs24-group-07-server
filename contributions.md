@@ -32,20 +32,15 @@ timeline
 
 ### B1s9l
 
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/1:
-  Landing page
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
-  Register page basic setup
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
-  Login page basic setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/29:
+  Landing page & Header setup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/4:
   Teams Overview page
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/5:
-  Team Dashboard page
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/17:
-  User profile edit popup
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/26:
-  Profile view popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
+  Register page setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
+  Login page setup
+
 
 ### Monti934
 
