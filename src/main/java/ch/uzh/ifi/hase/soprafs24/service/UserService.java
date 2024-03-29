@@ -33,6 +33,11 @@ public class UserService {
   }
 
   public User createUser(User newUser) {
+    // check that username, name, and password are not empty strings
+    ServiceHelpers.checkValidString(newUser.getUsername(), "Username");
+    ServiceHelpers.checkValidString(newUser.getName(), "Name");
+    ServiceHelpers.checkValidString(newUser.getPassword(), "Password");
+
     newUser.setToken(UUID.randomUUID().toString());
     checkIfUserExists(newUser);
     // saves the given entity but data is only persisted in the database once
