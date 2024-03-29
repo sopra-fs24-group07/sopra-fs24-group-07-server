@@ -49,9 +49,9 @@ timeline
 
 ### Monti934
 
-- https://github.com/orgs/sopra-fs24-group07/projects/2/views/2?pane=issue&itemId=56998565:
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15:
   Login endpoint
-- https://github.com/orgs/sopra-fs24-group07/projects/2/views/2?pane=issue&itemId=57100095:
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/50:
   Read Agora Documentation
 
 ## 30.03.2024 - 05.04.2024
