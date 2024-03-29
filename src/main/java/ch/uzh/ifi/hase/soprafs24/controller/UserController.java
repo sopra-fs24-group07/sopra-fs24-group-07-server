@@ -31,6 +31,7 @@ public class UserController {
     this.authorizationService = authorizationService;
   }
 
+  // Account creation:
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
