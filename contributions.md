@@ -31,7 +31,7 @@ timeline
   Login tests and docu
 
 ### B1s9l
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues:
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues1:
   Landing page
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
   Register page basic setup  
