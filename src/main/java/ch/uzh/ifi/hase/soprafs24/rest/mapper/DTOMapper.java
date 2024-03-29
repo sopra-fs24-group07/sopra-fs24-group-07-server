@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Auth;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
