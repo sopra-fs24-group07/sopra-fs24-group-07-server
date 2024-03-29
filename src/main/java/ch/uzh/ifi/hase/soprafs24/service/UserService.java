@@ -32,7 +32,7 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  // User creation
+  // User creation:
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     checkIfUserExists(newUser);
