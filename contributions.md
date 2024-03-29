@@ -36,11 +36,6 @@ timeline
   Landing page & Header setup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/4:
   Teams Overview page
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
-  Register page setup
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
-  Login page setup
-
 
 ### Monti934
 
