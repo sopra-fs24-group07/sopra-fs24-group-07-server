@@ -43,21 +43,4 @@ public class UserController {
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
-
-  @PostMapping("/register")
-  @ResponseStatus(HttpStatus.CREATED)
-  @ResponseBody
-  public UserGetDTO registerUser(@RequestBody UserPostDTO userPostDTO) {
-    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-    // check if username already exists: it will throw an error if the username
-    // already exists, otherwise it will create a new user!
-    User existingUser = userService.findByUsername(userInput.getUsername());
-    if (existingUser != null) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
-    }
-
-    User createdUser = userService.createUser(userInput);
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
-  }
 }
