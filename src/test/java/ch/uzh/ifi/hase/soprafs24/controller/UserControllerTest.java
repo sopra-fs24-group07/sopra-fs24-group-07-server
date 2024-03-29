@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,8 +14,6 @@ import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +54,11 @@ public class UserControllerTest {
     given(userService.createUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/api/v1/users")
-                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                    .content(asJsonString(userPostDTO))
-                                                    .header("Authorization", "1234");
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
 
     // then
     mockMvc.perform(postRequest)
@@ -83,10 +80,11 @@ public class UserControllerTest {
         .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists"));
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/api/v1/users")
-                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                    .content(asJsonString(userPostDTO))
-                                                    .header("Authorization", "1234");
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
 
     // then
     mockMvc.perform(postRequest)
@@ -96,22 +94,5 @@ public class UserControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Username already exists")));
-  }
-
-  /**
-   * Helper Method to convert userPostDTO into a JSON string such that the input
-   * can be processed
-   * Input will look like this: {"name": "Test User", "username": "testUsername"}
-   *
-   * @param object
-   * @return string
-   */
-  private String asJsonString(final Object object) {
-    try {
-      return new ObjectMapper().writeValueAsString(object);
-    } catch (JsonProcessingException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format("The request body could not be created.%s", e.toString()));
-    }
   }
 }

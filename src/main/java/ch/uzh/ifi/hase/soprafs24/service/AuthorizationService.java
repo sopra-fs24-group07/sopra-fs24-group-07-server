@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Authorization Service
@@ -39,10 +41,12 @@ public class AuthorizationService {
    * Checks if the token is valid
    *
    * @param token the token to be checked
-   * @return true if the token is valid, false otherwise
+   * @throws ResponseStatusException if the token is invalid
    */
-  public boolean isAuthorized(String token) {
-    return this.userRepository.findByToken(token) != null;
+  public void isAuthorized(String token) {
+    if (this.userRepository.findByToken(token) == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    }
   }
 
   /**
@@ -50,10 +54,12 @@ public class AuthorizationService {
    *
    * @param token the token to be checked
    * @param username the username to be checked
-   * @return true if the token belongs to the user with the given username, false otherwise
+   * @throws ResponseStatusException if the token is invalid or does not belong to the user
    */
-  public boolean isAuthorized(String token, String username) {
+  public void isAuthorized(String token, String username) {
     User foundUser = userRepository.findByToken(token);
-    return foundUser != null && foundUser.getUsername().equals(username);
+    if (foundUser == null || !foundUser.getUsername().equals(username)) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    }
   }
 }

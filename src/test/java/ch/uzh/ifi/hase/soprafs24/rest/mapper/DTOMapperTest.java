@@ -2,7 +2,10 @@ package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ public class DTOMapperTest {
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setName("name");
     userPostDTO.setUsername("username");
+    userPostDTO.setPassword("password");
 
     // MAP -> Create user
     User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
@@ -26,6 +30,7 @@ public class DTOMapperTest {
     // check content
     assertEquals(userPostDTO.getName(), user.getName());
     assertEquals(userPostDTO.getUsername(), user.getUsername());
+    assertEquals(userPostDTO.getPassword(), user.getPassword());
   }
 
   @Test
@@ -43,5 +48,37 @@ public class DTOMapperTest {
     assertEquals(user.getUserId(), userGetDTO.getUserId());
     assertEquals(user.getName(), userGetDTO.getName());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
+  }
+
+  @Test
+  public void testCreateTeam_fromTeamPostDTO_success() {
+    // create TeamPostDTO
+    TeamPostDTO teamPostDTO = new TeamPostDTO();
+    teamPostDTO.setName("name");
+    teamPostDTO.setDescription("description");
+
+    // MAP -> Create Team
+    Team team = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
+
+    // check content
+    assertEquals(teamPostDTO.getName(), team.getName());
+    assertEquals(teamPostDTO.getDescription(), team.getDescription());
+  }
+
+  @Test
+  public void testGetTeam_fromTeam_toTeamGetDTO_success() {
+    // create Team
+    Team team = new Team();
+    team.setTeamId(1L);
+    team.setName("name");
+    team.setDescription("description");
+
+    // MAP -> Create TeamGetDTO
+    TeamGetDTO teamGetDTO = DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team);
+
+    // check content
+    assertEquals(team.getTeamId(), teamGetDTO.getTeamId());
+    assertEquals(team.getName(), teamGetDTO.getName());
+    assertEquals(team.getDescription(), teamGetDTO.getDescription());
   }
 }

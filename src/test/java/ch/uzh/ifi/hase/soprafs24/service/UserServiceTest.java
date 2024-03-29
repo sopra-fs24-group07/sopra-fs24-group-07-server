@@ -28,6 +28,7 @@ public class UserServiceTest {
     testUser.setUserId(1L);
     testUser.setName("testName");
     testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
 
     // when -> any object is being save in the userRepository -> return the dummy
     // testUser
