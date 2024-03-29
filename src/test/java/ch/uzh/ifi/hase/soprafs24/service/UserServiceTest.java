@@ -80,7 +80,7 @@ public class UserServiceTest {
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
 
-  // ALIHAN TEST
+  // ALIHAN TEST:
   @Test
   public void createUser_duplicateUsername_throwsException() {
     // given -> a first user has already been created
@@ -94,7 +94,7 @@ public class UserServiceTest {
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
 
-  // ALIHAN TEST
+  // ALIHAN TEST:
   @Test
   public void findByUsername_existingUsername_returnsUser() {
     // given
@@ -114,7 +114,7 @@ public class UserServiceTest {
     assertEquals(user.getUsername(), foundUser.getUsername());
   }
 
-  // ALIHAN TEST
+  // ALIHAN TEST:
   @Test
   public void findByUsername_nonExistingUsername_returnsNull() {
     // given
