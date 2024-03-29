@@ -32,6 +32,7 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
+  // User creation:
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     checkIfUserExists(newUser);
@@ -62,9 +63,5 @@ public class UserService {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
     }
-  }
-
-  public User findByUsername(String username) {
-    return userRepository.findByUsername(username);
   }
 }
