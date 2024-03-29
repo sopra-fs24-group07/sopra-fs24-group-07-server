@@ -54,6 +54,16 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/50:
   Read Agora Documentation
 
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/20:
+  Account Creation API endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/21:
+  Account Creation tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/53:
+  User Profile Edit API endpoints
+  
+    
 ## 30.03.2024 - 05.04.2024
 
 ## 06.04.2024 - 12.04.2024
