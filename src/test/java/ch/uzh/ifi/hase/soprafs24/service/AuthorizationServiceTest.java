@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.server.ResponseStatusException;
 
 public class AuthorizationServiceTest {
   @Mock private UserRepository userRepository;
@@ -107,8 +108,8 @@ public class AuthorizationServiceTest {
     // when -> find user by token -> user is returned
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
 
-    // then
-    assertTrue(authorizationService.isAuthorized("some valid token"));
+    // then -> no exception is thrown
+    authorizationService.isAuthorized("some valid token");
   }
 
   /**
@@ -121,8 +122,9 @@ public class AuthorizationServiceTest {
     // when -> find user by token -> no user is returned because token is invalid
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(null);
 
-    // then
-    assertFalse(authorizationService.isAuthorized("some invalid token"));
+    // then -> exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isAuthorized("some invalid token"));
   }
 
   /**
@@ -138,8 +140,8 @@ public class AuthorizationServiceTest {
     // when -> find user by token -> user is returned
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
 
-    // then
-    assertTrue(authorizationService.isAuthorized("batman's token", username));
+    // then (does not throw exception)
+    authorizationService.isAuthorized("batman's token", username);
   }
 
   /**
@@ -156,7 +158,8 @@ public class AuthorizationServiceTest {
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(null);
 
     // then
-    assertFalse(authorizationService.isAuthorized("invalid token", username));
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isAuthorized("invalid token", username));
   }
 
   /**
@@ -173,7 +176,8 @@ public class AuthorizationServiceTest {
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
 
     // then
-    assertFalse(authorizationService.isAuthorized("batman's token", "robin"));
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isAuthorized("batman's token", "robin"));
   }
 
   // endregion
