@@ -31,10 +31,11 @@ timeline
   Login tests and docu
 
 ### B1s9l
+
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/1:
   Landing page
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
-  Register page basic setup  
+  Register page basic setup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
   Login page basic setup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/4:
@@ -46,6 +47,12 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/26:
   Profile view popup
 
+### Monti934
+
+- https://github.com/orgs/sopra-fs24-group07/projects/2/views/2?pane=issue&itemId=56998565:
+  Login endpoint
+- https://github.com/orgs/sopra-fs24-group07/projects/2/views/2?pane=issue&itemId=57100095:
+  Read Agora Documentation
 
 ## 30.03.2024 - 05.04.2024
 
