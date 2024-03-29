@@ -80,4 +80,53 @@ public class UserServiceTest {
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
+
+  // ALIHAN TEST:
+  @Test
+  public void createUser_duplicateUsername_throwsException() {
+    // given -> a first user has already been created
+    userService.createUser(testUser);
+
+    // when -> setup additional mocks for UserRepository
+    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
+
+    // then -> attempt to create second user with same user -> check that an error
+    // is thrown
+    assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+  }
+
+  // ALIHAN TEST:
+  @Test
+  public void findByUsername_existingUsername_returnsUser() {
+    // given
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+
+    // when
+    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user);
+
+    // then
+    User foundUser = userRepository.findByUsername(user.getUsername());
+
+    assertEquals(user.getUserId(), foundUser.getUserId());
+    assertEquals(user.getName(), foundUser.getName());
+    assertEquals(user.getUsername(), foundUser.getUsername());
+  }
+
+  // ALIHAN TEST:
+  @Test
+  public void findByUsername_nonExistingUsername_returnsNull() {
+    // given
+    String username = "nonExistingUsername";
+
+    // when
+    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
+
+    // then
+    User foundUser = userRepository.findByUsername(username);
+
+    assertNull(foundUser);
+  }
 }

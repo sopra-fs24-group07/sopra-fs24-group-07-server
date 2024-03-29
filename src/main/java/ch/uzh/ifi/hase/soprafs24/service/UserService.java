@@ -32,6 +32,7 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
+  // User creation:
   public User createUser(User newUser) {
     // check that username, name, and password are not empty strings
     ServiceHelpers.checkValidString(newUser.getUsername(), "Username");
