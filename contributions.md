@@ -14,7 +14,7 @@
   Login service
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15:
   Login endpoint (also done in
-  https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15)
+  https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/82)
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/17:
   Login tests and docu
 
