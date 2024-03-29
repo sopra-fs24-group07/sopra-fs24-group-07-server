@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -69,33 +71,31 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.username", is(user.getUsername())));
   }
 
-  // ALIHAN TEST
+  // Alihan TEST:
   @Test
-  public void registerUser_validInput_userCreated() throws Exception {
+  public void createUser_duplicateUsername_throwsError() throws Exception {
     // given
-    User user = new User();
-    user.setUserId(1L);
-    user.setName("Test User");
-    user.setUsername("testUsername");
-    user.setToken("1");
-
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setName("Test User");
     userPostDTO.setUsername("testUsername");
 
-    given(userService.createUser(Mockito.any())).willReturn(user);
+    given(userService.createUser(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists"));
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/register")
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/users")
                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                    .content(asJsonString(userPostDTO));
+                                                    .content(asJsonString(userPostDTO))
+                                                    .header("Authorization", "1234");
 
     // then
     mockMvc.perform(postRequest)
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())))
-        .andExpect(jsonPath("$.name", is(user.getName())))
-        .andExpect(jsonPath("$.username", is(user.getUsername())));
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Username already exists")));
   }
 
   /**
