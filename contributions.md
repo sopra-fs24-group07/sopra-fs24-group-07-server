@@ -30,6 +30,23 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/17:
   Login tests and docu
 
+### B1s9l
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues:
+  Landing page
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
+  Register page basic setup  
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
+  Login page basic setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/4:
+  Teams Overview page
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/5:
+  Team Dashboard page
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/17:
+  User profile edit popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/26:
+  Profile view popup
+
+
 ## 30.03.2024 - 05.04.2024
 
 ## 06.04.2024 - 12.04.2024
