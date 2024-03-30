@@ -29,6 +29,12 @@ timeline
   https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/82)
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/17:
   Login tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/25:
+  Create team service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/26:
+  Create team tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/24:
+  Create team api endpoint
 
 ### B1s9l
 
@@ -61,8 +67,6 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/21:
   Account Creation tests and docu
 
-  
-    
 ## 30.03.2024 - 05.04.2024
 
 ## 06.04.2024 - 12.04.2024
