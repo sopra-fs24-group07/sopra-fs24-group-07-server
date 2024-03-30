@@ -50,6 +50,47 @@ public class UserService {
     return newUser;
   }
 
+  // User updating:
+  public User updateUser(User userToUpdate) {
+    ServiceHelpers.checkValidString(userToUpdate.getUsername(), "Username");
+    ServiceHelpers.checkValidString(userToUpdate.getName(), "Name");
+    ServiceHelpers.checkValidString(userToUpdate.getPassword(), "Password");
+
+    User existingUser =
+        userRepository.findById(userToUpdate.getUserId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    existingUser.setName(userToUpdate.getName());
+    existingUser.setUsername(userToUpdate.getUsername());
+    existingUser.setPassword(userToUpdate.getPassword());
+
+    userRepository.save(existingUser);
+    userRepository.flush();
+
+    log.debug("Updated Information for User: {}", existingUser);
+    return existingUser;
+  }
+
+  // User deletion:
+  public void deleteUser(Long userId) {
+    User existingUser = userRepository.findById(userId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    userRepository.delete(existingUser);
+    userRepository.flush();
+
+    log.debug("Deleted User: {}", existingUser);
+  }
+
+  // `checkInput` method in `UserService` checks the input fields of the user for null values.
+  // If any of them are null, it throws a `BAD_REQUEST` exception
+  public void checkInput(User userInput) {
+    if (userInput.getName() == null || userInput.getUsername() == null
+        || userInput.getPassword() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Input fields can't be null");
+    }
+  }
+
   /**
    * This is a helper method that will check the uniqueness criteria of the
    * username defined in the User entity. The method will do nothing if the input is unique
