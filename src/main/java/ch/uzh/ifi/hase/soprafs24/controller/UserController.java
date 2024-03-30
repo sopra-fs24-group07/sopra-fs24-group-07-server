@@ -44,4 +44,25 @@ public class UserController {
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
+
+  @PutMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO updateUser(@PathVariable Long id, @RequestBody UserPostDTO userPostDTO) {
+    // convert API user to internal representation
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    userInput.setUserId(id);
+
+    // update user
+    User updatedUser = userService.updateUser(userInput);
+
+    // convert internal representation of user back to API
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
+  }
+
+  @DeleteMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteUser(@PathVariable Long id) {
+    userService.deleteUser(id);
+  }
 }
