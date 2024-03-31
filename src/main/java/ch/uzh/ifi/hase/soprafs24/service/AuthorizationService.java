@@ -37,15 +37,6 @@ public class AuthorizationService {
                                                                          : null;
   }
 
-  // `checkAuth` method in `AuthorizationService` validates the token provided with the request.
-  // If the token is not valid or does not exist, it throws an `UNAUTHORIZED` exception
-  public void checkAuth(String token) {
-    User user = userRepository.findByToken(token);
-    if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-    }
-  }
-
   /**
    * Checks if the token is valid
    *
