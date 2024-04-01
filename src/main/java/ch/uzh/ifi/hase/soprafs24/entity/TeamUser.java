@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
  * Many-to-many relationship between Team and User.
  * Instances should be created using the provided constructors, which ensure the proper setup of the
  * embedded id.
+ * @see <a
+ *     href="https://www.baeldung.com/jpa-many-to-many#many-to-many-using-a-composite-key">https://www.baeldung.com/jpa-many-to-many#many-to-many-using-a-composite-key</a>
  */
 @Entity
 @Table(name = "TEAM_USER")
@@ -21,9 +23,9 @@ public class TeamUser implements Serializable {
   // entity that uses this composite key (TeamUser), annotated with @EmbeddedId
   @EmbeddedId private TeamUserId teamUserId;
 
-  @ManyToOne @MapsId("teamId") Team team;
+  @ManyToOne @MapsId("teamId") @JoinColumn(name = "teamId") private Team team;
 
-  @ManyToOne @MapsId("userId") User user;
+  @ManyToOne @MapsId("userId") @JoinColumn(name = "userId") private User user;
 
   @CreationTimestamp private LocalDateTime joinTimestamp;
 
