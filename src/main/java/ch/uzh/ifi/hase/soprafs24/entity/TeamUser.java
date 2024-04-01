@@ -25,7 +25,7 @@ public class TeamUser implements Serializable {
 
   @ManyToOne @MapsId("userId") User user;
 
-  @CreationTimestamp @Column(nullable = false) private LocalDateTime creationTimestamp;
+  @CreationTimestamp private LocalDateTime joinTimestamp;
 
   /**
    * Default constructor
@@ -69,11 +69,11 @@ public class TeamUser implements Serializable {
     this.user = user;
   }
 
-  public LocalDateTime getCreationTimestamp() {
-    return creationTimestamp;
+  public LocalDateTime getJoinTimestamp() {
+    return joinTimestamp;
   }
 
-  public void setCreationTimestamp(LocalDateTime creationTimestamp) {
-    this.creationTimestamp = creationTimestamp;
+  public void setJoinTimestamp(LocalDateTime joinTimestamp) {
+    this.joinTimestamp = joinTimestamp;
   }
 }
