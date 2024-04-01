@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -22,11 +23,19 @@ import org.springframework.web.server.ResponseStatusException;
 @SpringBootTest
 public class UserServiceIntegrationTest {
   @Qualifier("userRepository") @Autowired private UserRepository userRepository;
+  @Qualifier("teamUserRepository") @Autowired private TeamUserRepository teamUserRepository;
 
   @Autowired private UserService userService;
 
   @BeforeEach
   public void setup() {
+    // delete all links between teams and users, because of error: ERROR: update or delete on table
+    // "users" violates foreign key constraint "fk4bpysmsga1jvt3v3tsn8o6hc9" on table "team_user"
+    // Foreign-key constraints:
+    //     "fk4bpysmsga1jvt3v3tsn8o6hc9" FOREIGN KEY (user_id) REFERENCES users(user_id)
+    //     "fkiuwi96twuthgvhnarqj34mnjv" FOREIGN KEY (team_id) REFERENCES team(team_id)
+    teamUserRepository.deleteAll();
+
     userRepository.deleteAll();
   }
 
