@@ -44,9 +44,7 @@ public class TeamUserServiceTest {
     testUser.setPassword("alfred123");
     testUser.setToken("1");
 
-    testTeamUser = new TeamUser();
-    testTeamUser.setUser(testUser);
-    testTeamUser.setTeam(testTeam);
+    testTeamUser = new TeamUser(testTeam, testUser);
 
     // when -> any object is being save in the teamUserRepository -> return the dummy testTeamUser
     Mockito.when(teamUserRepository.save(Mockito.any())).thenReturn(testTeamUser);

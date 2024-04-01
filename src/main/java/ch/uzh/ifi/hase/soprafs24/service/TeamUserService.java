@@ -53,9 +53,7 @@ public class TeamUserService {
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
 
     // create link (join timestamp will be set automatically)
-    TeamUser teamUser = new TeamUser();
-    teamUser.setUser(user);
-    teamUser.setTeam(team);
+    TeamUser teamUser = new TeamUser(team, user);
 
     // save and flush
     teamUserRepository.save(teamUser);

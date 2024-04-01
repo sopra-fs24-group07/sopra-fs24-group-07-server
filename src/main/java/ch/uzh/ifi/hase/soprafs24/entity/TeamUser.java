@@ -30,7 +30,7 @@ public class TeamUser implements Serializable {
   @CreationTimestamp private LocalDateTime joinTimestamp;
 
   /**
-   * Default constructor
+   * Default constructor for TeamUser, but uses postLoad to ensure that the embedded id is set.
    */
   public TeamUser() {}
 
@@ -45,6 +45,13 @@ public class TeamUser implements Serializable {
     this.team = team;
     this.user = user;
     this.teamUserId = new TeamUserId(team.getTeamId(), user.getUserId());
+  }
+
+  @PostLoad
+  private void postLoad() {
+    if (this.teamUserId == null) {
+      this.teamUserId = new TeamUserId(team.getTeamId(), user.getUserId());
+    }
   }
 
   public TeamUserId getTeamUserId() {
