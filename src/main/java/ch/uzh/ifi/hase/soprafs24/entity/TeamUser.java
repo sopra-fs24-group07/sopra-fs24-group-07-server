@@ -13,6 +13,8 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "TEAM_USER")
 public class TeamUser implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   // JPA wouldn't know that these two fields together form the primary key for the TeamUser entity.
   // By using an embedded id, we're making it clear to JPA that these two fields together form the
   // primary key.
