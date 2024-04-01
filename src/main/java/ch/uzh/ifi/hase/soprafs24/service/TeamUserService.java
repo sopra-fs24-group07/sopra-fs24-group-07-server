@@ -46,6 +46,7 @@ public class TeamUserService {
    * @throws ResponseStatusException 404 if user or team not found
    */
   public TeamUser createTeamUser(Long teamId, Long userId) {
+    log.debug("create link between teamId: " + teamId + " and userId: " + userId);
     // check that the user and team exist
     User user = userRepository.findById(userId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
