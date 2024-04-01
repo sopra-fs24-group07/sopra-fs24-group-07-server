@@ -49,7 +49,7 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock valid token
-    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
     // mock team service
     given(teamService.createTeam(Mockito.any())).willReturn(team);
     // TODO: mock add user to team on creation service call
@@ -85,9 +85,8 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock invalid token -> throw exception
-    Mockito.doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED))
-        .when(authorizationService)
-        .isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString()))
+        .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -116,7 +115,8 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock invalid token -> throw exception
-    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    // Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
 
     // mock team service
     given(teamService.createTeam(Mockito.any()))

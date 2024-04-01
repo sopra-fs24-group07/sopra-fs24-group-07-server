@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -31,7 +32,7 @@ public class TeamController {
   public TeamGetDTO createTeam(
       @RequestBody TeamPostDTO teamPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
-    authorizationService.isAuthorized(token);
+    User authorizedUser = authorizationService.isAuthorized(token);
 
     // convert API team to internal representation
     Team teamInput = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
