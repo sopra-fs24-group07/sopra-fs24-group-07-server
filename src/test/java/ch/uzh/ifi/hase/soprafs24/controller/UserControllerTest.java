@@ -4,7 +4,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -94,5 +96,48 @@ public class UserControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Username already exists")));
+  }
+
+  @Test
+  public void updateUser_validInput_userUpdated() throws Exception {
+    // given
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User Updated");
+    user.setUsername("testUsernameUpdated");
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    given(userService.updateUser(Mockito.any())).willReturn(user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/" + user.getUserId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())))
+        .andExpect(jsonPath("$.name", is(user.getName())))
+        .andExpect(jsonPath("$.username", is(user.getUsername())));
+  }
+
+  @Test
+  public void deleteUser_validInput_userDeleted() throws Exception {
+    // given
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+
+    // when -> do the request + validate the result
+    MockHttpServletRequestBuilder deleteRequest = delete("/api/v1/users/" + user.getUserId());
+
+    // then
+    mockMvc.perform(deleteRequest).andExpect(status().isOk());
   }
 }
