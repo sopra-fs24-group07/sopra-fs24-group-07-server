@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,4 +66,65 @@ public class TeamUserServiceIntegrationTest {
     // assertEquals(testTeam.getTeamId(), createdTeamUser.getTeamUserId().getTeamId());
     // assertEquals(testUser.getUserId(), createdTeamUser.getTeamUserId().getUserId());
   }
+
+  // region get teams by user tests
+  // Don't need to test if user does not exist (done in TeamUserServiceTest)
+
+  /**
+   * Test for getting all teams of a user with no link to another team
+   */
+  @Test
+  public void getTeamsByUser_noTeams_emptyList() {
+    // given user with no link to any team
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // when
+    List<Team> teams = teamUserService.getTeamsOfUser(testUser.getUserId());
+
+    // then
+    assertTrue(teams.isEmpty());
+  }
+
+  /**
+   * Test for getting all teams of a user with one link to a team
+   */
+  @Test
+  public void getTeamsByUser_oneTeam_oneTeam() {
+    // assume create team and create user work correctly (tested in TeamServiceIntegrationTest and
+    // UserServiceIntegrationTest)
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given teamUser link (if this works, is tested in another test, focus here is on
+    // getTeamsOfUser)
+    TeamUser testTeamUser = new TeamUser(testTeam, testUser);
+    teamUserRepository.saveAndFlush(testTeamUser);
+
+    // when
+    List<Team> teams = teamUserService.getTeamsOfUser(testUser.getUserId());
+
+    // then
+    assertEquals(1, teams.size());
+    assertEquals(testTeam.getTeamId(), teams.get(0).getTeamId());
+    assertEquals(testTeam.getName(), teams.get(0).getName());
+    assertEquals(testTeam.getDescription(), teams.get(0).getDescription());
+  }
+  // endregion
 }
