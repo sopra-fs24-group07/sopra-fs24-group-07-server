@@ -42,10 +42,13 @@ public class TeamUserRepositoryIntegrationTest {
     team.setName("Team Name");
     team.setDescription("Team Description");
 
-    teamUser = new TeamUser(team, user);
-
+    // save team and user
     entityManager.persist(user);
     entityManager.persist(team);
+    entityManager.flush();
+
+    // create teamUser link
+    teamUser = new TeamUser(team, user);
     entityManager.persist(teamUser);
     entityManager.flush();
   }
@@ -73,6 +76,18 @@ public class TeamUserRepositoryIntegrationTest {
     assertNotNull(found.get(0).getTeamUserId());
     assertEquals(found.get(0).getTeamUserId().getTeamId(), team.getTeamId());
     assertEquals(found.get(0).getTeamUserId().getUserId(), user.getUserId());
-    assertNotNull(found.get(0).getCreationTimestamp());
+    assertNotNull(found.get(0).getJoinTimestamp());
+  }
+
+  @Test
+  public void whenFindById_thenReturnTeamUser() {
+    // when
+    TeamUser found = teamUserRepository.findById(teamUser.getTeamUserId()).orElse(null);
+
+    // then
+    assertNotNull(found.getTeamUserId());
+    assertNotNull(found.getJoinTimestamp());
+    assertEquals(found.getUser().getUserId(), user.getUserId());
+    assertEquals(found.getTeam().getTeamId(), team.getTeamId());
   }
 }

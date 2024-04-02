@@ -43,14 +43,17 @@ public class AuthorizationService {
    * Checks if the token is valid
    *
    * @param token the token to be checked
+   * @return the user of the token
    * @throws ResponseStatusException if the token is invalid
    */
-  public void isAuthorized(String token) {
+  public User isAuthorized(String token) {
     log.info("Checking authorization for token '{}'", token); // monitor authorization attempts
 
-    if (this.userRepository.findByToken(token) == null) {
+    User foundUser = this.userRepository.findByToken(token);
+    if (foundUser == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
     }
+    return foundUser;
   }
 
   /**
@@ -58,14 +61,16 @@ public class AuthorizationService {
    *
    * @param token the token to be checked
    * @param username the username to be checked
+   * @return the user of the token/username
    * @throws ResponseStatusException if the token is invalid or does not belong to the user
    */
-  public void isAuthorized(String token, String username) {
+  public User isAuthorized(String token, String username) {
     log.info("Checking authorization for token '{}'", token); // monitor authorization attempts
 
     User foundUser = userRepository.findByToken(token);
     if (foundUser == null || !foundUser.getUsername().equals(username)) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
     }
+    return foundUser;
   }
 }

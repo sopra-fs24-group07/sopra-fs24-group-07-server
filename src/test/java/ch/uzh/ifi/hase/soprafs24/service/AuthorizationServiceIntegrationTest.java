@@ -107,8 +107,12 @@ public class AuthorizationServiceIntegrationTest {
     User createdUser = userService.createUser(testUser);
 
     // when try auth -> then exception
-    assertDoesNotThrow(
-        () -> authorizationService.isAuthorized(testUser.getToken(), testUser.getUsername()));
+    User authorizedUser =
+        authorizationService.isAuthorized(testUser.getToken(), testUser.getUsername());
+
+    // then
+    assertEquals(createdUser.getUsername(), authorizedUser.getUsername());
+    assertEquals(createdUser.getToken(), authorizedUser.getToken());
   }
 
   /**
