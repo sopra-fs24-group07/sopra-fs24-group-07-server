@@ -6,6 +6,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,20 +67,20 @@ public class TeamUserService {
     return teamUser;
   }
 
-  // /**
-  //  * Get all teams of a user
-  //  */
-  // public List<Team> getTeamsOfUser(Long userId) {
-  //   // check that the user exists
-  //   User user = userRepository.findById(userId).orElseThrow(
-  //       () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-  //
-  //   // get all teams of the user
-  //   List<TeamUser> teamUsers = teamUserRepository.findByUser(user);
-  //   List<Team> teams = teamUsers.stream().map(TeamUser::getTeam).collect(Collectors.toList());
-  //
-  //   log.debug("Found {} teams for user '{}'", teams.size(), user.getUsername());
-  //
-  //   return teams;
-  // }
+  /**
+   * Get all teams of a user
+   */
+  public List<Team> getTeamsOfUser(Long userId) {
+    // check that the user exists
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // get all teams of the user
+    List<TeamUser> teamUsers = teamUserRepository.findByUser(user);
+    List<Team> teams = teamUsers.stream().map(TeamUser::getTeam).collect(Collectors.toList());
+
+    log.debug("Found {} teams for user '{}'", teams.size(), user.getUsername());
+
+    return teams;
+  }
 }
