@@ -111,9 +111,11 @@ public class UserControllerTest {
     // given test user
     User testUser = new User();
     testUser.setUserId(1L);
+    testUser.setToken("1");
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(testUser);
+    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
 
     // when -> service request to get all teams of a user -> return empty list
     given(teamUserService.getTeamsOfUser(Mockito.anyLong())).willReturn(java.util.List.of());
@@ -122,7 +124,7 @@ public class UserControllerTest {
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/users/" + testUser.getUserId().toString() + "/teams")
             .contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "1");
+            .header("Authorization", testUser.getToken());
 
     // then -> validate result for empty list of teamGetDTOs
     mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
@@ -136,6 +138,7 @@ public class UserControllerTest {
     // given test user
     User testUser = new User();
     testUser.setUserId(1L);
+    testUser.setToken("1");
 
     // given test team (which user is linked to)
     Team testTeam = new Team();
@@ -144,7 +147,8 @@ public class UserControllerTest {
     testTeam.setDescription("We are a productive team!");
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(testUser);
+    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
 
     // when -> service request to get all teams of a user -> return empty list
     given(teamUserService.getTeamsOfUser(Mockito.anyLong()))
@@ -154,7 +158,7 @@ public class UserControllerTest {
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/users/" + testUser.getUserId().toString() + "/teams")
             .contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "1");
+            .header("Authorization", testUser.getToken());
 
     // then -> validate result for empty list of teamGetDTOs
     mockMvc.perform(getRequest)
