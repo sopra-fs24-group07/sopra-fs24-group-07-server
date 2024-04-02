@@ -68,7 +68,12 @@ public class TeamUserService {
   }
 
   /**
-   * Get all teams of a user
+   * Get all teams of a user.
+   *
+   * @param userId user id of which the teams should be retrieved
+   *
+   * @return list of teams (empty if no teams are found)
+   * @throws ResponseStatusException 404 if user not found
    */
   public List<Team> getTeamsOfUser(Long userId) {
     // check that the user exists
