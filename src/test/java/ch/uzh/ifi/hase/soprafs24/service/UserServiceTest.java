@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -128,5 +129,64 @@ public class UserServiceTest {
     User foundUser = userRepository.findByUsername(username);
 
     assertNull(foundUser);
+  }
+
+  @Test
+  public void updateUser_validInputs_success() {
+    // given
+    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
+
+    User updatedUser = new User();
+    updatedUser.setUserId(testUser.getUserId());
+    updatedUser.setName("updatedName");
+    updatedUser.setUsername("updatedUsername");
+    updatedUser.setPassword("updatedPassword");
+
+    // when
+    User returnedUser = userService.updateUser(updatedUser);
+
+    // then
+    Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+    assertEquals(updatedUser.getUserId(), returnedUser.getUserId());
+    assertEquals(updatedUser.getName(), returnedUser.getName());
+    assertEquals(updatedUser.getUsername(), returnedUser.getUsername());
+    assertEquals(updatedUser.getPassword(), returnedUser.getPassword());
+  }
+
+  @Test
+  public void updateUser_nonExistingUser_throwsException() {
+    // given
+    User nonExistingUser = new User();
+    nonExistingUser.setUserId(2L);
+    nonExistingUser.setName("nonExistingName");
+    nonExistingUser.setUsername("nonExistingUsername");
+    nonExistingUser.setPassword("nonExistingPassword");
+
+    Mockito.when(userRepository.findById(nonExistingUser.getUserId())).thenReturn(Optional.empty());
+
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
+  }
+
+  @Test
+  public void deleteUser_existingUser_success() {
+    // given
+    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
+
+    // when
+    userService.deleteUser(testUser.getUserId());
+
+    // then
+    Mockito.verify(userRepository, Mockito.times(1)).delete(Mockito.any());
+  }
+
+  @Test
+  public void deleteUser_nonExistingUser_throwsException() {
+    // given
+    Long nonExistingUserId = 2L;
+    Mockito.when(userRepository.findById(nonExistingUserId)).thenReturn(Optional.empty());
+
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.deleteUser(nonExistingUserId));
   }
 }
