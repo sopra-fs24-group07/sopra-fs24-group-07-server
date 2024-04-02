@@ -90,4 +90,42 @@ public class TeamUserRepositoryIntegrationTest {
     assertEquals(found.getUser().getUserId(), user.getUserId());
     assertEquals(found.getTeam().getTeamId(), team.getTeamId());
   }
+
+  /**
+   * Test for finding a teamUser by a user that does exist, but has no team
+   */
+  @Test
+  public void whenFindByUser_thenReturnEmptyList() {
+    // given user with no team link
+    User user2 = new User();
+    user2.setName("Alan Turing");
+    user2.setUsername("alan@turing");
+    user2.setPassword("enigma");
+    user2.setToken("2");
+
+    // save user with no team link
+    entityManager.persist(user2);
+    entityManager.flush();
+
+    // when
+    List<TeamUser> found = teamUserRepository.findByUser(user2);
+
+    // then
+    assertEquals(found.size(), 0);
+  }
+
+  /**
+   * Test for finding a teamUser by a user that does exist
+   */
+  @Test
+  public void whenFindByUser_thenReturnTeamUserList() {
+    // when
+    List<TeamUser> found = teamUserRepository.findByUser(user);
+
+    // then
+    assertEquals(found.size(), 1);
+    assertEquals(found.get(0), teamUser);
+    assertEquals(found.get(0).getTeam(), team);
+    assertEquals(found.get(0).getUser(), user);
+  }
 }
