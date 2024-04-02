@@ -102,6 +102,62 @@ public class UserControllerTest {
   }
 
   // region get teams by user tests
+  /**
+   * Test for getting all teams of a user, but not valid token
+   */
+  @Test
+  public void getTeamsByUser_invalidToken_throwsError() throws Exception {
+    // given test user
+    User testUser = new User();
+    testUser.setUserId(1L);
+    testUser.setToken("1");
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/users/" + testUser.getUserId().toString() + "/teams")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "invalid token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
+
+  /**
+   * Test for getting all teams of a user, but user does not exist (wrong userId in uri)
+   */
+  @Test
+  public void getTeamsByUser_userDoesNotExist_throwsError() throws Exception {
+    // given test user
+    User testUser = new User();
+    testUser.setUserId(1L);
+    testUser.setToken("1");
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+
+    // when -> service request to get all teams of a user -> return empty list
+    given(teamUserService.getTeamsOfUser(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/users/42/teams")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", testUser.getToken());
+
+    // then -> validate result for not found
+    mockMvc.perform(getRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
 
   /**
    * Test for getting all teams of a user with no link to another team
