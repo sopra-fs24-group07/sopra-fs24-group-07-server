@@ -82,15 +82,6 @@ public class UserService {
     log.debug("Deleted User: {}", existingUser);
   }
 
-  // `checkInput` method in `UserService` checks the input fields of the user for null values.
-  // If any of them are null, it throws a `BAD_REQUEST` exception
-  public void checkInput(User userInput) {
-    if (userInput.getName() == null || userInput.getUsername() == null
-        || userInput.getPassword() == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Input fields can't be null");
-    }
-  }
-
   /**
    * This is a helper method that will check the uniqueness criteria of the
    * username defined in the User entity. The method will do nothing if the input is unique
