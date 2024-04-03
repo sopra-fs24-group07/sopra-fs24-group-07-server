@@ -4,6 +4,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -116,7 +118,8 @@ public class UserControllerTest {
     MockHttpServletRequestBuilder putRequest =
         put("/api/v1/users/" + user.getUserId())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(ControllerTestHelper.asJsonString(userPostDTO));
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
 
     // then
     mockMvc.perform(putRequest)
@@ -127,17 +130,48 @@ public class UserControllerTest {
   }
 
   @Test
-  public void deleteUser_validInput_userDeleted() throws Exception {
+  public void deleteUser_validInput_userDeleteda() throws Exception {
     // given
     User user = new User();
     user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
 
-    // when -> do the request + validate the result
-    MockHttpServletRequestBuilder deleteRequest = delete("/api/v1/users/" + user.getUserId());
+    // when -> do the request
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/users/" + user.getUserId()).header("Authorization", "1234");
 
     // then
     mockMvc.perform(deleteRequest).andExpect(status().isOk());
+
+    // verify that the userService.deleteUser method was called once
+    verify(userService, times(1)).deleteUser(user.getUserId());
+  }
+
+  // Test case for PUT method where user doesn't exist
+  @Test
+  public void updateUser_nonExistingUser_throwsError() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    given(userService.updateUser(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains("User not found")));
   }
 }
