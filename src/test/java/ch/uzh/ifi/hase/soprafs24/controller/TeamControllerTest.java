@@ -1,7 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -147,4 +150,102 @@ public class TeamControllerTest {
     // then -> isUnauthorized
     mockMvc.perform(postRequest).andExpect(status().isBadRequest());
   }
+
+  // region getUsersOfTeam tests
+  // Don't need to test if we get empty list of users, because there should always at least one user
+  // linked to a team (no rotten green path testing)
+
+  /**
+   * Test for getting all users of a team, but not valid token (user token not in db)
+   */
+  @Test
+  public void getUsersOfTeam_invalidToken_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorized(Mockito.anyString()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "invalid token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
+
+  /**
+   * Test for getting all users of a team, but not valid token (user not in team)
+   */
+  @Test
+  public void getUsersOfTeam_userNotInTeam_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+
+    // given user that makes request, but is not in teasTeam
+    User userNotInTeam = new User();
+    userNotInTeam.setUserId(2L);
+    userNotInTeam.setToken("userNotInTeamToken");
+
+    // when -> is auth check -> is valid -> but user is not the valid one
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(userNotInTeam);
+    // when -> get users of team -> testUser is in team, but not the other user
+    given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
+        .willReturn(java.util.List.of(testUser));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", userNotInTeam.getToken()); // request with this token
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isForbidden())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
+
+  /**
+   * Test for getting all users of a team successfully
+   */
+  @Test
+  public void getUsersOfTeam_validInput() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(testUser);
+    // when -> get users of team -> testUser is in team
+    given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
+        .willReturn(java.util.List.of(testUser));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].userId", is(testUser.getUserId().intValue())))
+        .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+
+  // endregion
 }
