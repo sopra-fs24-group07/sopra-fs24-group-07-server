@@ -91,6 +91,8 @@ public class TeamUserRepositoryIntegrationTest {
     assertEquals(found.getTeam().getTeamId(), team.getTeamId());
   }
 
+  // region findByUser tests
+
   /**
    * Test for finding a teamUser by a user that does exist, but has no team
    */
@@ -128,4 +130,45 @@ public class TeamUserRepositoryIntegrationTest {
     assertEquals(found.get(0).getTeam(), team);
     assertEquals(found.get(0).getUser(), user);
   }
+
+  // endregion
+
+  // region findByTeam tests
+
+  /**
+   * Test for finding a teamUser by a team that does exist, but has no user
+   */
+  @Test
+  public void whenFindByTeam_thenReturnEmptyList() {
+    // given user with no user link
+    Team team2 = new Team();
+    team2.setName("The A-team");
+    team2.setDescription("I love it when a plan comes together!");
+
+    // save user with no team link
+    entityManager.persist(team2);
+    entityManager.flush();
+
+    // when
+    List<TeamUser> found = teamUserRepository.findByTeam(team2);
+
+    // then
+    assertEquals(found.size(), 0);
+  }
+
+  /**
+   * Test for finding a teamUser by a team that does exist
+   */
+  @Test
+  public void whenFindByTeam_thenReturnTeamUserList() {
+    // when
+    List<TeamUser> found = teamUserRepository.findByTeam(team);
+
+    // then
+    assertEquals(found.size(), 1);
+    assertEquals(found.get(0), teamUser);
+    assertEquals(found.get(0).getTeam(), team);
+    assertEquals(found.get(0).getUser(), user);
+  }
+  // endregion
 }
