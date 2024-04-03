@@ -179,6 +179,52 @@ public class AuthorizationServiceTest {
     assertThrows(ResponseStatusException.class,
         () -> authorizationService.isAuthorized("batman's token", "robin"));
   }
+  /**
+   * test that if token and userId correspond, true is returned
+   */
+  @Test
+  public void isAuthorized_tokenAndUserId_valid() {
+    // given no user which can be found by token
+    User testUser = new User();
+    testUser.setUserId(1L);
+
+    // when -> find user by token -> user is returned
+    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
+
+    // then (does not throw exception)
+    authorizationService.isAuthorized("batman's token", 1L);
+  }
+
+  /**
+   * test that if token cannot be found, false is returned
+   */
+  @Test
+  public void isAuthorized_tokenAndUserId_invalidToken() {
+    // when -> find user by token -> no user found because token is invalid
+    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(null);
+
+    // then
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isAuthorized("invalid token", 1L));
+  }
+
+  /**
+   * test that if token and userId do not correspond, false is returned
+   */
+  @Test
+  public void isAuthorized_tokenAndUserId_tokenAndUserIdNotCorresponding() {
+    String username = "batman";
+    // given no user which can be found by token
+    User testUser = new User();
+    testUser.setUserId(1L);
+
+    // when -> find user by token -> no user found because token is invalid
+    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
+
+    // then
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isAuthorized("batman's token", 2L));
+  }
 
   // endregion
 }
