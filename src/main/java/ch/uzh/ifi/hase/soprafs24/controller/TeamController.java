@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
+import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class TeamController {
   private final TeamService teamService;
   private final AuthorizationService authorizationService;
+  private final TeamUserService teamUserService;
 
-  TeamController(TeamService teamService, AuthorizationService authorizationService) {
+  TeamController(TeamService teamService, AuthorizationService authorizationService,
+      TeamUserService teamUserService) {
     this.teamService = teamService;
     this.authorizationService = authorizationService;
+    this.teamUserService = teamUserService;
   }
 
   @PostMapping("/teams")
@@ -31,7 +36,7 @@ public class TeamController {
   public TeamGetDTO createTeam(
       @RequestBody TeamPostDTO teamPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
-    authorizationService.isAuthorized(token);
+    User authorizedUser = authorizationService.isAuthorized(token);
 
     // convert API team to internal representation
     Team teamInput = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
@@ -39,7 +44,8 @@ public class TeamController {
     // create team
     Team createdTeam = teamService.createTeam(teamInput);
 
-    // TODO: call service to add user to created team
+    // add user to created team
+    teamUserService.createTeamUser(createdTeam.getTeamId(), authorizedUser.getUserId());
 
     // convert internal representation of team back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeam);

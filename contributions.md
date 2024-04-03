@@ -8,7 +8,7 @@ timeline
     31.03.2024: Account Creation: Login: Auth : Team Creation
     07.04.2024: User Edit: Team Overview: Team Dashboard: Task Creation: Agora Voice Chat
     14.04.2024: Task Board: Task Details: Task Edit: Team Invitation: Session Start
-    21.04.2024: Session End: Session Statistics
+    21.04.2024: Session End: Session Statistics: DB Prod
     26.04.2024: Abgabe
 ```
 
@@ -29,6 +29,12 @@ timeline
   https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/82)
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/17:
   Login tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/25:
+  Create team service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/26:
+  Create team tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/24:
+  Create team api endpoint
 
 ### B1s9l
 
