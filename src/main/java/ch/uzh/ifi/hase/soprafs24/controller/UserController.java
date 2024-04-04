@@ -57,7 +57,7 @@ public class UserController {
   public UserGetDTO updateUser(@PathVariable Long id, @RequestBody UserPostDTO userPostDTO,
       @RequestHeader("Authorization") String token) {
     // Check if the token is valid and belongs to the user
-    authorizationService.isAuthorized(token);
+    authorizationService.isAuthorized(token, id);
 
     // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
@@ -74,7 +74,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public void deleteUser(@PathVariable Long id, @RequestHeader("Authorization") String token) {
     // Check if the token is valid and belongs to the user
-    authorizationService.isAuthorized(token);
+    authorizationService.isAuthorized(token, id);
 
     userService.deleteUser(id);
   }
