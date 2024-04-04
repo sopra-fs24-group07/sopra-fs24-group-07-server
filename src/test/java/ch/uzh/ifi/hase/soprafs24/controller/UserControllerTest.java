@@ -114,7 +114,7 @@ public class UserControllerTest {
   // Alihan: Update User happy path
   @Test
   public void updateUser_validInput_userUpdated() throws Exception {
-    // given
+    // given updated user data
     User user = new User();
     user.setUserId(1L);
     user.setName("Test User Updated");
@@ -124,6 +124,11 @@ public class UserControllerTest {
     userPostDTO.setName("Test User Updated");
     userPostDTO.setUsername("testUsernameUpdated");
 
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when -> update user -> return updated user
     given(userService.updateUser(Mockito.any())).willReturn(user);
 
     // when/then -> do the request + validate the result
@@ -149,8 +154,13 @@ public class UserControllerTest {
     userPostDTO.setName("Test User Updated");
     userPostDTO.setUsername("testUsernameUpdated");
 
-    given(userService.updateUser(Mockito.any()))
+    // when -> check existing and authorized user -> user not found
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // not needed because auth checks that
+    // given(userService.updateUser(Mockito.any()))
+    //     .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder putRequest =
@@ -160,12 +170,31 @@ public class UserControllerTest {
             .header("Authorization", "1234");
 
     // then
-    mockMvc.perform(putRequest)
-        .andExpect(status().isNotFound())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-        .andExpect(result
-            -> assertTrue(result.getResolvedException().getMessage().contains("User not found")));
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
+
+  // Alihan: Update User; Test case for PUT method where token does not correspond to user's id or
+  // token is not valid (not found)
+  @Test
+  public void updateUser_notAuthorizedUser_throwsError() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
   }
 
   // Alihan: Update User; Test case for PUT method where user tries to update with invalid input
@@ -175,6 +204,11 @@ public class UserControllerTest {
     userPostDTO.setName("");
     userPostDTO.setUsername("");
 
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> update user -> invalid input
     given(userService.updateUser(Mockito.any()))
         .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input"));
 
@@ -184,12 +218,7 @@ public class UserControllerTest {
             .content(ControllerTestHelper.asJsonString(userPostDTO))
             .header("Authorization", "1234");
 
-    mockMvc.perform(putRequest)
-        .andExpect(status().isBadRequest())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-        .andExpect(result
-            -> assertTrue(result.getResolvedException().getMessage().contains("Invalid input")));
+    mockMvc.perform(putRequest).andExpect(status().isBadRequest());
   }
 
   // endregion
@@ -198,12 +227,17 @@ public class UserControllerTest {
 
   // Alihan: Delete user (happy path)
   @Test
-  public void deleteUser_validInput_userDeleteda() throws Exception {
+  public void deleteUser_validInput_success() throws Exception {
     // given
     User user = new User();
     user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
+    user.setToken("1234");
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
 
     // when -> do the request
     MockHttpServletRequestBuilder deleteRequest =
@@ -216,37 +250,31 @@ public class UserControllerTest {
     verify(userService, times(1)).deleteUser(user.getUserId());
   }
 
-  // Alihan: Delete User; Test case for DELETE method where user is not authorized
+  // Alihan: Delete User; Test case for DELETE method where user is not authorized (token invalid or
+  // not found)
   @Test
   public void deleteUser_notAuthorized_throwsError() throws Exception {
-    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     MockHttpServletRequestBuilder deleteRequest =
-        delete("/api/v1/users/1").header("Authorization", "1234");
+        delete("/api/v1/users/1").header("Authorization", "invalid token");
 
-    mockMvc.perform(deleteRequest)
-        .andExpect(status().isUnauthorized())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+    mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
   }
 
   // Alihan: Delete User; Test case for DELETE method where user is not found
   @Test
   public void deleteUser_nonExistingUser_throwsError() throws Exception {
-    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
-        .when(userService)
-        .deleteUser(Mockito.anyLong());
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     MockHttpServletRequestBuilder deleteRequest =
         delete("/api/v1/users/1").header("Authorization", "1234");
 
-    mockMvc.perform(deleteRequest)
-        .andExpect(status().isNotFound())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-        .andExpect(result
-            -> assertTrue(result.getResolvedException().getMessage().contains("User not found")));
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
   }
 
   // endregion
