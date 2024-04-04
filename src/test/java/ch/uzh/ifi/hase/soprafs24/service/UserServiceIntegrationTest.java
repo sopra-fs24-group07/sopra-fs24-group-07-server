@@ -105,4 +105,57 @@ public class UserServiceIntegrationTest {
     // not same name
     assertNotEquals(testUser.getUsername(), testUser2.getUsername());
   }
+
+  // Alihan: PUT with valid input, happy path
+  @Test
+  public void updateUser_validInputs_success() {
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+
+    User createdUser = userService.createUser(testUser);
+
+    createdUser.setName("updatedName");
+    createdUser.setUsername("updatedUsername");
+    createdUser.setPassword("updatedPassword");
+
+    User updatedUser = userService.updateUser(createdUser);
+
+    assertEquals(createdUser.getUserId(), updatedUser.getUserId());
+    assertEquals(createdUser.getName(), updatedUser.getName());
+    assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+  }
+
+  // Alihan: PUT with non-existing user, unhappy path
+  @Test
+  public void updateUser_nonExistingUser_throwsException() {
+    User nonExistingUser = new User();
+    nonExistingUser.setUserId(99L);
+    nonExistingUser.setName("nonExistingName");
+    nonExistingUser.setUsername("nonExistingUsername");
+    nonExistingUser.setPassword("nonExistingPassword");
+
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
+  }
+
+  // Alihan: DELETE as happy path
+  @Test
+  public void deleteUser_existingUser_success() {
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+
+    User createdUser = userService.createUser(testUser);
+    userService.deleteUser(createdUser.getUserId());
+
+    assertNull(userRepository.findById(createdUser.getUserId()).orElse(null));
+  }
+
+  // Alihan: DELETE with non-existing user; unhappy path
+  @Test
+  public void deleteUser_nonExistingUser_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> userService.deleteUser(99L));
+  }
 }
