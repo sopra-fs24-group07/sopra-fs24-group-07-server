@@ -36,6 +36,44 @@ public class UserServiceTest {
     Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
   }
 
+  // region helper findByUsername tests
+  // ALIHAN TEST:
+  @Test
+  public void findByUsername_existingUsername_returnsUser() {
+    // given
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+
+    // when
+    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user);
+
+    // then
+    User foundUser = userRepository.findByUsername(user.getUsername());
+
+    assertEquals(user.getUserId(), foundUser.getUserId());
+    assertEquals(user.getName(), foundUser.getName());
+    assertEquals(user.getUsername(), foundUser.getUsername());
+  }
+
+  // ALIHAN TEST:
+  @Test
+  public void findByUsername_nonExistingUsername_returnsNull() {
+    // given
+    String username = "nonExistingUsername";
+
+    // when
+    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
+
+    // then
+    User foundUser = userRepository.findByUsername(username);
+
+    assertNull(foundUser);
+  }
+  // endregion
+
+  // region create user
   @Test
   public void createUser_validInputs_success() {
     // when -> any object is being save in the userRepository -> return the dummy
@@ -95,42 +133,9 @@ public class UserServiceTest {
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
+  // endregion
 
-  // ALIHAN TEST:
-  @Test
-  public void findByUsername_existingUsername_returnsUser() {
-    // given
-    User user = new User();
-    user.setUserId(1L);
-    user.setName("Test User");
-    user.setUsername("testUsername");
-
-    // when
-    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user);
-
-    // then
-    User foundUser = userRepository.findByUsername(user.getUsername());
-
-    assertEquals(user.getUserId(), foundUser.getUserId());
-    assertEquals(user.getName(), foundUser.getName());
-    assertEquals(user.getUsername(), foundUser.getUsername());
-  }
-
-  // ALIHAN TEST:
-  @Test
-  public void findByUsername_nonExistingUsername_returnsNull() {
-    // given
-    String username = "nonExistingUsername";
-
-    // when
-    Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
-
-    // then
-    User foundUser = userRepository.findByUsername(username);
-
-    assertNull(foundUser);
-  }
-
+  // region update user
   @Test
   public void updateUser_validInputs_success() {
     // given
@@ -167,6 +172,9 @@ public class UserServiceTest {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
   }
+  // endregion
+
+  // region delete user
 
   @Test
   public void deleteUser_existingUser_success() {
@@ -189,4 +197,5 @@ public class UserServiceTest {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser(nonExistingUserId));
   }
+  // endregion
 }
