@@ -48,6 +48,7 @@ public class UserControllerTest {
   @MockBean private AuthorizationService authorizationService;
   @MockBean private TeamUserService teamUserService;
 
+  // region createUser
   @Test
   public void createUser_validInput_userCreated() throws Exception {
     // given
@@ -105,6 +106,10 @@ public class UserControllerTest {
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Username already exists")));
   }
+
+  // endregion
+
+  // region update user
 
   // Alihan: Update User happy path
   @Test
@@ -187,6 +192,10 @@ public class UserControllerTest {
             -> assertTrue(result.getResolvedException().getMessage().contains("Invalid input")));
   }
 
+  // endregion
+
+  // region delete user
+
   // Alihan: Delete user (happy path)
   @Test
   public void deleteUser_validInput_userDeleteda() throws Exception {
@@ -239,6 +248,8 @@ public class UserControllerTest {
         .andExpect(result
             -> assertTrue(result.getResolvedException().getMessage().contains("User not found")));
   }
+
+  // endregion
 
   // region get teams by user tests
   /**
