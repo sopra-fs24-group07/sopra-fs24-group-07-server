@@ -115,19 +115,22 @@ public class UserServiceIntegrationTest {
   // Alihan: PUT with valid input, happy path
   @Test
   public void updateUser_validInputs_success() {
+    // given user in db to update
     User testUser = new User();
     testUser.setName("testName");
     testUser.setUsername("testUsername");
     testUser.setPassword("1234");
-
     User createdUser = userService.createUser(testUser);
 
+    // update user
     createdUser.setName("updatedName");
     createdUser.setUsername("updatedUsername");
     createdUser.setPassword("updatedPassword");
 
+    // update service call
     User updatedUser = userService.updateUser(createdUser);
 
+    // check if user is updated
     assertEquals(createdUser.getUserId(), updatedUser.getUserId());
     assertEquals(createdUser.getName(), updatedUser.getName());
     assertEquals(createdUser.getUsername(), updatedUser.getUsername());
@@ -142,6 +145,9 @@ public class UserServiceIntegrationTest {
     nonExistingUser.setUsername("nonExistingUsername");
     nonExistingUser.setPassword("nonExistingPassword");
 
+    // check if user really does not exist
+    assertTrue(userRepository.findById(99L).isEmpty());
+
     assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
   }
 
@@ -152,20 +158,27 @@ public class UserServiceIntegrationTest {
   // Alihan: DELETE as happy path
   @Test
   public void deleteUser_existingUser_success() {
+    // given user to delete which is in the db
     User testUser = new User();
     testUser.setName("testName");
     testUser.setUsername("testUsername");
     testUser.setPassword("1234");
-
     User createdUser = userService.createUser(testUser);
+
+    // execute delete action
     userService.deleteUser(createdUser.getUserId());
 
-    assertNull(userRepository.findById(createdUser.getUserId()).orElse(null));
+    // check if user really does not exist anymore
+    assertTrue(userRepository.findById(createdUser.getUserId()).isEmpty());
   }
 
   // Alihan: DELETE with non-existing user; unhappy path
   @Test
   public void deleteUser_nonExistingUser_throwsException() {
+    // check if user really does not exist (need to do because of integration test)
+    assertTrue(userRepository.findById(99L).isEmpty());
+
+    // assertion to throw error
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser(99L));
   }
 
