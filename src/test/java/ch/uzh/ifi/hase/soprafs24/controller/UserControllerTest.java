@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -105,8 +106,6 @@ public class UserControllerTest {
                 result.getResolvedException().getMessage().contains("Username already exists")));
   }
 
-  // region update/delete user tests
-
   @Test
   public void updateUser_validInput_userUpdated() throws Exception {
     // given
@@ -181,7 +180,45 @@ public class UserControllerTest {
         .andExpect(result
             -> assertTrue(result.getResolvedException().getMessage().contains("User not found")));
   }
-  // endregion
+
+  // Test case for PUT method where user tries to update with invalid input
+  @Test
+  public void updateUser_invalidInput_throwsError() throws Exception {
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("");
+    userPostDTO.setUsername("");
+
+    given(userService.updateUser(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input"));
+
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    mockMvc.perform(putRequest)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains("Invalid input")));
+  }
+
+  // Test case for DELETE method where user is not authorized
+  @Test
+  public void deleteUser_notAuthorized_throwsError() throws Exception {
+    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/users/1").header("Authorization", "1234");
+
+    mockMvc.perform(deleteRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
 
   // region get teams by user tests
   /**
