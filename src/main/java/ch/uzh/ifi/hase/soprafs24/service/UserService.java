@@ -46,7 +46,7 @@ public class UserService {
     newUser = userRepository.save(newUser);
     userRepository.flush();
 
-    log.debug("Created Information for User: {}", newUser);
+    log.info("Created Information for User: {} with id {}", newUser, newUser.getUserId());
     return newUser;
   }
 

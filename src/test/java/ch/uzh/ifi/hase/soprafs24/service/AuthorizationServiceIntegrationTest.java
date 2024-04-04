@@ -96,7 +96,7 @@ public class AuthorizationServiceIntegrationTest {
    * test if the token is valid and maps to existing user
    */
   @Test
-  public void isAuthorized_tokenMapsToUser_success() {
+  public void isExistingAndAuthorized_tokenMapsToUser_success() {
     // given
     User testUser = new User();
     testUser.setName("Bruce Wayne");
@@ -106,44 +106,45 @@ public class AuthorizationServiceIntegrationTest {
     // if create user works, is tested in other tests
     User createdUser = userService.createUser(testUser);
 
-    // when try auth -> then exception
-    User authorizedUser =
-        authorizationService.isAuthorized(testUser.getToken(), testUser.getUsername());
+    // when try auth -> then exception (need createdUser.getToken/UserId because generated values)
+    User authorizedUser = authorizationService.isExistingAndAuthorized(
+        createdUser.getToken(), createdUser.getUserId());
 
     // then
-    assertEquals(createdUser.getUsername(), authorizedUser.getUsername());
-    assertEquals(createdUser.getToken(), authorizedUser.getToken());
+    assertEquals(testUser.getUsername(), authorizedUser.getUsername());
+    assertEquals(createdUser.getToken(), authorizedUser.getToken()); // generated value
   }
 
   /**
-   * test if the token is invalid, but username does exist
+   * test if the token is invalid, but user does exist
    */
   @Test
-  public void isAuthorized_tokenMapsToUser_invalidUserToken() {
+  public void isExistingAndAuthorized_tokenMapsToUser_invalidUserToken() {
     // given
     User testUser = new User();
     testUser.setName("Bruce Wayne");
     testUser.setUsername("batman");
     testUser.setPassword("alfred123");
+    testUser.setUserId(1L);
 
     // if create user works, is tested in other tests
     User createdUser = userService.createUser(testUser);
 
     // when try auth -> then exception
     assertThrows(ResponseStatusException.class,
-        () -> authorizationService.isAuthorized("invalid token", testUser.getUsername()));
+        () -> authorizationService.isAuthorized("invalid token", createdUser.getUserId()));
   }
 
   /**
-   * test if the token is invalid, but username does exist
+   * test if user does not exist
    */
   @Test
-  public void isAuthorized_tokenMapsToUser_userDoesNotExist() {
+  public void isExistingAndAuthorized_tokenMapsToUser_userDoesNotExist() {
     // given no user exists
-    assertNull(userRepository.findByUsername("batman"));
+    assertTrue(userRepository.findById(1L).isEmpty());
 
     // when try auth -> then exception
     assertThrows(
-        ResponseStatusException.class, () -> authorizationService.isAuthorized("token", "batman"));
+        ResponseStatusException.class, () -> authorizationService.isAuthorized("token", 1L));
   }
 }
