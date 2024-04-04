@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -134,6 +135,43 @@ public class UserServiceIntegrationTest {
     assertEquals(createdUser.getUserId(), updatedUser.getUserId());
     assertEquals(createdUser.getName(), updatedUser.getName());
     assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+  }
+
+  /**
+   * Test if the user is updated with valid inputs, but another user with the same username already
+   * exists -> throws error
+   */
+  @Test
+  public void updateUser_duplicateUsername_throwsException() {
+    String originalTestUsername = "testUsername";
+
+    // given another user in the db with the same username
+    User anotherUser = new User();
+    anotherUser.setName("anotherName");
+    anotherUser.setUsername("UNIQUE_USERNAME");
+    anotherUser.setPassword("anotherPassword");
+    userService.createUser(anotherUser);
+
+    // given user in db to update
+    User testUser = new User();
+    testUser.setName(originalTestUsername);
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // update user
+    createdUser.setName("updatedName");
+    createdUser.setUsername("UNIQUE_USERNAME");
+    createdUser.setPassword("updatedPassword");
+
+    // update service call
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(createdUser));
+
+    // check that username update did not get through
+    User found = userRepository.findById(testUser.getUserId()).orElse(null);
+    assertNotNull(found);
+    assertEquals(originalTestUsername, found.getUsername());
+    assertNotEquals(anotherUser.getUsername(), found.getUsername());
   }
 
   // Alihan: PUT with non-existing user, unhappy path

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 
 public class UserServiceTest {
@@ -172,6 +174,53 @@ public class UserServiceTest {
     // then
     assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
   }
+  @Test
+  public void updateUser_invalidInputs_throwsException() {
+    // given
+    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
+
+    User updatedUser = new User();
+    updatedUser.setUserId(testUser.getUserId());
+    updatedUser.setName(""); // invalid field
+    updatedUser.setUsername("updatedUsername");
+    updatedUser.setPassword("updatedPassword");
+
+    // when
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(updatedUser));
+
+    // then
+    Mockito.verify(userRepository, Mockito.times(0)).save(Mockito.any());
+  }
+
+  /**
+   * Test if update user to other username that already exists is not possible
+   */
+  @Test
+  public void updateUser_duplicateUsername_throwsException() {
+    // given
+    User updatedUser = new User();
+    updatedUser.setUserId(testUser.getUserId());
+    updatedUser.setName("updatedName");
+    updatedUser.setUsername("updatedUsername");
+    updatedUser.setPassword("updatedPassword");
+
+    User existingUser = new User();
+    existingUser.setUserId(2L);
+    existingUser.setName("existingName");
+    existingUser.setUsername("existingUsername");
+    existingUser.setPassword("existingPassword");
+
+    // when -> fetch user to update from db
+    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
+
+    // when -> save -> throw DataIntegrityViolationException because username is not unique
+    Mockito.when(userRepository.save(Mockito.any()))
+        .thenThrow(new DataIntegrityViolationException("constraint violation"));
+
+    // then
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(updatedUser));
+  }
+
   // endregion
 
   // region delete user

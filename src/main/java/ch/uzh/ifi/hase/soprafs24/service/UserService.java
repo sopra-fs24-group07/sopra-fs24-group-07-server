@@ -3,11 +3,13 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,19 +58,26 @@ public class UserService {
     ServiceHelpers.checkValidString(userToUpdate.getName(), "Name");
     ServiceHelpers.checkValidString(userToUpdate.getPassword(), "Password");
 
-    User existingUser =
+    User updatedUser =
         userRepository.findById(userToUpdate.getUserId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    existingUser.setName(userToUpdate.getName());
-    existingUser.setUsername(userToUpdate.getUsername());
-    existingUser.setPassword(userToUpdate.getPassword());
+    updatedUser.setName(userToUpdate.getName());
+    updatedUser.setUsername(userToUpdate.getUsername());
+    updatedUser.setPassword(userToUpdate.getPassword());
 
-    userRepository.save(existingUser);
-    userRepository.flush();
+    try {
+      // execute update
+      userRepository.save(updatedUser);
+      userRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      // ERROR: duplicate key value violates unique constraint "uk_r43af9ap4edm43mmtq01oddj6"
+      //   Detail: Key (username)=(UNIQUE_USERNAME) already exists.
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
+    }
 
-    log.debug("Updated Information for User: {}", existingUser);
-    return existingUser;
+    log.debug("Updated Information for User: {}", updatedUser);
+    return updatedUser;
   }
 
   // User deletion:
@@ -100,5 +109,31 @@ public class UserService {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
     }
+  }
+
+  /**
+   * Helper method to check if the username to be updated is unique in the database.
+   * @param userUpdatedValues the user with the updated values
+   *
+   * @throws org.springframework.web.server.ResponseStatusException 409 if uniqueness is violated
+   * @see User
+   */
+  private void checkIfOtherUserExists(User userUpdatedValues) {
+    List<User> users = userRepository.findAllByUsername(userUpdatedValues.getUsername());
+
+    log.info(
+        "Found {} users with the username '{}'", users.size(), userUpdatedValues.getUsername());
+
+    // if username is free OR if already one user and the user is not the same as the one to be
+    // updated -> ok
+    if (users.isEmpty()
+        || (users.size() == 1
+            && Objects.equals(users.get(0).getUserId(), userUpdatedValues.getUserId()))) {
+      return;
+    }
+
+    // else conflict
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "The username provided is not unique. Therefore, the user could not be created!");
   }
 }
