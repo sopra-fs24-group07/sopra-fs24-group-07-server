@@ -63,7 +63,7 @@ public class AuthorizationService {
    * @param token the token to be checked
    * @param userId the userId to be checked
    * @return the user of the token/username
-   * @throws ResponseStatusException if the token is invalid or does not belong to the user
+   * @throws ResponseStatusException 404 if the user does not exist; 401 if the token is invalid
    */
   public User isExistingAndAuthorized(String token, Long userId) {
     log.info(
