@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -131,35 +132,37 @@ public class AuthorizationServiceTest {
    * test that if token and username correspond, true is returned
    */
   @Test
-  public void isAuthorized_tokenAndUsername_valid() {
-    String username = "batman";
+  public void isExistingAndAuthorized_tokenAndUsername_valid() {
+    // given valid token
+    String token = "batman's token";
+
     // given no user which can be found by token
     User testUser = new User();
-    testUser.setUsername(username);
+    testUser.setUserId(1L);
+    testUser.setToken(token);
 
     // when -> find user by token -> user is returned
-    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
+    Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testUser));
 
     // then (does not throw exception)
-    authorizationService.isAuthorized("batman's token", username);
+    authorizationService.isExistingAndAuthorized(token, testUser.getUserId());
   }
 
   /**
    * test that if token cannot be found, false is returned
    */
   @Test
-  public void isAuthorized_tokenAndUsername_invalidToken() {
-    String username = "batman";
+  public void isExistingAndAuthorized_tokenAndUsername_invalidToken() {
     // given no user which can be found by token
     User testUser = new User();
-    testUser.setUsername(username);
+    testUser.setUserId(1L);
 
     // when -> find user by token -> no user found because token is invalid
     Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(null);
 
     // then
     assertThrows(ResponseStatusException.class,
-        () -> authorizationService.isAuthorized("invalid token", username));
+        () -> authorizationService.isExistingAndAuthorized("invalid token", testUser.getUserId()));
   }
 
   /**
@@ -167,17 +170,21 @@ public class AuthorizationServiceTest {
    */
   @Test
   public void isAuthorized_tokenAndUsername_tokenAndUsernameNotCorresponding() {
-    String username = "batman";
     // given no user which can be found by token
     User testUser = new User();
-    testUser.setUsername(username);
+    testUser.setToken("valid token");
+
+    // given user that is returned
+    User invaliduser = new User();
+    invaliduser.setToken("invalid token");
+    invaliduser.setUserId(1L);
 
     // when -> find user by token -> no user found because token is invalid
-    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(testUser);
+    Mockito.when(userRepository.findByToken(Mockito.anyString())).thenReturn(invaliduser);
 
     // then
     assertThrows(ResponseStatusException.class,
-        () -> authorizationService.isAuthorized("batman's token", "robin"));
+        () -> authorizationService.isExistingAndAuthorized("batman's token", 2L));
   }
   /**
    * test that if token and userId correspond, true is returned
