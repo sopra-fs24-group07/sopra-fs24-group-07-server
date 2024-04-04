@@ -39,6 +39,8 @@ public class UserServiceIntegrationTest {
     userRepository.deleteAll();
   }
 
+  // region create user
+
   @Test
   public void createUser_validInputs_success() {
     // given
@@ -106,6 +108,10 @@ public class UserServiceIntegrationTest {
     assertNotEquals(testUser.getUsername(), testUser2.getUsername());
   }
 
+  // endregion
+
+  // region update user
+
   // Alihan: PUT with valid input, happy path
   @Test
   public void updateUser_validInputs_success() {
@@ -139,6 +145,10 @@ public class UserServiceIntegrationTest {
     assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
   }
 
+  // endregion
+
+  // region delete user
+
   // Alihan: DELETE as happy path
   @Test
   public void deleteUser_existingUser_success() {
@@ -158,4 +168,6 @@ public class UserServiceIntegrationTest {
   public void deleteUser_nonExistingUser_throwsException() {
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser(99L));
   }
+
+  // endregion
 }
