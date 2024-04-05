@@ -10,7 +10,7 @@ public class TaskPostDTO {
   private String description;
   private TaskStatus status;
 
-  public Integer getTeamkId() {
+  public Integer getTeamId() {
     return teamId;
   }
 
