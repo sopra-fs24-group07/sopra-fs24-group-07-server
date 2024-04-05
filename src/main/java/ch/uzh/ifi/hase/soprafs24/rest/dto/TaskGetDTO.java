@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 import java.util.Date;
 
+// GET DTO
+
 public class TaskGetDTO {
   private Integer taskId;
   private Integer teamId;
