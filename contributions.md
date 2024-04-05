@@ -59,6 +59,18 @@ timeline
 
 ## 30.03.2024 - 05.04.2024
 
+### B1s9l
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
+  Account creation form done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/3:
+  Login form done
+
+### Monti934
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/2:
+  Account creation form done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/6:
+  Dashboard UI done
+
 ## 06.04.2024 - 12.04.2024
 
 ## 13.04.2024 - 19.04.2024
