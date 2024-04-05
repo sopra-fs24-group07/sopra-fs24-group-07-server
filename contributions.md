@@ -71,6 +71,14 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/6:
   Dashboard UI done
 
+### Alihan26
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/53:
+  User profile edit api endpoints
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/54:
+  User profile edit services
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/55:
+  User profile tests and docu
+  
 ## 06.04.2024 - 12.04.2024
 
 ## 13.04.2024 - 19.04.2024
