@@ -30,7 +30,8 @@ public class Task implements Serializable {
   @Column(nullable = false) private TaskStatus status;
 
   // foreign key to Team
-  @OneToOne @JoinColumn(name = "teamId", nullable = false) private Team team;
+  // important: we can have multiple tasks per team, that's why it's a ManyToOne ass.
+  @ManyToOne @JoinColumn(name = "teamId", nullable = false) private Team team;
 
   public Long getTaskId() {
     return taskId;
