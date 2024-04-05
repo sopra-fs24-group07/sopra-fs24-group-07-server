@@ -5,8 +5,13 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,6 +48,7 @@ public class UserControllerTest {
   @MockBean private AuthorizationService authorizationService;
   @MockBean private TeamUserService teamUserService;
 
+  // region createUser
   @Test
   public void createUser_validInput_userCreated() throws Exception {
     // given
@@ -100,6 +106,178 @@ public class UserControllerTest {
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Username already exists")));
   }
+
+  // endregion
+
+  // region update user
+
+  // Alihan: Update User happy path
+  @Test
+  public void updateUser_validInput_userUpdated() throws Exception {
+    // given updated user data
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User Updated");
+    user.setUsername("testUsernameUpdated");
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when -> update user -> return updated user
+    given(userService.updateUser(Mockito.any())).willReturn(user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/" + user.getUserId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())))
+        .andExpect(jsonPath("$.name", is(user.getName())))
+        .andExpect(jsonPath("$.username", is(user.getUsername())));
+  }
+
+  // Alihan: Update User; Test case for PUT method where user doesn't exist
+  @Test
+  public void updateUser_nonExistingUser_throwsError() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    // when -> check existing and authorized user -> user not found
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // not needed because auth checks that
+    // given(userService.updateUser(Mockito.any()))
+    //     .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
+
+  // Alihan: Update User; Test case for PUT method where token does not correspond to user's id or
+  // token is not valid (not found)
+  @Test
+  public void updateUser_notAuthorizedUser_throwsError() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("Test User Updated");
+    userPostDTO.setUsername("testUsernameUpdated");
+
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
+  }
+
+  // Alihan: Update User; Test case for PUT method where user tries to update with invalid input
+  @Test
+  public void updateUser_invalidInput_throwsError() throws Exception {
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setName("");
+    userPostDTO.setUsername("");
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> update user -> invalid input
+    given(userService.updateUser(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input"));
+
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(userPostDTO))
+            .header("Authorization", "1234");
+
+    mockMvc.perform(putRequest).andExpect(status().isBadRequest());
+  }
+
+  // endregion
+
+  // region delete user
+
+  // Alihan: Delete user (happy path)
+  @Test
+  public void deleteUser_validInput_success() throws Exception {
+    // given
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+    user.setToken("1234");
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when -> do the request
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/users/" + user.getUserId()).header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(deleteRequest).andExpect(status().isOk());
+
+    // verify that the userService.deleteUser method was called once
+    verify(userService, times(1)).deleteUser(user.getUserId());
+  }
+
+  // Alihan: Delete User; Test case for DELETE method where user is not authorized (token invalid or
+  // not found)
+  @Test
+  public void deleteUser_notAuthorized_throwsError() throws Exception {
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/users/1").header("Authorization", "invalid token");
+
+    mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
+  }
+
+  // Alihan: Delete User; Test case for DELETE method where user is not found
+  @Test
+  public void deleteUser_nonExistingUser_throwsError() throws Exception {
+    // when -> check existing and authorized user -> not authorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/users/1").header("Authorization", "1234");
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
+  }
+
+  // endregion
 
   // region get teams by user tests
   /**

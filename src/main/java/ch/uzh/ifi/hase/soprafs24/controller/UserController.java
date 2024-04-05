@@ -51,6 +51,34 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
 
+  @PutMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO updateUser(@PathVariable Long id, @RequestBody UserPostDTO userPostDTO,
+      @RequestHeader("Authorization") String token) {
+    // Check if the user exists and the token is valid
+    authorizationService.isExistingAndAuthorized(token, id);
+
+    // convert API user to internal representation
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    userInput.setUserId(id);
+
+    // update user
+    User updatedUser = userService.updateUser(userInput);
+
+    // convert internal representation of user back to API
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
+  }
+
+  @DeleteMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteUser(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    // Check if the user exists and the token is valid
+    authorizationService.isExistingAndAuthorized(token, id);
+
+    userService.deleteUser(id);
+  }
+
   // Get teams of user
   @GetMapping("/users/{userId}/teams")
   @ResponseStatus(HttpStatus.OK)

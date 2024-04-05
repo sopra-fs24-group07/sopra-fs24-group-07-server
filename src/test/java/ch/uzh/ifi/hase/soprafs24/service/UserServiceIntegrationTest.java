@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ public class UserServiceIntegrationTest {
 
     userRepository.deleteAll();
   }
+
+  // region create user
 
   @Test
   public void createUser_validInputs_success() {
@@ -105,4 +108,117 @@ public class UserServiceIntegrationTest {
     // not same name
     assertNotEquals(testUser.getUsername(), testUser2.getUsername());
   }
+
+  // endregion
+
+  // region update user
+
+  // Alihan: PUT with valid input, happy path
+  @Test
+  public void updateUser_validInputs_success() {
+    // given user in db to update
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // update user
+    createdUser.setName("updatedName");
+    createdUser.setUsername("updatedUsername");
+    createdUser.setPassword("updatedPassword");
+
+    // update service call
+    User updatedUser = userService.updateUser(createdUser);
+
+    // check if user is updated
+    assertEquals(createdUser.getUserId(), updatedUser.getUserId());
+    assertEquals(createdUser.getName(), updatedUser.getName());
+    assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+  }
+
+  /**
+   * Test if the user is updated with valid inputs, but another user with the same username already
+   * exists -> throws error
+   */
+  @Test
+  public void updateUser_duplicateUsername_throwsException() {
+    String originalTestUsername = "testUsername";
+
+    // given another user in the db with the same username
+    User anotherUser = new User();
+    anotherUser.setName("anotherName");
+    anotherUser.setUsername("UNIQUE_USERNAME");
+    anotherUser.setPassword("anotherPassword");
+    userService.createUser(anotherUser);
+
+    // given user in db to update
+    User testUser = new User();
+    testUser.setName(originalTestUsername);
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // update user
+    createdUser.setName("updatedName");
+    createdUser.setUsername("UNIQUE_USERNAME");
+    createdUser.setPassword("updatedPassword");
+
+    // update service call
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(createdUser));
+
+    // check that username update did not get through
+    User found = userRepository.findById(testUser.getUserId()).orElse(null);
+    assertNotNull(found);
+    assertEquals(originalTestUsername, found.getUsername());
+    assertNotEquals(anotherUser.getUsername(), found.getUsername());
+  }
+
+  // Alihan: PUT with non-existing user, unhappy path
+  @Test
+  public void updateUser_nonExistingUser_throwsException() {
+    User nonExistingUser = new User();
+    nonExistingUser.setUserId(99L);
+    nonExistingUser.setName("nonExistingName");
+    nonExistingUser.setUsername("nonExistingUsername");
+    nonExistingUser.setPassword("nonExistingPassword");
+
+    // check if user really does not exist
+    assertTrue(userRepository.findById(99L).isEmpty());
+
+    assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
+  }
+
+  // endregion
+
+  // region delete user
+
+  // Alihan: DELETE as happy path
+  @Test
+  public void deleteUser_existingUser_success() {
+    // given user to delete which is in the db
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // execute delete action
+    userService.deleteUser(createdUser.getUserId());
+
+    // check if user really does not exist anymore
+    assertTrue(userRepository.findById(createdUser.getUserId()).isEmpty());
+  }
+
+  // Alihan: DELETE with non-existing user; unhappy path
+  @Test
+  public void deleteUser_nonExistingUser_throwsException() {
+    // check if user really does not exist (need to do because of integration test)
+    assertTrue(userRepository.findById(99L).isEmpty());
+
+    // assertion to throw error
+    assertThrows(ResponseStatusException.class, () -> userService.deleteUser(99L));
+  }
+
+  // endregion
 }
