@@ -127,4 +127,61 @@ public class TeamUserServiceIntegrationTest {
     assertEquals(testTeam.getDescription(), teams.get(0).getDescription());
   }
   // endregion
+
+  // region get users by team tests
+  // Don't need to test if team does not exist (done in TeamUserServiceTest)
+
+  /**
+   * Test for getting all users of a team with no link to another user
+   */
+  @Test
+  public void getUsersByTeam_noUsers_emptyList() {
+    // given team with no link to any user
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    teamRepository.saveAndFlush(testTeam);
+
+    // when
+    List<User> users = teamUserService.getUsersOfTeam(testTeam.getTeamId());
+
+    // then
+    assertTrue(users.isEmpty());
+  }
+
+  /**
+   * Test for getting all users of a team with one link to a user
+   */
+  @Test
+  public void getUsersByTeam_oneUser() {
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given teamUser link (if this works, is tested in another test, focus here is on
+    // getTeamsOfUser)
+    TeamUser testTeamUser = new TeamUser(testTeam, testUser);
+    teamUserRepository.saveAndFlush(testTeamUser);
+
+    // when
+    List<User> users = teamUserService.getUsersOfTeam(testTeam.getTeamId());
+
+    // then
+    assertEquals(1, users.size());
+    assertEquals(testUser.getUserId(), users.get(0).getUserId());
+    assertEquals(testUser.getUsername(), users.get(0).getUsername());
+    assertEquals(testUser.getName(), users.get(0).getName());
+  }
+
+  // endregion
 }

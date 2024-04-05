@@ -291,7 +291,7 @@ public class UserControllerTest {
     testUser.setToken("1");
 
     // when -> is auth check -> is invalid
-    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     // when -> perform get request
@@ -318,12 +318,12 @@ public class UserControllerTest {
     testUser.setToken("1");
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
-        .willReturn(testUser);
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // when -> service request to get all teams of a user -> return empty list
-    given(teamUserService.getTeamsOfUser(Mockito.anyLong()))
-        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+    // given(teamUserService.getTeamsOfUser(Mockito.anyLong()))
+    //     .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // when -> perform get request
     MockHttpServletRequestBuilder getRequest = get("/api/v1/users/42/teams")
@@ -348,7 +348,7 @@ public class UserControllerTest {
     testUser.setToken("1");
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
         .willReturn(testUser);
 
     // when -> service request to get all teams of a user -> return empty list
@@ -381,7 +381,7 @@ public class UserControllerTest {
     testTeam.setDescription("We are a productive team!");
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString(), Mockito.anyLong()))
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
         .willReturn(testUser);
 
     // when -> service request to get all teams of a user -> return empty list

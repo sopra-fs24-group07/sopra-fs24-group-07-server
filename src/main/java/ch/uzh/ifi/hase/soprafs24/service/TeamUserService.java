@@ -88,4 +88,26 @@ public class TeamUserService {
 
     return teams;
   }
+
+  /**
+   * Get all users of a team
+   *
+   * @param teamId team id of which the users should be retrieved
+   *
+   * @return list of users (empty if no users are found)
+   * @throws ResponseStatusException 404 if team not found
+   */
+  public List<User> getUsersOfTeam(Long teamId) {
+    // check that the team exists
+    Team team = teamRepository.findById(teamId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // get all users of the team
+    List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
+    List<User> users = teamUsers.stream().map(TeamUser::getUser).collect(Collectors.toList());
+
+    log.debug("Found {} users for team '{}'", users.size(), team.getName());
+
+    return users;
+  }
 }

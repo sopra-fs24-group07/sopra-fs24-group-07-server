@@ -189,4 +189,96 @@ public class TeamUserServiceTest {
         ResponseStatusException.class, () -> teamUserService.getTeamsOfUser(testUser.getUserId()));
   }
   // endregion
+
+  // region get users of team tests
+
+  /**
+   * Test for getting all users of a team if team exists but has no linked users
+   */
+  @Test
+  public void getUsersOfTeam_teamExists_noUsers() {
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testTeam));
+
+    // when -> try to find users by team -> return empty list
+    Mockito.when(teamUserRepository.findByTeam(Mockito.any())).thenReturn(java.util.List.of());
+
+    // then
+    List<User> foundUsers = teamUserService.getUsersOfTeam(testTeam.getTeamId());
+
+    // assert found empty list
+    assertEquals(0, foundUsers.size());
+  }
+
+  /**
+   * Test for getting all users of a team if team exists and has a linked user
+   */
+  @Test
+  public void getUsersOfTeam_teamExists_withUsers() {
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testTeam));
+
+    // when -> try to find users by team -> return list with dummy teamUser
+    Mockito.when(teamUserRepository.findByTeam(Mockito.any()))
+        .thenReturn(java.util.List.of(testTeamUser));
+
+    // then
+    List<User> foundUsers = teamUserService.getUsersOfTeam(testTeam.getTeamId());
+
+    // assert found list with one user
+    assertEquals(1, foundUsers.size());
+    assertEquals(testUser, foundUsers.get(0));
+    assertEquals(testUser.getUserId(), foundUsers.get(0).getUserId());
+    assertEquals(testUser.getUsername(), foundUsers.get(0).getUsername());
+    assertEquals(testUser.getToken(), foundUsers.get(0).getToken());
+  }
+
+  /**
+   * Test for getting all users of a team if team exists and has more than one linked user
+   */
+  @Test
+  public void getUsersOfTeam_teamExists_withMultipleUsers() {
+    // given second user
+    User testUser2 = new User();
+    testUser2.setUserId(2L);
+    testUser2.setUsername("superman");
+    testUser2.setPassword("kryptonite123");
+    testUser2.setToken("2");
+
+    // given 2nd link of testTeam
+    TeamUser testTeamUser2 = new TeamUser(testTeam, testUser2);
+
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testTeam));
+
+    // when -> try to find users of team -> return list with dummy teamUser and testTeamUser2
+    Mockito.when(teamUserRepository.findByTeam(Mockito.any()))
+        .thenReturn(java.util.List.of(testTeamUser, testTeamUser2));
+
+    // then
+    List<User> foundUsers = teamUserService.getUsersOfTeam(testTeam.getTeamId());
+
+    // assert found list with two users
+    assertEquals(2, foundUsers.size());
+    assertEquals(testUser, foundUsers.get(0));
+    assertEquals(testUser2, foundUsers.get(1));
+  }
+
+  /**
+   * Test throwing error if team does not exist
+   */
+  @Test
+  public void getUsersOfTeam_teamDoesNotExist_throwsException() {
+    // when -> try to find teamId in the repository -> no team found
+    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(java.util.Optional.empty());
+
+    // expects 404 if team id cannot be found
+    assertThrows(
+        ResponseStatusException.class, () -> teamUserService.getUsersOfTeam(testTeam.getTeamId()));
+  }
+
+  // endregion
 }

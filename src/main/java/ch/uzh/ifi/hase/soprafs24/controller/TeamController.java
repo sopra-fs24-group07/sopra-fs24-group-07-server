@@ -4,12 +4,16 @@ import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /*
  * Team Controller
@@ -49,5 +53,30 @@ public class TeamController {
 
     // convert internal representation of team back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeam);
+  }
+
+  @GetMapping("/teams/{teamId}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<UserGetDTO> getUsersOfTeam(
+      @PathVariable Long teamId, @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token)
+    User authorizedUser = authorizationService.isAuthorized(token);
+
+    // get users of team (throws 404 if teamId not found)
+    List<User> users = teamUserService.getUsersOfTeam(teamId);
+
+    // check if user is in returned user list
+    if (!users.contains(authorizedUser)) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not in team");
+    }
+
+    // convert internal representation of users back to API
+    List<UserGetDTO> userGetDTOs = new ArrayList<>();
+    for (User user : users) {
+      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+    }
+
+    return userGetDTOs;
   }
 }
