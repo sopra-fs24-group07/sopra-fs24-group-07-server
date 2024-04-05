@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 
+// Post DTO for Task
+
 public class TaskPostDTO {
   private Integer teamId;
   private String title;
