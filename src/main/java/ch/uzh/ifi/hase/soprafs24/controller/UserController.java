@@ -58,7 +58,7 @@ public class UserController {
   public List<TeamGetDTO> getTeamsOfUser(
       @PathVariable Long userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
     // check if user is authorized
-    User user = authorizationService.isAuthorized(token, userId);
+    User user = authorizationService.isExistingAndAuthorized(token, userId);
 
     // get teams of user
     List<Team> teams = teamUserService.getTeamsOfUser(userId);
