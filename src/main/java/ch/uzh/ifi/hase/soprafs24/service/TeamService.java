@@ -5,8 +5,10 @@ import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Team Service
@@ -43,5 +45,12 @@ public class TeamService {
 
     log.debug("Created Information for Team: {}", newTeam);
     return newTeam;
+  }
+
+  public Team getTeam(Long teamId) {
+    return teamRepository.findById(teamId).orElseThrow(
+        ()
+            -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Team not found with id " + teamId));
   }
 }
