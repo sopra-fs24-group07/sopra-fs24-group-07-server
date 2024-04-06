@@ -25,7 +25,7 @@ jobs:
         run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
 
       - name: Set database URL to dev GCP
-        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" >> dburl.properties
+        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" > dburl.properties
 
       - name: Test and analyze with dev GCP
         run: ./gradlew test jacocoTestReport sonarqube
