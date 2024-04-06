@@ -42,8 +42,8 @@ jobs:
       - name: Set database password
         run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
 
-      - name: Set database URL to dev GCP
-        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" > dburl.properties
+#      - name: Set database URL to dev GCP
+#        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" > dburl.properties
 
       - name: Deploy to App Engine
         id: deploy
@@ -55,7 +55,8 @@ jobs:
         # Database todo update to dev
         env:
 #          SPRING_PROFILES_ACTIVE: prod
-          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }} -DdbURL=${{ secrets.DB_URL_DEV }}'
+#          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }} -DdbURL=${{ secrets.DB_URL_DEV }}'
+          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }}'
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"

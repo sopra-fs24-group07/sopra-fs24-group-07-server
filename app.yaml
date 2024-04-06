@@ -8,4 +8,4 @@ network:
   session_affinity: false
 
 env_variables:
-  SPRING_PROFILES_ACTIVE: 'prod'
+  SPRING_PROFILES_ACTIVE: prod
