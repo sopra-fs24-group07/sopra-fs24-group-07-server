@@ -24,13 +24,16 @@ jobs:
       - name: Set database password to dev GCP
         run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
 
+      - name: Set database URL to dev GCP
+        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" >> dburl.properties
+
       - name: Test and analyze with dev GCP
         run: ./gradlew test jacocoTestReport sonarqube
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SPRING_PROFILES_ACTIVE: devGCP
-          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }}'
+          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }} -DdbURL=${{ secrets.DB_URL_DEV }}'
 #
 #      - name: Build with Gradle
 #        run: ./gradlew build
