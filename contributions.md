@@ -59,8 +59,6 @@ timeline
 
 ## 30.03.2024 - 05.04.2024
 
-\<\<\<\<\<\<\< HEAD
-
 ### 5v3nn
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/86:
