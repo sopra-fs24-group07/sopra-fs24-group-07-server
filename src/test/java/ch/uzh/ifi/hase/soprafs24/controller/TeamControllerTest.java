@@ -1,15 +1,22 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
+import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,6 +39,15 @@ public class TeamControllerTest {
 
   @MockBean private TeamService teamService;
   @MockBean private AuthorizationService authorizationService;
+  @MockBean private TeamUserService teamUserService;
+
+  private User testUser;
+
+  @BeforeEach
+  public void setup() {
+    testUser = new User();
+    testUser.setUserId(1L);
+  }
 
   /**
    * Test for creating a team with valid input
@@ -49,10 +65,12 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock valid token
-    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
     // mock team service
     given(teamService.createTeam(Mockito.any())).willReturn(team);
-    // TODO: mock add user to team on creation service call
+    // mock add user to team on creation service call
+    given(teamUserService.createTeamUser(Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(new TeamUser(team, testUser));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -85,9 +103,8 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock invalid token -> throw exception
-    Mockito.doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED))
-        .when(authorizationService)
-        .isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString()))
+        .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -116,7 +133,8 @@ public class TeamControllerTest {
     teamPostDTO.setDescription("We are the most productive team in sopra");
 
     // mock invalid token -> throw exception
-    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    // Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.anyString());
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
 
     // mock team service
     given(teamService.createTeam(Mockito.any()))
@@ -132,4 +150,102 @@ public class TeamControllerTest {
     // then -> isUnauthorized
     mockMvc.perform(postRequest).andExpect(status().isBadRequest());
   }
+
+  // region getUsersOfTeam tests
+  // Don't need to test if we get empty list of users, because there should always at least one user
+  // linked to a team (no rotten green path testing)
+
+  /**
+   * Test for getting all users of a team, but not valid token (user token not in db)
+   */
+  @Test
+  public void getUsersOfTeam_invalidToken_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorized(Mockito.anyString()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "invalid token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
+
+  /**
+   * Test for getting all users of a team, but not valid token (user not in team)
+   */
+  @Test
+  public void getUsersOfTeam_userNotInTeam_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+
+    // given user that makes request, but is not in teasTeam
+    User userNotInTeam = new User();
+    userNotInTeam.setUserId(2L);
+    userNotInTeam.setToken("userNotInTeamToken");
+
+    // when -> is auth check -> is valid -> but user is not the valid one
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(userNotInTeam);
+    // when -> get users of team -> testUser is in team, but not the other user
+    given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
+        .willReturn(java.util.List.of(testUser));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", userNotInTeam.getToken()); // request with this token
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isForbidden())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
+  }
+
+  /**
+   * Test for getting all users of a team successfully
+   */
+  @Test
+  public void getUsersOfTeam_validInput() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(testUser);
+    // when -> get users of team -> testUser is in team
+    given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
+        .willReturn(java.util.List.of(testUser));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/" + testTeam.getTeamId().toString() + "/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].userId", is(testUser.getUserId().intValue())))
+        .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+
+  // endregion
 }

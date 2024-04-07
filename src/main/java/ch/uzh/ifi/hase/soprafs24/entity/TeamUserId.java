@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Embeddable;
+import javax.persistence.PostLoad;
 
 /**
  * Represents the embedded id for TeamUser.
@@ -10,6 +12,8 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class TeamUserId implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   private Long teamId;
 
   private Long userId;
@@ -30,6 +34,14 @@ public class TeamUserId implements Serializable {
     this.userId = userId;
   }
 
+  @PostLoad
+  private void postLoad() {
+    if (this.teamId == null || this.userId == null) {
+      throw new IllegalStateException(
+          "TeamUserId is not properly initialized. teamId or userId is null and needs to be set.");
+    }
+  }
+
   public Long getTeamId() {
     return teamId;
   }
@@ -44,5 +56,20 @@ public class TeamUserId implements Serializable {
 
   public void setUserId(Long userId) {
     this.userId = userId;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    TeamUserId that = (TeamUserId) o;
+    return Objects.equals(teamId, that.teamId) && Objects.equals(userId, that.userId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(teamId, userId);
   }
 }
