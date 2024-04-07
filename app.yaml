@@ -9,7 +9,7 @@ network:
 
 vpc_access_connector:
   name: projects/sopra-fs24-group-07-server/locations/europe-west1/connectors/db-connector
-  egress-setting: all-traffic
+#  egress-setting: all-traffic
 
 #env_variables:
 #  SPRING_PROFILES_ACTIVE: dev
