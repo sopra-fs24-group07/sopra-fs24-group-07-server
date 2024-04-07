@@ -108,6 +108,25 @@ public class TaskServiceTest {
     assertThrows(ResponseStatusException.class, () -> taskService.createTask(emptyTask));
   }
 
+  /**
+   * Test for creating a new task with non-existing team throws exception
+   */
+  @Test
+  public void createTask_nonExistingTeam_throwsException() {
+    // given
+    Task taskWithNonExistingTeam = new Task();
+    taskWithNonExistingTeam.setTitle("task1");
+    taskWithNonExistingTeam.setDescription("This is task 1");
+    taskWithNonExistingTeam.setTeam(null);
+
+    // when -> try to find teamId in the teamService -> return null
+    Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(null);
+
+    // when/then -> try to create task with non-existing team -> should throw an exception
+    assertThrows(
+        ResponseStatusException.class, () -> taskService.createTask(taskWithNonExistingTeam));
+  }
+
   // GET
   /**
    * Test for getting all tasks of a team if team exists and has tasks
