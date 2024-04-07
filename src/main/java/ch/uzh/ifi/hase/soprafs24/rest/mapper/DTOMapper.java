@@ -7,23 +7,15 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-/**
- * DTOMapper
- * This class is responsible for generating classes that will automatically
- * transform/map the internal representation
- * of an entity (e.g., the User) to the external/API representation (e.g.,
- * UserGetDTO for getting, UserPostDTO for creating)
- * and vice versa.
- * Additional mappers can be defined for new entities.
- * Always created one mapper for getting information (GET) and one mapper for
- * creating information (POST)
- */
 @Mapper
 public interface DTOMapper {
   DTOMapper INSTANCE = Mappers.getMapper(DTOMapper.class);
 
   @Mapping(source = "username", target = "username")
   @Mapping(source = "password", target = "password")
+  @Mapping(target = "userId", ignore = true) // Added this line
+  @Mapping(target = "name", ignore = true) // Added this line
+  @Mapping(target = "token", ignore = true) // Added this line
   User convertLoginPostDTOtoEntity(LoginPostDTO loginPostDTO);
 
   @Mapping(source = "token", target = "token") AuthGetDTO convertEntityToAuthGetDTO(String token);
@@ -31,6 +23,8 @@ public interface DTOMapper {
   @Mapping(source = "name", target = "name")
   @Mapping(source = "username", target = "username")
   @Mapping(source = "password", target = "password")
+  @Mapping(target = "userId", ignore = true) // Added this line
+  @Mapping(target = "token", ignore = true) // Added this line
   User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
   @Mapping(source = "userId", target = "userId")
@@ -40,6 +34,7 @@ public interface DTOMapper {
 
   @Mapping(source = "name", target = "name")
   @Mapping(source = "description", target = "description")
+  @Mapping(target = "teamId", ignore = true) // Added this line
   Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
 
   @Mapping(source = "teamId", target = "teamId")
@@ -51,6 +46,8 @@ public interface DTOMapper {
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "status", target = "status")
+  @Mapping(target = "taskId", ignore = true) // Added this line
+  @Mapping(target = "creationDate", ignore = true) // Added this line
   Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
 
   @Named("mapTeamIdToTeam")
