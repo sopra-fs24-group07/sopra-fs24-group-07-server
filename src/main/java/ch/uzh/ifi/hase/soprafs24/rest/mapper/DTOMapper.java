@@ -47,14 +47,14 @@ public interface DTOMapper {
   @Mapping(source = "description", target = "description")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
 
-  @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "teamId", target = "team.teamId")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "status", target = "status")
   Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
 
   @Mapping(source = "taskId", target = "taskId")
-  @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "team.teamId", target = "teamId")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "creationDate", target = "creationDate")
