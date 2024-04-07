@@ -38,10 +38,12 @@ public class TaskService {
     this.teamService = teamService;
   }
 
+  // create single task
   public Task createTask(Task newTask) {
     // check that title and description are not null or empty
     if (newTask.getTitle() == null || newTask.getTitle().isEmpty()
-        || newTask.getDescription() == null || newTask.getDescription().isEmpty()) {
+        || newTask.getDescription() == null || newTask.getDescription().isEmpty()
+        || newTask.getTeam() == null) {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Some needed fields are missing in the task object.");
     }
@@ -56,15 +58,10 @@ public class TaskService {
     return newTask;
   }
 
+  // list of tasks
   public List<Task> getTasksByTeamId(Long teamId) {
     Team team = teamService.getTeam(teamId);
     List<Task> tasks = taskRepository.findByTeam(team);
-
-    if (tasks.isEmpty()) {
-      throw new ResponseStatusException(
-          HttpStatus.NOT_FOUND, "No tasks found for team with id " + teamId);
-    }
-
-    return tasks;
+    return tasks; // just return the list as it is, whether it's empty or not
   }
 }
