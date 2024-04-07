@@ -2,19 +2,18 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -27,17 +26,14 @@ import org.springframework.web.server.ResponseStatusException;
 public class TaskServiceIntegrationTest {
   @Qualifier("taskRepository") @Autowired private TaskRepository taskRepository;
   @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
-  
-  @Autowired
-  private TaskService taskService;
 
+  @Autowired private TaskService taskService;
 
   @BeforeEach
   public void setup() {
     taskRepository.deleteAll();
     teamRepository.deleteAll();
   }
-
 
   // POST
   @Test
@@ -77,9 +73,11 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
+    ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertTrue(
+        exception.getReason().contains("Some needed fields are missing in the task object."));
   }
 
   @Test
@@ -96,9 +94,11 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
+    ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertTrue(
+        exception.getReason().contains("Some needed fields are missing in the task object."));
   }
 
   @Test
@@ -115,9 +115,11 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
+    ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertTrue(
+        exception.getReason().contains("Some needed fields are missing in the task object."));
   }
 
   @Test
@@ -134,12 +136,14 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
+    ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertTrue(
+        exception.getReason().contains("Some needed fields are missing in the task object."));
   }
 
-  //GET
+  // GET
   @Test
   public void getTasksByTeamId_validInputs_success() {
     // given a team with tasks
@@ -176,9 +180,11 @@ public class TaskServiceIntegrationTest {
     Team savedTeam = teamRepository.saveAndFlush(team);
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.getTasksByTeamId(savedTeam.getTeamId()));
+    ResponseStatusException exception = assertThrows(
+        ResponseStatusException.class, () -> taskService.getTasksByTeamId(savedTeam.getTeamId()));
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-    assertTrue(exception.getReason().contains("No tasks found for team with id " + savedTeam.getTeamId()));
+    assertTrue(
+        exception.getReason().contains("No tasks found for team with id " + savedTeam.getTeamId()));
   }
 
   @Test
@@ -187,9 +193,9 @@ public class TaskServiceIntegrationTest {
     Long invalidTeamId = 999L;
 
     // when & then
-    ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taskService.getTasksByTeamId(invalidTeamId));
+    ResponseStatusException exception = assertThrows(
+        ResponseStatusException.class, () -> taskService.getTasksByTeamId(invalidTeamId));
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertTrue(exception.getReason().contains("Team not found with id " + invalidTeamId));
   }
-
 }
