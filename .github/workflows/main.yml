@@ -38,12 +38,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Database todo update to prod vars
-      - name: Set database password
-        run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
+#      # Database todo update to prod vars
+#      - name: Set database password
+#        run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
 
 #      - name: Set database URL to dev GCP
 #        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" > dburl.properties
+
+      # add password from secret to app.yaml
+      - name: Add database passwrod to app.yaml
+        run: |
+          echo "env_variables:" >> app.yaml
+          echo "  dbPassword: ${{ secrets.DB_PASSWORD_DEV }}" >> app.yaml
+          cat app.yaml
 
       - name: Deploy to App Engine
         id: deploy

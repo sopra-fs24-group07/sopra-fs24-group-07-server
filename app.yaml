@@ -13,3 +13,5 @@ vpc_access_connector:
 
 #env_variables:
 #  SPRING_PROFILES_ACTIVE: dev
+
+# env variables (psw) will be added in pipeline
