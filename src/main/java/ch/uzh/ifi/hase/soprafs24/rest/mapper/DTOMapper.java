@@ -34,7 +34,6 @@ public interface DTOMapper {
 
   @Mapping(source = "name", target = "name")
   @Mapping(source = "description", target = "description")
-  @Mapping(target = "teamId", ignore = true) // Added this line
   Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
 
   @Mapping(source = "teamId", target = "teamId")
@@ -46,8 +45,8 @@ public interface DTOMapper {
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "status", target = "status")
-  @Mapping(target = "taskId", ignore = true) // Added this line
-  @Mapping(target = "creationDate", ignore = true) // Added this line
+  @Mapping(target = "taskId", ignore = true)
+  @Mapping(target = "creationDate", ignore = true)
   Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
 
   @Named("mapTeamIdToTeam")
