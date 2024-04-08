@@ -9,28 +9,24 @@ import org.hibernate.annotations.CreationTimestamp;
  * Many-to-many relationship between Team and User.
  * Instances should be created using the provided constructors, which ensure the proper setup of the
  * embedded id.
- * @see <a
- *     href="https://www.baeldung.com/jpa-many-to-many#many-to-many-using-a-composite-key">https://www.baeldung.com/jpa-many-to-many#many-to-many-using-a-composite-key</a>
  */
 @Entity
 @Table(name = "TEAM_USER")
 public class TeamUser implements Serializable {
-  private static final long serialVersionUID = 1L;
-
   // JPA wouldn't know that these two fields together form the primary key for the TeamUser entity.
   // By using an embedded id, we're making it clear to JPA that these two fields together form the
   // primary key.
   // entity that uses this composite key (TeamUser), annotated with @EmbeddedId
   @EmbeddedId private TeamUserId teamUserId;
 
-  @ManyToOne @MapsId("teamId") @JoinColumn(name = "teamId") private Team team;
+  @ManyToOne @MapsId("teamId") Team team;
 
-  @ManyToOne @MapsId("userId") @JoinColumn(name = "userId") private User user;
+  @ManyToOne @MapsId("userId") User user;
 
-  @CreationTimestamp private LocalDateTime joinTimestamp;
+  @CreationTimestamp @Column(nullable = false) private LocalDateTime creationTimestamp;
 
   /**
-   * Default constructor for TeamUser, but uses postLoad to ensure that the embedded id is set.
+   * Default constructor
    */
   public TeamUser() {}
 
@@ -45,13 +41,6 @@ public class TeamUser implements Serializable {
     this.team = team;
     this.user = user;
     this.teamUserId = new TeamUserId(team.getTeamId(), user.getUserId());
-  }
-
-  @PostLoad
-  private void postLoad() {
-    if (this.teamUserId == null) {
-      this.teamUserId = new TeamUserId(team.getTeamId(), user.getUserId());
-    }
   }
 
   public TeamUserId getTeamUserId() {
@@ -78,11 +67,11 @@ public class TeamUser implements Serializable {
     this.user = user;
   }
 
-  public LocalDateTime getJoinTimestamp() {
-    return joinTimestamp;
+  public LocalDateTime getCreationTimestamp() {
+    return creationTimestamp;
   }
 
-  public void setJoinTimestamp(LocalDateTime joinTimestamp) {
-    this.joinTimestamp = joinTimestamp;
+  public void setCreationTimestamp(LocalDateTime creationTimestamp) {
+    this.creationTimestamp = creationTimestamp;
   }
 }

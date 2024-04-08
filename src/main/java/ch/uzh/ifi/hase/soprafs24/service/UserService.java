@@ -3,13 +3,11 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,47 +46,8 @@ public class UserService {
     newUser = userRepository.save(newUser);
     userRepository.flush();
 
-    log.info("Created Information for User: {} with id {}", newUser, newUser.getUserId());
+    log.debug("Created Information for User: {}", newUser);
     return newUser;
-  }
-
-  // User updating:
-  public User updateUser(User userToUpdate) {
-    ServiceHelpers.checkValidString(userToUpdate.getUsername(), "Username");
-    ServiceHelpers.checkValidString(userToUpdate.getName(), "Name");
-    ServiceHelpers.checkValidString(userToUpdate.getPassword(), "Password");
-
-    User updatedUser =
-        userRepository.findById(userToUpdate.getUserId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-    updatedUser.setName(userToUpdate.getName());
-    updatedUser.setUsername(userToUpdate.getUsername());
-    updatedUser.setPassword(userToUpdate.getPassword());
-
-    try {
-      // execute update
-      userRepository.save(updatedUser);
-      userRepository.flush();
-    } catch (DataIntegrityViolationException e) {
-      // ERROR: duplicate key value violates unique constraint "uk_r43af9ap4edm43mmtq01oddj6"
-      //   Detail: Key (username)=(UNIQUE_USERNAME) already exists.
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
-    }
-
-    log.debug("Updated Information for User: {}", updatedUser);
-    return updatedUser;
-  }
-
-  // User deletion:
-  public void deleteUser(Long userId) {
-    User existingUser = userRepository.findById(userId).orElseThrow(
-        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-    userRepository.delete(existingUser);
-    userRepository.flush();
-
-    log.debug("Deleted User: {}", existingUser);
   }
 
   /**
