@@ -67,4 +67,7 @@ jobs:
 #          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }}'
 
       - name: Test
-        run: curl "${{ steps.deploy.outputs.url }}"
+        run: |
+          response=$(curl -s "${{ steps.deploy.outputs.url }}")
+          echo "::set-output name=response::$response"
+          [[ "$response" == *"Service Unavailable"* ]] && exit 1
