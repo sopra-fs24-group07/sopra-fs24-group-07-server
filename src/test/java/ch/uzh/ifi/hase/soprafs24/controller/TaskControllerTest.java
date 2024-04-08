@@ -91,7 +91,8 @@
 //     mockMvc.perform(postRequest)
 //         .andExpect(status().isBadRequest())
 //         .andExpect(
-//             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+//             result -> assertTrue(result.getResolvedException() instanceof
+//             ResponseStatusException))
 //         .andExpect(result
 //             -> assertTrue(result.getResolvedException().getMessage().contains(
 //                 "Some needed fields are missing in the task object.")));
@@ -105,9 +106,8 @@
 //     taskPostDTO.setDescription("This is a test task.");
 
 //     Mockito
-//         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
-//         .when(authorizationService)
-//         .isAuthorized(Mockito.any());
+//         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to
+//         access.")) .when(authorizationService) .isAuthorized(Mockito.any());
 
 //     // when/then -> do the request + validate the result
 //     MockHttpServletRequestBuilder postRequest =
@@ -120,10 +120,12 @@
 //     mockMvc.perform(postRequest)
 //         .andExpect(status().isUnauthorized())
 //         .andExpect(
-//             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+//             result -> assertTrue(result.getResolvedException() instanceof
+//             ResponseStatusException))
 //         .andExpect(result
 //             -> assertTrue(
-//                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+//                 result.getResolvedException().getMessage().contains("Not authorized to
+//                 access.")));
 //   }
 
 //   // GET
@@ -157,7 +159,8 @@
 //     // given
 //     given(taskService.getTasksByTeamId(Mockito.anyLong()))
 //         .willThrow(
-//             new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id 1"));
+//             new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id
+//             1"));
 
 //     // when/then -> do the request + validate the result
 //     MockHttpServletRequestBuilder getRequest =
@@ -167,7 +170,8 @@
 //     mockMvc.perform(getRequest)
 //         .andExpect(status().isNotFound())
 //         .andExpect(
-//             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+//             result -> assertTrue(result.getResolvedException() instanceof
+//             ResponseStatusException))
 //         .andExpect(result
 //             -> assertTrue(result.getResolvedException().getMessage().contains(
 //                 "No tasks found for team with id 1")));
@@ -177,9 +181,8 @@
 //   public void getTasks_unauthorizedAccess_throwsError() throws Exception {
 //     // given
 //     Mockito
-//         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
-//         .when(authorizationService)
-//         .isAuthorized(Mockito.any());
+//         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to
+//         access.")) .when(authorizationService) .isAuthorized(Mockito.any());
 
 //     // when/then -> do the request + validate the result
 //     MockHttpServletRequestBuilder getRequest =
@@ -189,9 +192,11 @@
 //     mockMvc.perform(getRequest)
 //         .andExpect(status().isUnauthorized())
 //         .andExpect(
-//             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+//             result -> assertTrue(result.getResolvedException() instanceof
+//             ResponseStatusException))
 //         .andExpect(result
 //             -> assertTrue(
-//                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+//                 result.getResolvedException().getMessage().contains("Not authorized to
+//                 access.")));
 //   }
 // }
