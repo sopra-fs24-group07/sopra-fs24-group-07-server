@@ -67,6 +67,6 @@ jobs:
 
       - name: Test
         run: |
-          response=$(curl -s "${{ steps.deploy.outputs.url }}")
-          echo "::set-output name=response::$response"
-          [[ "$response" == *"Service Unavailable"* ]] && exit 1
+          response=$(curl "${{ steps.deploy.outputs.url }}")
+          echo $response
+          if [[ "$response" == *"Service Unavailable"* ]]; then exit 1; else echo "App is up and running"; fi
