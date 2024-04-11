@@ -28,6 +28,43 @@ public class TeamServiceIntegrationTest {
     teamRepository.deleteAll();
   }
 
+  // region getTeamByTeamId tests
+  @Test
+  public void getTeamByTeamId_success() {
+    // given
+    Team team = new Team();
+    team.setName("productiviTeam");
+    team.setDescription("We are a productive team!");
+    team.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(team);
+
+    // then
+    Team foundTeam = teamService.getTeamByTeamId(team.getTeamId());
+
+    assertEquals(team.getTeamId(), foundTeam.getTeamId());
+    assertEquals(team.getName(), foundTeam.getName());
+    assertEquals(team.getDescription(), foundTeam.getDescription());
+  }
+
+  @Test
+  public void getTeamByTeamId_teamNotFound_throwsException() {
+    // given
+    Team team = new Team();
+    team.setName("productiviTeam");
+    team.setDescription("We are a productive team!");
+    team.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(team);
+
+    // then
+    assertThrows(RuntimeException.class, () -> teamService.getTeamByTeamId(999L));
+  }
+  // endregion
+
+  // region getTeamByTeamUUID tests
   @Test
   public void getTeamByTeamUUID_success() {
     // given
@@ -63,7 +100,9 @@ public class TeamServiceIntegrationTest {
     assertThrows(
         RuntimeException.class, () -> teamService.getTeamByTeamUUID("non-existing-team-uuid"));
   }
+  // endregion
 
+  // region createTeam tests
   @Test
   public void createTeam_validInputs_success() {
     String teamName = "productiviTeam";
@@ -118,4 +157,5 @@ public class TeamServiceIntegrationTest {
     // two teams should exist
     assertEquals(2, teamRepository.findAll().size());
   }
+  // endregion
 }

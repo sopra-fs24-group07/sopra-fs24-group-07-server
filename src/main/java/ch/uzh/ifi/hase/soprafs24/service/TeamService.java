@@ -30,6 +30,21 @@ public class TeamService {
   }
 
   /**
+   * Get team by team id.
+   *
+   * @param teamId team id
+   * @return team with given team id
+   * @throws ResponseStatusException 404 if team id not found
+   */
+  public Team getTeamByTeamId(Long teamId) {
+    Team found = teamRepository.findById(teamId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    log.debug("getTeamByTeamId: Found team: {} for team-id {}", found, teamId);
+    return found;
+  }
+
+  /**
    * Get team by team uuid.
    *
    * @param teamUUID team uuid
