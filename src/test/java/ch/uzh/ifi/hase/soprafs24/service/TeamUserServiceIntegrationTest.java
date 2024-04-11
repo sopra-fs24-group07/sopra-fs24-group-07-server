@@ -46,6 +46,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
     // given user
     User testUser = new User();
@@ -102,6 +103,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // given user
@@ -140,6 +142,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // when
@@ -158,6 +161,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // given user

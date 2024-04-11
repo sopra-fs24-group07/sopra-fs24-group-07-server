@@ -44,6 +44,7 @@ public class TeamServiceTest {
     assertEquals(testTeam.getTeamId(), createdTeam.getTeamId());
     assertEquals(testTeam.getName(), createdTeam.getName());
     assertEquals(testTeam.getDescription(), createdTeam.getDescription());
+    assertNotNull(createdTeam.getTeamUUID());
   }
 
   @Test

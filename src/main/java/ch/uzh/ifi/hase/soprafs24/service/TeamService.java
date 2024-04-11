@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,14 @@ public class TeamService {
     // check that name is not empty string
     ServiceHelpers.checkValidString(newTeam.getName(), "Name");
 
+    newTeam.setTeamUUID(UUID.randomUUID().toString());
+
     // saves the given entity but data is only persisted in the database once
     // flush() is called
     newTeam = teamRepository.save(newTeam);
     teamRepository.flush();
 
-    log.debug("Created Information for Team: {}", newTeam);
+    log.debug("Created Information for Team: {} with id {}", newTeam, newTeam.getTeamId());
     return newTeam;
   }
 }
