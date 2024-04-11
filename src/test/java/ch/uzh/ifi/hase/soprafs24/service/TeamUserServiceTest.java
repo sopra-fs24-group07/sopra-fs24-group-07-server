@@ -23,6 +23,7 @@ public class TeamUserServiceTest {
   @Mock private TeamRepository teamRepository;
   @Mock private UserRepository userRepository;
 
+  @Mock private TeamService teamService;
   @InjectMocks private TeamUserService teamUserService;
 
   private Team testTeam;
@@ -38,6 +39,7 @@ public class TeamUserServiceTest {
     testTeam.setTeamId(1L);
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
 
     testUser = new User();
     testUser.setUserId(1L);
@@ -51,6 +53,7 @@ public class TeamUserServiceTest {
     Mockito.when(teamUserRepository.save(Mockito.any())).thenReturn(testTeamUser);
   }
 
+  // region createTeamUser with teamId tests
   /**
    * Test for creating a new link between an existing user and an existing team
    */
@@ -103,6 +106,33 @@ public class TeamUserServiceTest {
     assertThrows(ResponseStatusException.class,
         () -> teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId()));
   }
+  // endregion
+
+  // region createTeamUser with teamUUID tests
+
+  /**
+   * Test for creating a new link between an existing user and an existing team
+   */
+  @Test
+  public void createTeamUser_validInputs_teamUUID_success() {
+    // when -> try to find teamUUID/userId in the repository -> return dummy team/user
+    Mockito.when(teamService.getTeamByTeamUUID(Mockito.any())).thenReturn(testTeam);
+    TeamUserService tempTeamUserService = Mockito.spy(teamUserService);
+    Mockito.doReturn(testTeamUser)
+        .when(tempTeamUserService)
+        .createTeamUser(Mockito.anyLong(), Mockito.anyLong());
+
+    // when
+    TeamUser createdTeamUser =
+        tempTeamUserService.createTeamUser(testTeam.getTeamUUID(), testUser.getUserId());
+
+    // then
+    assertEquals(createdTeamUser.getTeamUserId(), testTeamUser.getTeamUserId());
+    assertEquals(createdTeamUser.getTeam(), testTeamUser.getTeam());
+    assertEquals(createdTeamUser.getUser(), testTeamUser.getUser());
+  }
+
+  // endregion
 
   // region get teams of user tests
 

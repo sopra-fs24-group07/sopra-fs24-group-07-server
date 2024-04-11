@@ -28,14 +28,17 @@ public class TeamUserService {
   private final UserRepository userRepository;
   private final TeamRepository teamRepository;
   private final TeamUserRepository teamUserRepository;
+  private final TeamService teamService;
 
   @Autowired
   public TeamUserService(@Qualifier("userRepository") UserRepository userRepository,
       @Qualifier("teamRepository") TeamRepository teamRepository,
-      @Qualifier("teamUserRepository") TeamUserRepository teamUserRepository) {
+      @Qualifier("teamUserRepository") TeamUserRepository teamUserRepository,
+      @Qualifier("teamService") TeamService teamService) {
     this.userRepository = userRepository;
     this.teamRepository = teamRepository;
     this.teamUserRepository = teamUserRepository;
+    this.teamService = teamService;
   }
 
   /**
@@ -52,6 +55,7 @@ public class TeamUserService {
     // check that the user and team exist
     User user = userRepository.findById(userId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    // todo call team service method
     Team team = teamRepository.findById(teamId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
 
@@ -65,6 +69,22 @@ public class TeamUserService {
     log.debug("Created Information for TeamUser: {}", teamUser);
 
     return teamUser;
+  }
+
+  /**
+   * Create a new link between an existing user (identified with userId) and an existing team
+   * (identified with teamUUID). This is the case if a user accepts the invitation to a team.
+   *
+   * @param teamUUID team uuid
+   * @param userId user id
+   * @return the created teamUser (for testing)
+   * @throws ResponseStatusException 404 if user or team not found
+   */
+  public TeamUser createTeamUser(String teamUUID, Long userId) {
+    log.debug("create link between teamUUID: " + teamUUID + " and userId: " + userId);
+
+    // create link (join timestamp will be set automatically)
+    return this.createTeamUser(teamService.getTeamByTeamUUID(teamUUID).getTeamId(), userId);
   }
 
   /**
