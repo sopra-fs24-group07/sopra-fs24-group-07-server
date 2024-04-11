@@ -6,8 +6,11 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Team Service
@@ -24,6 +27,25 @@ public class TeamService {
   @Autowired
   public TeamService(TeamRepository teamRepository) {
     this.teamRepository = teamRepository;
+  }
+
+  /**
+   * Get team by team uuid.
+   *
+   * @param teamUUID team uuid
+   * @return team with given team uuid
+   * @throws ResponseStatusException 404 if team uuid not found
+   */
+  public Team getTeamByTeamUUID(String teamUUID) {
+    Team found = teamRepository.findByTeamUUID(teamUUID);
+
+    // check if team exists
+    if (found == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found");
+    }
+
+    log.debug("getTeamByTeamUUID: Found team: {} for team-uuid {}", found, found.getTeamUUID());
+    return found;
   }
 
   /**

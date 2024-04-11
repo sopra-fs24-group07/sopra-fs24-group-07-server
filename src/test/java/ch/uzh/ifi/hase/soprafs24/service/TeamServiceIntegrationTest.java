@@ -29,6 +29,42 @@ public class TeamServiceIntegrationTest {
   }
 
   @Test
+  public void getTeamByTeamUUID_success() {
+    // given
+    Team team = new Team();
+    team.setName("productiviTeam");
+    team.setDescription("We are a productive team!");
+    team.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(team);
+
+    // then
+    Team foundTeam = teamService.getTeamByTeamUUID(team.getTeamUUID());
+
+    assertEquals(team.getTeamId(), foundTeam.getTeamId());
+    assertEquals(team.getName(), foundTeam.getName());
+    assertEquals(team.getDescription(), foundTeam.getDescription());
+    assertEquals(team.getTeamUUID(), foundTeam.getTeamUUID());
+  }
+
+  @Test
+  public void getTeamByTeamUUID_teamNotFound_throwsException() {
+    // given
+    Team team = new Team();
+    team.setName("productiviTeam");
+    team.setDescription("We are a productive team!");
+    team.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(team);
+
+    // then
+    assertThrows(
+        RuntimeException.class, () -> teamService.getTeamByTeamUUID("non-existing-team-uuid"));
+  }
+
+  @Test
   public void createTeam_validInputs_success() {
     String teamName = "productiviTeam";
 
