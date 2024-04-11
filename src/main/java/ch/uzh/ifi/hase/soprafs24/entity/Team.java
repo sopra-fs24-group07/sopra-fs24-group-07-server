@@ -18,6 +18,8 @@ public class Team implements Serializable {
   // varchar(500), not null
   @Column(length = 500, nullable = false) private String description;
 
+  @Column(nullable = false, unique = true) private String teamUUID;
+
   public Long getTeamId() {
     return teamId;
   }
@@ -40,5 +42,13 @@ public class Team implements Serializable {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getTeamUUID() {
+    return teamUUID;
+  }
+
+  public void setTeamUUID(String teamUUID) {
+    this.teamUUID = teamUUID;
   }
 }

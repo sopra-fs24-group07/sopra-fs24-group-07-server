@@ -9,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,7 @@ public class CommentRepositoryIntegrationTest {
     team = new Team();
     team.setName("Team Name");
     team.setDescription("Team Description");
+    team.setTeamUUID("team-uuid");
 
     task = new Task();
     task.setTitle("Task Title");
@@ -57,6 +59,14 @@ public class CommentRepositoryIntegrationTest {
     entityManager.persist(team);
     entityManager.persist(task);
     entityManager.flush();
+  }
+
+  @AfterEach
+  public void teardown() {
+    commentRepository.deleteAll();
+    taskRepository.deleteAll();
+    teamRepository.deleteAll();
+    userRepository.deleteAll();
   }
 
   @Test
