@@ -33,6 +33,7 @@ public interface DTOMapper {
   Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
 
   @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "teamUUID", target = "teamUUID")
   @Mapping(source = "name", target = "name")
   @Mapping(source = "description", target = "description")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);

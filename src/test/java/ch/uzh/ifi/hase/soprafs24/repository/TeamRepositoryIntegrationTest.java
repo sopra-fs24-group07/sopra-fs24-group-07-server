@@ -24,6 +24,7 @@ public class TeamRepositoryIntegrationTest {
     Team team = new Team();
     team.setName("Team Name");
     team.setDescription("Team Description");
+    team.setTeamUUID("team-uuid");
 
     entityManager.persist(team);
     entityManager.flush();
@@ -35,5 +36,6 @@ public class TeamRepositoryIntegrationTest {
     assertNotNull(found.get().getTeamId());
     assertEquals(found.get().getName(), team.getName());
     assertEquals(found.get().getDescription(), team.getDescription());
+    assertEquals(found.get().getTeamUUID(), team.getTeamUUID());
   }
 }
