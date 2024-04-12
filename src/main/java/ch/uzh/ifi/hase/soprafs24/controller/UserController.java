@@ -1,8 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamInvitationPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -98,5 +100,28 @@ public class UserController {
     }
 
     return teamGetDTOs;
+  }
+
+  /**
+   * Add user to team with team invitation.
+   */
+  @PostMapping("/users/{userId}/teams")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public TeamGetDTO userAcceptsTeamInvitation(@PathVariable Long userId,
+      @RequestBody TeamInvitationPostDTO teamInvitationPostDTO,
+      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+    // check if user is authorized
+    User user = authorizationService.isExistingAndAuthorized(token, userId);
+
+    // convert team invitation uuid to team instance with only team uuid
+    // String teamUUID =
+    // DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoString(teamInvitationPostDTO);
+    String teamUUID = teamInvitationPostDTO.getTeamUUID();
+
+    // add user to existing team
+    TeamUser createdTeamUser = teamUserService.createTeamUser(teamUUID, user.getUserId());
+
+    return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeamUser.getTeam());
   }
 }

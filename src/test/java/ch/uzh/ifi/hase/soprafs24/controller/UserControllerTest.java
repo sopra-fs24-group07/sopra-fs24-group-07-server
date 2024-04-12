@@ -16,7 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamInvitationPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
@@ -401,6 +403,153 @@ public class UserControllerTest {
         .andExpect(jsonPath("$[0].teamId", is(testTeam.getTeamId().intValue())))
         .andExpect(jsonPath("$[0].name", is(testTeam.getName())))
         .andExpect(jsonPath("$[0].description", is(testTeam.getDescription())));
+  }
+  // endregion
+
+  // region userAcceptsTeamInvitation
+
+  /**
+   * verify that the teamUserService.createTeamUser(teamUUID, userId) method was called, and the
+   * mocked test user is returned
+   */
+  @Test
+  public void userAcceptsTeamInvitation_validInput_success() throws Exception {
+    // given
+    String teamUUID = "1984";
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+    user.setToken(teamUUID);
+
+    Team team = new Team();
+    team.setTeamId(1L);
+    team.setName("Test Team");
+    team.setDescription("Test Description");
+
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID(teamUUID);
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when -> create team link with team uuid -> return new teamUser
+    given(teamUserService.createTeamUser(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new TeamUser(team, user));
+
+    // when -> do the request
+    MockHttpServletRequestBuilder putRequest =
+        post("/api/v1/users/" + user.getUserId() + "/teams/")
+            .header("Authorization", "1234")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO));
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.teamId", is(team.getTeamId().intValue())))
+        .andExpect(jsonPath("$.name", is(team.getName())))
+        .andExpect(jsonPath("$.description", is(team.getDescription())));
+
+    // verify the authorizationService.isExistingAndAuthorized method was called once
+    verify(authorizationService, times(1))
+        .isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong());
+
+    // verify that the teamUserService.createTeamUser(teamUUID, userId) method was called once
+    verify(teamUserService, times(1)).createTeamUser(teamUUID, user.getUserId());
+  }
+
+  /**
+   * verify that if the user token of the request does not exist in the db, a 401 status is returned
+   */
+  @Test
+  public void userAcceptsTeamInvitation_validInput_invalidToken_throwsError() throws Exception {
+    // given
+    String teamUUID = "1984";
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+    user.setToken(teamUUID);
+
+    Team team = new Team();
+    team.setTeamId(1L);
+    team.setName("Test Team");
+    team.setDescription("Test Description");
+
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID(teamUUID);
+
+    // when -> check existing and authorized user -> unauthorized
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token"));
+
+    // when -> do the request
+    MockHttpServletRequestBuilder putRequest =
+        post("/api/v1/users/" + user.getUserId() + "/teams/")
+            .header("Authorization", "1234")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO));
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
+
+    // verify the authorizationService.isExistingAndAuthorized method was called once
+    verify(authorizationService, times(1))
+        .isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong());
+
+    // verify that the teamUserService.createTeamUser(teamUUID, userId) method was never called
+    verify(teamUserService, times(0)).createTeamUser(teamUUID, user.getUserId());
+  }
+
+  /**
+   * verify that if the team could not be found by the team uuid, a 404 status is returned
+   */
+  @Test
+  public void userAcceptsTeamInvitation_invalidTeamUUID_throwsError() throws Exception {
+    // given
+    String teamUUID = "1984";
+    User user = new User();
+    user.setUserId(1L);
+    user.setName("Test User");
+    user.setUsername("testUsername");
+    user.setToken(teamUUID);
+
+    Team team = new Team();
+    team.setTeamId(1L);
+    team.setName("Test Team");
+    team.setDescription("Test Description");
+
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("2001"); // invalid team uuid
+
+    // when -> check existing and authorized user -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when -> create team link with team uuid -> team not found by team uuid (would be thrown in
+    // the teamService on getTeamByTeamUUID())
+    given(teamUserService.createTeamUser(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // when -> do the request
+    MockHttpServletRequestBuilder putRequest =
+        post("/api/v1/users/" + user.getUserId() + "/teams/")
+            .header("Authorization", "1234")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO));
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+
+    // verify the authorizationService.isExistingAndAuthorized method was called once
+    verify(authorizationService, times(1))
+        .isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong());
+
+    // verify that the teamUserService.createTeamUser(teamUUID, userId) method was called, but wrong
+    // team-uuid
+    verify(teamUserService, times(1)).createTeamUser("2001", user.getUserId());
   }
   // endregion
 }
