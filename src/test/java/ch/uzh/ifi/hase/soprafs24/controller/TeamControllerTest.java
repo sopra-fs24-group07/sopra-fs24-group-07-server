@@ -93,6 +93,7 @@ public class TeamControllerTest {
     TaskPostDTO taskPostDTO = new TaskPostDTO();
     taskPostDTO.setTitle("Test Task");
 
+    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.any());
     given(taskService.createTask(Mockito.any()))
         .willThrow(new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Some needed fields are missing in the task object."));
@@ -155,6 +156,7 @@ public class TeamControllerTest {
     List<Task> tasks = new ArrayList<>();
     tasks.add(task);
 
+    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.any());
     given(taskService.getTasksByTeamId(Mockito.anyLong())).willReturn(tasks);
 
     // when/then -> do the request + validate the result
