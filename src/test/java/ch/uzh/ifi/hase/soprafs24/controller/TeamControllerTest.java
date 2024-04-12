@@ -9,13 +9,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
+import ch.uzh.ifi.hase.soprafs24.service.TaskService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -40,6 +45,7 @@ public class TeamControllerTest {
   @MockBean private TeamService teamService;
   @MockBean private AuthorizationService authorizationService;
   @MockBean private TeamUserService teamUserService;
+  @MockBean private TaskService taskService;
 
   private User testUser;
 
@@ -249,5 +255,107 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
   }
 
+  // endregion
+
+  // region TaskControllerTest
+
+  // POST
+  /**
+   * Test for creating a Task with valid inputs (Happy-Path)
+   */
+  @Test
+  public void createTask_validInput_taskCreated() throws Exception {
+    // given
+    Task task = new Task();
+    task.setTaskId(1L);
+    task.setTitle("Test Task");
+    task.setDescription("This is a test task.");
+
+    TaskPostDTO taskPostDTO = new TaskPostDTO();
+    taskPostDTO.setTitle("Test Task");
+    taskPostDTO.setDescription("This is a test task.");
+
+    // given(teamService.createTask(Mockito.any())).willReturn(task);
+    // todo use doesUserExistsAndAuthenticate
+    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.any());
+    given(taskService.createTask(Mockito.any())).willReturn(task);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/teams/1/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.taskId", is(task.getTaskId().intValue())))
+        .andExpect(jsonPath("$.title", is(task.getTitle())))
+        .andExpect(jsonPath("$.description", is(task.getDescription())));
+  }
+
+  /**
+   * Test for creating a Task where we have missing fields
+   */
+  @Test
+  public void createTask_missingFields_throwsError() throws Exception {
+    // given
+    TaskPostDTO taskPostDTO = new TaskPostDTO();
+    taskPostDTO.setTitle("Test Task");
+
+    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.any());
+    given(taskService.createTask(Mockito.any()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Some needed fields are missing in the task object."));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/teams/1/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains(
+                "Some needed fields are missing in the task object.")));
+  }
+
+  /**
+   * Test for creating a Task where User has unauthorized Access
+   */
+  @Test
+  public void createTask_unauthorizedAccess_throwsError() throws Exception {
+    // given
+    TaskPostDTO taskPostDTO = new TaskPostDTO();
+    taskPostDTO.setTitle("Test Task");
+    taskPostDTO.setDescription("This is a test task.");
+
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorized(Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/teams/1/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPostDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
   // endregion
 }
