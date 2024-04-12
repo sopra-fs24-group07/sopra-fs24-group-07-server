@@ -86,7 +86,7 @@ public class TeamService {
   }
 
   /**
-   * Get team method. 
+   * Get team method.
    *
    * @param Long teamId
    * @return team that's been found by team ID
