@@ -6,28 +6,10 @@ import java.util.Date;
 // GET DTO
 
 public class TaskGetDTO {
-  private Integer taskId;
-  private Integer teamId;
   private String title;
   private String description;
   private Date creationDate;
   private TaskStatus status;
-
-  public Integer getTaskId() {
-    return taskId;
-  }
-
-  public void setTaskId(Integer taskId) {
-    this.taskId = taskId;
-  }
-
-  public Integer getTeamkId() {
-    return teamId;
-  }
-
-  public void setTeamId(Integer teamId) {
-    this.teamId = teamId;
-  }
 
   public String getTitle() {
     return title;
