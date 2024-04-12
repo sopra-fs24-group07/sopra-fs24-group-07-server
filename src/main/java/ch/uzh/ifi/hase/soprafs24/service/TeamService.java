@@ -84,4 +84,17 @@ public class TeamService {
     log.debug("Created Information for Team: {} with id {}", newTeam, newTeam.getTeamId());
     return newTeam;
   }
+
+  /**
+   * Get team method. 
+   *
+   * @param Long teamId
+   * @return team that's been found by team ID
+   */
+  public Team getTeam(Long teamId) {
+    return teamRepository.findById(teamId).orElseThrow(
+        ()
+            -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Team not found with id " + teamId));
+  }
 }
