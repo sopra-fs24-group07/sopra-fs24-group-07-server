@@ -5,18 +5,9 @@ import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 // Post DTO for Task
 
 public class TaskPostDTO {
-  private Integer teamId;
   private String title;
   private String description;
   private TaskStatus status;
-
-  public Integer getTeamId() {
-    return teamId;
-  }
-
-  public void setTeamId(Integer teamId) {
-    this.teamId = teamId;
-  }
 
   public String getTitle() {
     return title;
