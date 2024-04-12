@@ -42,7 +42,6 @@ public class TeamControllerTest {
 
   @MockBean private TeamService teamService;
   @MockBean private AuthorizationService authorizationService;
-
   @MockBean private TaskService taskService;
 
   private User testUser;
@@ -55,6 +54,7 @@ public class TeamControllerTest {
 
   // region TaskControllerTest
 
+  // POST
   @Test
   public void createTask_validInput_taskCreated() throws Exception {
     // given
@@ -67,6 +67,9 @@ public class TeamControllerTest {
     taskPostDTO.setTitle("Test Task");
     taskPostDTO.setDescription("This is a test task.");
 
+    // given(teamService.createTask(Mockito.any())).willReturn(task);
+    // todo use doesUserExistsAndAuthenticate
+    Mockito.doNothing().when(authorizationService).isAuthorized(Mockito.any());
     given(taskService.createTask(Mockito.any())).willReturn(task);
 
     // when/then -> do the request + validate the result
@@ -84,7 +87,6 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$.description", is(task.getDescription())));
   }
 
-  // POST
   @Test
   public void createTask_missingFields_throwsError() throws Exception {
     // given
