@@ -59,6 +59,7 @@ public class TeamControllerTest {
     team.setTeamId(1L);
     team.setName("productiviteam");
     team.setDescription("We are the most productive team in sopra");
+    team.setTeamUUID("team-uuid");
 
     TeamPostDTO teamPostDTO = new TeamPostDTO();
     teamPostDTO.setName("productiviteam");
@@ -83,6 +84,7 @@ public class TeamControllerTest {
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.teamId", is(team.getTeamId().intValue())))
+        .andExpect(jsonPath("$.teamUUID", is(team.getTeamUUID())))
         .andExpect(jsonPath("$.name", is(team.getName())))
         .andExpect(jsonPath("$.description", is(team.getDescription())));
   }

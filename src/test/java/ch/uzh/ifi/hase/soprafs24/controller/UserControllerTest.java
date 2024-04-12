@@ -381,6 +381,7 @@ public class UserControllerTest {
     testTeam.setTeamId(1L);
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("produuid");
 
     // when -> is auth check -> is valid
     given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
@@ -401,6 +402,7 @@ public class UserControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].teamId", is(testTeam.getTeamId().intValue())))
+        .andExpect(jsonPath("$[0].teamUUID", is(testTeam.getTeamUUID())))
         .andExpect(jsonPath("$[0].name", is(testTeam.getName())))
         .andExpect(jsonPath("$[0].description", is(testTeam.getDescription())));
   }
@@ -451,6 +453,7 @@ public class UserControllerTest {
     mockMvc.perform(putRequest)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.teamId", is(team.getTeamId().intValue())))
+        .andExpect(jsonPath("$.teamUUID", is(teamUUID)))
         .andExpect(jsonPath("$.name", is(team.getName())))
         .andExpect(jsonPath("$.description", is(team.getDescription())));
 
