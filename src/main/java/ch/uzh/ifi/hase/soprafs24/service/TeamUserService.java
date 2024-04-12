@@ -55,9 +55,7 @@ public class TeamUserService {
     // check that the user and team exist
     User user = userRepository.findById(userId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    // todo call team service method
-    Team team = teamRepository.findById(teamId).orElseThrow(
-        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+    Team team = teamService.getTeamByTeamId(teamId);
 
     // create link (join timestamp will be set automatically)
     TeamUser teamUser = new TeamUser(team, user);

@@ -60,8 +60,7 @@ public class TeamUserServiceTest {
   @Test
   public void createTeamUser_validInputs_success() {
     // when -> try to find teamId/userId in the repository -> return dummy team/user
-    Mockito.when(teamRepository.findById(Mockito.any()))
-        .thenReturn(java.util.Optional.of(testTeam));
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(testTeam);
     Mockito.when(userRepository.findById(Mockito.any()))
         .thenReturn(java.util.Optional.of(testUser));
 
@@ -83,8 +82,7 @@ public class TeamUserServiceTest {
   @Test
   public void createTeamUser_invalidInputs_userDoesNotExist_throwsException() {
     // when -> try to find teamId in the repository -> return dummy team
-    Mockito.when(teamRepository.findById(Mockito.any()))
-        .thenReturn(java.util.Optional.of(testTeam));
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(testTeam);
     // when -> try to find userId in the repository -> no user found
     Mockito.when(userRepository.findById(Mockito.any())).thenReturn(java.util.Optional.empty());
 
@@ -98,7 +96,8 @@ public class TeamUserServiceTest {
   @Test
   public void createTeamUser_invalidInputs_teamDoesNotExist_throwsException() {
     // when -> try to find teamId in the repository -> no team found
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(java.util.Optional.empty());
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team id not found"));
     // when -> try to find userId in the repository -> return dummy user
     Mockito.when(userRepository.findById(Mockito.any()))
         .thenReturn(java.util.Optional.of(testUser));
