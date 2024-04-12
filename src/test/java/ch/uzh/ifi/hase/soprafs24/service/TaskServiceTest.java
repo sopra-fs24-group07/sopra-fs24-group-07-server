@@ -1,129 +1,129 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
- import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
- import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
- import ch.uzh.ifi.hase.soprafs24.entity.Task;
- import ch.uzh.ifi.hase.soprafs24.entity.Team;
- import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
- import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
- import java.time.LocalDateTime;
- import java.util.ArrayList;
- import java.util.List;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.mockito.InjectMocks;
- import org.mockito.Mock;
- import org.mockito.Mockito;
- import org.mockito.MockitoAnnotations;
- import org.springframework.http.HttpStatus;
- import org.springframework.web.server.ResponseStatusException;
+import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Task;
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
- public class TaskServiceTest {
-   @Mock private TaskRepository taskRepository;
-   @Mock private TeamService teamService;
+public class TaskServiceTest {
+  @Mock private TaskRepository taskRepository;
+  @Mock private TeamService teamService;
 
-   @InjectMocks private TaskService taskService;
+  @InjectMocks private TaskService taskService;
 
-   private Task testTask;
-   private Team testTeam;
-   private List<Task> tasks;
+  private Task testTask;
+  private Team testTeam;
+  private List<Task> tasks;
 
-   @BeforeEach
-   public void setup() {
-     MockitoAnnotations.openMocks(this);
+  @BeforeEach
+  public void setup() {
+    MockitoAnnotations.openMocks(this);
 
-     // given
-     testTask = new Task();
-     testTask.setTaskId(1L);
-     testTask.setTitle("task1");
-     testTask.setDescription("This is task 1");
-     testTask.setCreationDate(LocalDateTime.now());
-     testTask.setStatus(TaskStatus.TODO);
+    // given
+    testTask = new Task();
+    testTask.setTaskId(1L);
+    testTask.setTitle("task1");
+    testTask.setDescription("This is task 1");
+    testTask.setCreationDate(LocalDateTime.now());
+    testTask.setStatus(TaskStatus.TODO);
 
-     testTeam = new Team();
-     testTeam.setTeamId(1L);
-     testTeam.setName("team1");
-     testTeam.setDescription("This is team 1");
+    testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setName("team1");
+    testTeam.setDescription("This is team 1");
 
-     testTask.setTeam(testTeam);
+    testTask.setTeam(testTeam);
 
-     tasks = new ArrayList<>();
-     tasks.add(testTask);
+    tasks = new ArrayList<>();
+    tasks.add(testTask);
 
-     // when -> any object is being save in the taskRepository -> return the dummy testTask
-     Mockito.when(taskRepository.save(Mockito.any())).thenReturn(testTask);
-   }
+    // when -> any object is being save in the taskRepository -> return the dummy testTask
+    Mockito.when(taskRepository.save(Mockito.any())).thenReturn(testTask);
+  }
 
-   // POST
-   /**
-    * Test for creating a new task with valid inputs
-    */
-   @Test
-   public void createTask_validInputs_success() {
-     // when -> try to find teamId in the teamService -> return dummy team
-     Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(testTeam);
+  // POST
+  /**
+   * Test for creating a new task with valid inputs
+   */
+  @Test
+  public void createTask_validInputs_success() {
+    // when -> try to find teamId in the teamService -> return dummy team
+    Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(testTeam);
 
-     // when -> any object is being saved in the taskRepository -> return the dummy testTask
-     Task createdTask = taskService.createTask(testTask);
+    // when -> any object is being saved in the taskRepository -> return the dummy testTask
+    Task createdTask = taskService.createTask(testTask);
 
-     // then
-     Mockito.verify(taskRepository, Mockito.times(1)).save(Mockito.any());
+    // then
+    Mockito.verify(taskRepository, Mockito.times(1)).save(Mockito.any());
 
-     // check that task objects are expected
-     assertEquals(testTask.getTaskId(), createdTask.getTaskId());
-     assertEquals(testTask.getTitle(), createdTask.getTitle());
-     assertEquals(testTask.getDescription(), createdTask.getDescription());
-     assertEquals(testTask.getStatus(), createdTask.getStatus());
-     assertEquals(testTask.getTeam(), createdTask.getTeam());
-   }
+    // check that task objects are expected
+    assertEquals(testTask.getTaskId(), createdTask.getTaskId());
+    assertEquals(testTask.getTitle(), createdTask.getTitle());
+    assertEquals(testTask.getDescription(), createdTask.getDescription());
+    assertEquals(testTask.getStatus(), createdTask.getStatus());
+    assertEquals(testTask.getTeam(), createdTask.getTeam());
+  }
 
-   /**
-    * Test for creating a new task with missing fields throws exception
-    */
-   @Test
-   public void createTask_missingFields_throwsException() {
-     // given
-     Task incompleteTask = new Task();
-     incompleteTask.setTitle(null);
-     incompleteTask.setDescription("This is task 1");
-     incompleteTask.setTeam(testTeam);
+  /**
+   * Test for creating a new task with missing fields throws exception
+   */
+  @Test
+  public void createTask_missingFields_throwsException() {
+    // given
+    Task incompleteTask = new Task();
+    incompleteTask.setTitle(null);
+    incompleteTask.setDescription("This is task 1");
+    incompleteTask.setTeam(testTeam);
 
-     // when/then -> try to create task with missing fields -> should throw an exception
-     assertThrows(ResponseStatusException.class, () -> taskService.createTask(incompleteTask));
-   }
+    // when/then -> try to create task with missing fields -> should throw an exception
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(incompleteTask));
+  }
 
-   /**
-    * Test for creating a new task with empty fields throws exception
-    */
-   @Test
-   public void createTask_emptyFields_throwsException() {
-     // given
-     Task emptyTask = new Task();
-     emptyTask.setTitle("");
-     emptyTask.setDescription("");
-     emptyTask.setTeam(testTeam);
+  /**
+   * Test for creating a new task with empty fields throws exception
+   */
+  @Test
+  public void createTask_emptyFields_throwsException() {
+    // given
+    Task emptyTask = new Task();
+    emptyTask.setTitle("");
+    emptyTask.setDescription("");
+    emptyTask.setTeam(testTeam);
 
-     // when/then -> try to create task with empty fields -> should throw an exception
-     assertThrows(ResponseStatusException.class, () -> taskService.createTask(emptyTask));
-   }
+    // when/then -> try to create task with empty fields -> should throw an exception
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(emptyTask));
+  }
 
-   /**
-    * Test for creating a new task with non-existing team throws exception
-    */
-   @Test
-   public void createTask_nonExistingTeam_throwsException() {
-     // given
-     Task taskWithNonExistingTeam = new Task();
-     taskWithNonExistingTeam.setTitle("task1");
-     taskWithNonExistingTeam.setDescription("This is task 1");
-     taskWithNonExistingTeam.setTeam(null);
+  /**
+   * Test for creating a new task with non-existing team throws exception
+   */
+  @Test
+  public void createTask_nonExistingTeam_throwsException() {
+    // given
+    Task taskWithNonExistingTeam = new Task();
+    taskWithNonExistingTeam.setTitle("task1");
+    taskWithNonExistingTeam.setDescription("This is task 1");
+    taskWithNonExistingTeam.setTeam(null);
 
-     // when -> try to find teamId in the teamService -> return null
-     Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(null);
+    // when -> try to find teamId in the teamService -> return null
+    Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(null);
 
-     // when/then -> try to create task with non-existing team -> should throw an exception
-     assertThrows(
-         ResponseStatusException.class, () -> taskService.createTask(taskWithNonExistingTeam));
-   }
- }
+    // when/then -> try to create task with non-existing team -> should throw an exception
+    assertThrows(
+        ResponseStatusException.class, () -> taskService.createTask(taskWithNonExistingTeam));
+  }
+}
