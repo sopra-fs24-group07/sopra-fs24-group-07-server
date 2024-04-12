@@ -10,13 +10,13 @@ public class TaskGetDTO {
   private String description;
   private Date creationDate;
   private TaskStatus status;
-  private Integer taskId;
+  private Long taskId;
 
-  public Integer getTaskId() {
+  public Long getTaskId() {
     return taskId;
   }
 
-  public void setTaskId(Integer taskId) {
+  public void setTaskId(Long taskId) {
     this.taskId = taskId;
   }
 
