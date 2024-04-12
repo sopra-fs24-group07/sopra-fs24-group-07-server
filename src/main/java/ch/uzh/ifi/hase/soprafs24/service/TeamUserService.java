@@ -79,7 +79,7 @@ public class TeamUserService {
    * @throws ResponseStatusException 404 if user or team not found
    */
   public TeamUser createTeamUser(String teamUUID, Long userId) {
-    log.debug("create link between teamUUID: " + teamUUID + " and userId: " + userId);
+    log.debug("create link between teamUUID: {} and userId {} ", teamUUID, userId);
 
     // create link (join timestamp will be set automatically)
     return this.createTeamUser(teamService.getTeamByTeamUUID(teamUUID).getTeamId(), userId);
