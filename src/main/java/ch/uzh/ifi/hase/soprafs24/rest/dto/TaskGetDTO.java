@@ -10,6 +10,15 @@ public class TaskGetDTO {
   private String description;
   private Date creationDate;
   private TaskStatus status;
+  private Integer taskId;
+
+  public Integer getTaskId() {
+    return taskId;
+  }
+
+  public void setTaskId(Integer taskId) {
+    this.taskId = taskId;
+  }
 
   public String getTitle() {
     return title;
