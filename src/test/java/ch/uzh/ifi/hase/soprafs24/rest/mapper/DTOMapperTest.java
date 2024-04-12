@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
  * works.
  */
 public class DTOMapperTest {
+  // region user mappings
   @Test
   public void testCreateUser_fromUserPostDTO_toUser_success() {
     // create UserPostDTO
@@ -49,7 +50,9 @@ public class DTOMapperTest {
     assertEquals(user.getName(), userGetDTO.getName());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
   }
+  // endregion
 
+  // region team mappings
   @Test
   public void testCreateTeam_fromTeamPostDTO_success() {
     // create TeamPostDTO
@@ -70,6 +73,7 @@ public class DTOMapperTest {
     // create Team
     Team team = new Team();
     team.setTeamId(1L);
+    team.setTeamUUID("team-uuid");
     team.setName("name");
     team.setDescription("description");
 
@@ -78,7 +82,9 @@ public class DTOMapperTest {
 
     // check content
     assertEquals(team.getTeamId(), teamGetDTO.getTeamId());
+    assertEquals(team.getTeamUUID(), teamGetDTO.getTeamUUID());
     assertEquals(team.getName(), teamGetDTO.getName());
     assertEquals(team.getDescription(), teamGetDTO.getDescription());
   }
+  // endregion
 }

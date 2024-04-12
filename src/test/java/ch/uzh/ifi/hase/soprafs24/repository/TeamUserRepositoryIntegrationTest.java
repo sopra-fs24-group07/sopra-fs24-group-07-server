@@ -41,6 +41,7 @@ public class TeamUserRepositoryIntegrationTest {
     team = new Team();
     team.setName("Team Name");
     team.setDescription("Team Description");
+    team.setTeamUUID("team-uuid");
 
     // save team and user
     entityManager.persist(user);
@@ -144,6 +145,7 @@ public class TeamUserRepositoryIntegrationTest {
     Team team2 = new Team();
     team2.setName("The A-team");
     team2.setDescription("I love it when a plan comes together!");
+    team2.setTeamUUID("a-team");
 
     // save user with no team link
     entityManager.persist(team2);

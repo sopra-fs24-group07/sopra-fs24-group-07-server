@@ -29,6 +29,7 @@ public class TeamUserServiceIntegrationTest {
   @Qualifier("userRepository") @Autowired private UserRepository userRepository;
 
   @Autowired private TeamUserService teamUserService;
+  @Autowired private TeamService teamService;
 
   @BeforeEach
   public void setup() {
@@ -46,6 +47,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
     // given user
     User testUser = new User();
@@ -58,6 +60,37 @@ public class TeamUserServiceIntegrationTest {
     // when
     TeamUser createdTeamUser =
         teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId());
+
+    // then
+    // assertNotNull(createdTeamUser.getCreationTimestamp()); // set date
+    assertEquals(testTeam.getTeamId(), createdTeamUser.getTeam().getTeamId());
+    assertEquals(testUser.getUserId(), createdTeamUser.getUser().getUserId());
+    // assertEquals(testTeam.getTeamId(), createdTeamUser.getTeamUserId().getTeamId());
+    // assertEquals(testUser.getUserId(), createdTeamUser.getTeamUserId().getUserId());
+  }
+
+  @Test
+  public void createTeamUser_withTeamUUID_validInputs_success() {
+    // assume create team and create user work correctly (tested in TeamServiceIntegrationTest and
+    // UserServiceIntegrationTest)
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // when
+    TeamUser createdTeamUser =
+        teamUserService.createTeamUser(testTeam.getTeamUUID(), testUser.getUserId());
 
     // then
     // assertNotNull(createdTeamUser.getCreationTimestamp()); // set date
@@ -102,6 +135,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // given user
@@ -140,6 +174,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // when
@@ -158,6 +193,7 @@ public class TeamUserServiceIntegrationTest {
     Team testTeam = new Team();
     testTeam.setName("productiviTeam");
     testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
     teamRepository.saveAndFlush(testTeam);
 
     // given user

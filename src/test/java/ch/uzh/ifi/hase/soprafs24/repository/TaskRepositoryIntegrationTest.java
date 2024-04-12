@@ -34,6 +34,7 @@ public class TaskRepositoryIntegrationTest {
     team = new Team();
     team.setName("Team Name");
     team.setDescription("Team Description");
+    team.setTeamUUID("team-uuid");
 
     entityManager.persist(team);
     entityManager.flush();
