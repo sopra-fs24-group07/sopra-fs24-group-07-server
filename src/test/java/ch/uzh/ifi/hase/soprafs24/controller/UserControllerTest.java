@@ -420,12 +420,14 @@ public class UserControllerTest {
     user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
-    user.setToken(teamUUID);
 
     Team team = new Team();
     team.setTeamId(1L);
     team.setName("Test Team");
     team.setDescription("Test Description");
+    team.setTeamUUID(teamUUID);
+
+    TeamUser teamUser = new TeamUser(team, user);
 
     TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
     teamInvitationPostDTO.setTeamUUID(teamUUID);
@@ -436,7 +438,7 @@ public class UserControllerTest {
 
     // when -> create team link with team uuid -> return new teamUser
     given(teamUserService.createTeamUser(Mockito.anyString(), Mockito.anyLong()))
-        .willReturn(new TeamUser(team, user));
+        .willReturn(teamUser);
 
     // when -> do the request
     MockHttpServletRequestBuilder putRequest =
@@ -471,12 +473,12 @@ public class UserControllerTest {
     user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
-    user.setToken(teamUUID);
 
     Team team = new Team();
     team.setTeamId(1L);
     team.setName("Test Team");
     team.setDescription("Test Description");
+    team.setTeamUUID(teamUUID);
 
     TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
     teamInvitationPostDTO.setTeamUUID(teamUUID);
@@ -514,12 +516,12 @@ public class UserControllerTest {
     user.setUserId(1L);
     user.setName("Test User");
     user.setUsername("testUsername");
-    user.setToken(teamUUID);
 
     Team team = new Team();
     team.setTeamId(1L);
     team.setName("Test Team");
     team.setDescription("Test Description");
+    team.setTeamUUID(teamUUID);
 
     TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
     teamInvitationPostDTO.setTeamUUID("2001"); // invalid team uuid
