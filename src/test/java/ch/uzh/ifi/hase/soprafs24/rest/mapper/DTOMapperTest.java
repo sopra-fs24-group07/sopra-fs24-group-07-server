@@ -2,8 +2,12 @@ package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
@@ -85,6 +89,23 @@ public class DTOMapperTest {
     assertEquals(team.getTeamUUID(), teamGetDTO.getTeamUUID());
     assertEquals(team.getName(), teamGetDTO.getName());
     assertEquals(team.getDescription(), teamGetDTO.getDescription());
+  }
+  // endregion
+
+  // region create task
+  @Test
+  public void testCreateTask_fromTaskPostDTO_toTask_success() {
+    // create TaskPostDTO
+    TaskPostDTO taskPostDTO = new TaskPostDTO();
+    taskPostDTO.setTitle("write book");
+    taskPostDTO.setDescription("A productive task");
+
+    // MAP -> Create Task
+    Task task = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
+
+    // check content
+    assertEquals(taskPostDTO.getTitle(), task.getTitle());
+    assertEquals(taskPostDTO.getDescription(), task.getDescription());
   }
   // endregion
 }
