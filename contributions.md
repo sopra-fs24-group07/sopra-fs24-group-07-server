@@ -101,6 +101,15 @@ timeline
 
 ## 06.04.2024 - 12.04.2024
 
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/5:
+  Create Team UI form done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/26:
+  Profile View Done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/27:
+  Profile Render Done
+
 ## 13.04.2024 - 19.04.2024
 
 ## 20.04.2024 - 26.04.2024
