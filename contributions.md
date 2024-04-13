@@ -101,6 +101,13 @@ timeline
 
 ## 06.04.2024 - 12.04.2024
 
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/57:
+  Team invitation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/33:
+  Fixing team creation
+
 ### B1s9l
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/5:
