@@ -101,7 +101,8 @@ public class TeamController {
     // convert API task to internal representation
     Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
     // we hereby also check whether the team exists or not!!
-    taskInput.setTeam(teamService.getTeam(teamId)); // set the team for the task
+    taskInput.setTeam(
+        teamService.getTeamByTeamId(teamId)); // changed getTeam() to getTeamByTeamId()
 
     // create task
     Task createdTask = taskService.createTask(taskInput);
