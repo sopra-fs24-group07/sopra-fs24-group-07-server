@@ -2,12 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import java.util.List;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +25,10 @@ public class TaskService {
   private final Logger log = LoggerFactory.getLogger(TaskService.class);
 
   private final TaskRepository taskRepository;
-  private final TeamService teamService;
 
   @Autowired
-  public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
-      @Qualifier("teamService") TeamService teamService) {
+  public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository) {
     this.taskRepository = taskRepository;
-    this.teamService = teamService;
   }
 
   /**
