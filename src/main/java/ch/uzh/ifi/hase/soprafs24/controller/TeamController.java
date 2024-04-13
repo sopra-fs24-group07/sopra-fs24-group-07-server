@@ -92,8 +92,8 @@ public class TeamController {
   @ResponseBody
   public TaskGetDTO createTask(@PathVariable("ID") Long teamId,
       @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
-    // check if user is authorized (valid token)
-    User authorizedUser = authorizationService.isAuthorized(token);
+    // check if user is authorized (valid token) and if the user exists
+    User authorizedUser = authorizationService.isExistingAndAuthorized(token, teamId);
     if (authorizedUser == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
     }
