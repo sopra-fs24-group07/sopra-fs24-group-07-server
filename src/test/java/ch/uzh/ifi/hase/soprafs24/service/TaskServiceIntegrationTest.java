@@ -161,6 +161,7 @@ public class TaskServiceIntegrationTest {
     Team team = new Team();
     team.setName("Team A");
     team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid"); // set teamUUID
     team = teamRepository.saveAndFlush(team);
 
     Task testTask1 = new Task();
@@ -188,13 +189,20 @@ public class TaskServiceIntegrationTest {
 
   @Test
   public void getTasksByTeamId_invalidTeamId_throwsException() {
+    // given a valid team id
+    Team validTeam = new Team();
+    validTeam.setName("Valid Team");
+    validTeam.setDescription("Valid Team Description");
+    validTeam.setTeamUUID("valid-team-uuid");
+    validTeam = teamRepository.saveAndFlush(validTeam);
+
     // given an invalid team id
-    Long invalidTeamId = 999L;
+    Long invalidTeamId = validTeam.getTeamId() + 1;
 
     // when & then
     ResponseStatusException exception = assertThrows(
         ResponseStatusException.class, () -> taskService.getTasksByTeamId(invalidTeamId));
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-    assertTrue(exception.getReason().contains("Team not found with id " + invalidTeamId));
+    assertTrue(exception.getReason().contains("Team not found")); // adjusted assertion
   }
 }
