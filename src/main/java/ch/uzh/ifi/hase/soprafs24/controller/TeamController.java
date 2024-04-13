@@ -67,17 +67,11 @@ public class TeamController {
   @ResponseBody
   public List<UserGetDTO> getUsersOfTeam(
       @PathVariable Long teamId, @RequestHeader("Authorization") String token) {
-    // check if user is authorized (valid token)
-    // todo add
-    User authorizedUser = authorizationService.isAuthorized(token);
+    // check if user is authorized (valid token) also throws 404 if teamId not found
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
-    // get users of team (throws 404 if teamId not found)
+    // get users of team
     List<User> users = teamUserService.getUsersOfTeam(teamId);
-
-    // check if user is in returned user list
-    if (!users.contains(authorizedUser)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not in team");
-    }
 
     // convert internal representation of users back to API
     List<UserGetDTO> userGetDTOs = new ArrayList<>();

@@ -173,7 +173,7 @@ public class TeamControllerTest {
     testTeam.setTeamId(1L);
 
     // when -> is auth check -> is invalid
-    given(authorizationService.isAuthorized(Mockito.anyString()))
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     // when -> perform get request
@@ -206,7 +206,9 @@ public class TeamControllerTest {
     userNotInTeam.setToken("userNotInTeamToken");
 
     // when -> is auth check -> is valid -> but user is not the valid one
-    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(userNotInTeam);
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
     // when -> get users of team -> testUser is in team, but not the other user
     given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
         .willReturn(java.util.List.of(testUser));
@@ -219,7 +221,7 @@ public class TeamControllerTest {
 
     // then -> validate result for unauthorized
     mockMvc.perform(getRequest)
-        .andExpect(status().isForbidden())
+        .andExpect(status().isUnauthorized())
         .andExpect(
             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException));
   }
@@ -236,7 +238,8 @@ public class TeamControllerTest {
     // testUser is in team
 
     // when -> is auth check -> is valid
-    given(authorizationService.isAuthorized(Mockito.anyString())).willReturn(testUser);
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
     // when -> get users of team -> testUser is in team
     given(teamUserService.getUsersOfTeam(Mockito.anyLong()))
         .willReturn(java.util.List.of(testUser));
