@@ -93,7 +93,10 @@ public class TeamController {
   public TaskGetDTO createTask(@PathVariable("ID") Long teamId,
       @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
-    authorizationService.isAuthorized(token);
+    User authorizedUser = authorizationService.isAuthorized(token);
+    if (authorizedUser == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    }
 
     // convert API task to internal representation
     Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
