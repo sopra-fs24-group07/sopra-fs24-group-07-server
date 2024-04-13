@@ -68,6 +68,7 @@ public class TeamController {
   public List<UserGetDTO> getUsersOfTeam(
       @PathVariable Long teamId, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
+    // todo add
     User authorizedUser = authorizationService.isAuthorized(token);
 
     // get users of team (throws 404 if teamId not found)
@@ -93,16 +94,12 @@ public class TeamController {
   public TaskGetDTO createTask(@PathVariable("ID") Long teamId,
       @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token) and if the user exists
-    User authorizedUser = authorizationService.isExistingAndAuthorized(token, teamId);
-    if (authorizedUser == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-    }
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
     // convert API task to internal representation
     Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
     // we hereby also check whether the team exists or not!!
-    taskInput.setTeam(
-        teamService.getTeamByTeamId(teamId)); // changed getTeam() to getTeamByTeamId()
+    taskInput.setTeam(teamService.getTeamByTeamId(teamId));
 
     // create task
     Task createdTask = taskService.createTask(taskInput);

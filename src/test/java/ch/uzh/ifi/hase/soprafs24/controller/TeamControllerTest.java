@@ -280,9 +280,10 @@ public class TeamControllerTest {
     mockUser.setUserId(1L);
     mockUser.setToken("1234");
 
-    // mock the return of isExistingAndAuthorized()
+    // mock the return of isAuthorizedAndBelongsToTeam()
     Mockito
-        .when(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(mockUser);
     given(taskService.createTask(Mockito.any())).willReturn(task);
 
@@ -314,9 +315,10 @@ public class TeamControllerTest {
     mockUser.setUserId(1L);
     mockUser.setToken("1234");
 
-    // mock the return of isExistingAndAuthorized()
+    // mock the return of isAuthorizedAndBelongsToTeam()
     Mockito
-        .when(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(mockUser);
     given(taskService.createTask(Mockito.any()))
         .willThrow(new ResponseStatusException(
@@ -352,7 +354,7 @@ public class TeamControllerTest {
     Mockito
         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
         .when(authorizationService)
-        .isExistingAndAuthorized(Mockito.any(), Mockito.any());
+        .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.any());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
