@@ -42,16 +42,15 @@ public class TaskService {
   /**
    * Create tasks method.
    *
-   * @param Task newTask
+   * @param newTask to be created
    * @return newTask
    */
   public Task createTask(Task newTask) {
     // check that title and description are not null or empty
-    if (newTask.getTitle() == null || newTask.getTitle().isEmpty()
-        || newTask.getDescription() == null || newTask.getDescription().isEmpty()
-        || newTask.getTeam() == null) {
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Some needed fields are missing in the task object.");
+    ServiceHelpers.checkValidString(newTask.getTitle(), "title");
+    ServiceHelpers.checkValidString(newTask.getDescription(), "description");
+    if (newTask.getTeam() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Team cannot be null.");
     }
 
     // Set the status of the new task to to-do

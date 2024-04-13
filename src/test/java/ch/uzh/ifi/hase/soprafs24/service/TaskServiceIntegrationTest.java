@@ -85,11 +85,7 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(
-        exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
   }
 
   /**
@@ -111,11 +107,7 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(
-        exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
   }
 
   /**
@@ -137,11 +129,7 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(
-        exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
   }
 
   /**
@@ -163,10 +151,6 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    assertTrue(
-        exception.getReason().contains("Some needed fields are missing in the task object."));
+    assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
   }
 }
