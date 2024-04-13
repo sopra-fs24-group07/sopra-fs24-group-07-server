@@ -62,7 +62,8 @@ public class TaskServiceTest {
   @Test
   public void createTask_validInputs_success() {
     // when -> try to find teamId in the teamService -> return dummy team
-    Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(testTeam);
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenReturn(testTeam); // changed getTeam() to getTeamByTeamId()
 
     // when -> any object is being saved in the taskRepository -> return the dummy testTask
     Task createdTask = taskService.createTask(testTask);
@@ -120,7 +121,8 @@ public class TaskServiceTest {
     taskWithNonExistingTeam.setTeam(null);
 
     // when -> try to find teamId in the teamService -> return null
-    Mockito.when(teamService.getTeam(Mockito.any())).thenReturn(null);
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenReturn(null); // changed getTeam() to getTeamByTeamId()
 
     // when/then -> try to create task with non-existing team -> should throw an exception
     assertThrows(
