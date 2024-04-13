@@ -260,6 +260,10 @@ public class TeamControllerTest {
   // region TaskControllerTest
 
   // POST
+
+  /**
+   * Test for creating a Task with valid Inputs (Happy-Path)
+   */
   @Test
   public void createTask_validInput_taskCreated() throws Exception {
     // given
@@ -276,8 +280,10 @@ public class TeamControllerTest {
     mockUser.setUserId(1L);
     mockUser.setToken("1234");
 
-    // mock the return of isAuthorized()
-    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(mockUser);
+    // mock the return of isExistingAndAuthorized()
+    Mockito
+        .when(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(mockUser);
     given(taskService.createTask(Mockito.any())).willReturn(task);
 
     // when/then -> do the request + validate the result
@@ -295,6 +301,9 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$.description", is(task.getDescription())));
   }
 
+  /**
+   * Test for creating a Task with missing Fields
+   */
   @Test
   public void createTask_missingFields_throwsError() throws Exception {
     // given
@@ -305,8 +314,10 @@ public class TeamControllerTest {
     mockUser.setUserId(1L);
     mockUser.setToken("1234");
 
-    // mock the return of isAuthorized()
-    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(mockUser);
+    // mock the return of isExistingAndAuthorized()
+    Mockito
+        .when(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(mockUser);
     given(taskService.createTask(Mockito.any()))
         .willThrow(new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Some needed fields are missing in the task object."));
@@ -341,7 +352,7 @@ public class TeamControllerTest {
     Mockito
         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
         .when(authorizationService)
-        .isAuthorized(Mockito.any());
+        .isExistingAndAuthorized(Mockito.any(), Mockito.any());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
