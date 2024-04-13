@@ -101,4 +101,20 @@ public class TeamController {
     // convert internal representation of task back to API
     return DTOMapper.INSTANCE.convertEntityToTaskGetDTO(createdTask);
   }
+
+  @GetMapping("/teams/{ID}/tasks")
+  @ResponseBody
+  public List<TaskGetDTO> getTasks(
+      @PathVariable("ID") Long teamId, @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token)
+    authorizationService.isAuthorized(token);
+
+    // get tasks
+    List<Task> tasks = taskService.getTasksByTeamId(teamId);
+
+    // convert internal representation of tasks back to API
+    return tasks.stream()
+        .map(DTOMapper.INSTANCE::convertEntityToTaskGetDTO)
+        .collect(Collectors.toList());
+  }
 }
