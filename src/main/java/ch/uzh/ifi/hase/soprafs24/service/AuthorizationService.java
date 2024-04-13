@@ -1,7 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +24,13 @@ public class AuthorizationService {
 
   private final UserRepository userRepository;
 
+  private final TeamUserService teamUserService;
+
   @Autowired
-  public AuthorizationService(@Qualifier("userRepository") UserRepository userRepository) {
+  public AuthorizationService(
+      @Qualifier("userRepository") UserRepository userRepository, TeamUserService teamUserService) {
     this.userRepository = userRepository;
+    this.teamUserService = teamUserService;
   }
 
   /**
@@ -86,21 +93,47 @@ public class AuthorizationService {
   }
 
   /**
-   * Checks if the token belongs to the user with the given userId
+   * Checks if the token exists and the user is in the team
    *
    * @param token the token to be checked
-   * @param userId the userId to be checked (might not exist)
+   * @param teamId to be checked
    * @return the user of the token/username
-   * @throws ResponseStatusException if the token is invalid or does not belong to the user
+   * @throws ResponseStatusException 404 if the team is not found; 401 if the token is invalid the
+   *     user does not belong to the team
    */
-  public User isAuthorized(String token, Long userId) {
-    log.info("Checking authorization for token '{}' which belongs to userId '{}'", token,
-        userId); // monitor authorization attempts
+  public User isAuthorizedAndBelongsToTeam(String token, Long teamId) {
+    log.info("Checking authorization for token '{}' and teamId '{}'", token,
+        teamId); // monitor authorization attempts
 
-    User foundUser = userRepository.findByToken(token);
-    if (foundUser == null || !foundUser.getUserId().equals(userId)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    // check if user is authorized
+    User foundUser = isAuthorized(token);
+
+    // check if user is in team
+    if (teamUserService.getUsersOfTeam(teamId).stream().noneMatch(
+            user -> user.getUserId().equals(foundUser.getUserId()))) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not in team");
     }
+
     return foundUser;
   }
+
+  // Deprecated
+  // /**
+  //  * Checks if the token belongs to the user with the given userId
+  //  *
+  //  * @param token the token to be checked
+  //  * @param userId the userId to be checked (might not exist)
+  //  * @return the user of the token/username
+  //  * @throws ResponseStatusException if the token is invalid or does not belong to the user
+  //  */
+  // public User isAuthorized(String token, Long userId) {
+  //   log.info("Checking authorization for token '{}' which belongs to userId '{}'", token,
+  //       userId); // monitor authorization attempts
+  //
+  //   User foundUser = userRepository.findByToken(token);
+  //   if (foundUser == null || !foundUser.getUserId().equals(userId)) {
+  //     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+  //   }
+  //   return foundUser;
+  // }
 }
