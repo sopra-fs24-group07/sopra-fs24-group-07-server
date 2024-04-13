@@ -33,7 +33,8 @@ public class TaskService {
   private final TeamService teamService;
 
   @Autowired
-  public TaskService(TaskRepository taskRepository, TeamService teamService) {
+  public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
+      @Qualifier("teamService") TeamService teamService) {
     this.taskRepository = taskRepository;
     this.teamService = teamService;
   }
