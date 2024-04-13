@@ -2,10 +2,15 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,15 +21,22 @@ import org.springframework.web.server.ResponseStatusException;
 @SpringBootTest
 public class AuthorizationServiceIntegrationTest {
   @Qualifier("userRepository") @Autowired private UserRepository userRepository;
+  @Qualifier("teamUserRepository") @Autowired private TeamUserRepository teamUserRepository;
+  @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
 
   @Autowired private AuthorizationService authorizationService;
   @Autowired private UserService userService;
+  @Autowired private TeamUserService teamUserService;
+  @Autowired private TeamService teamService;
 
   @BeforeEach
   public void setup() {
+    teamUserRepository.deleteAll();
     userRepository.deleteAll();
+    teamRepository.deleteAll();
   }
 
+  // region login
   /**
    * test if the login works with valid credentials
    */
@@ -60,7 +72,9 @@ public class AuthorizationServiceIntegrationTest {
     // then
     assertNull(token);
   }
+  // endregion
 
+  // region isAuthorized
   /**
    * test if the token is valid
    */
@@ -91,7 +105,9 @@ public class AuthorizationServiceIntegrationTest {
     assertThrows(
         ResponseStatusException.class, () -> authorizationService.isAuthorized("invalid token"));
   }
+  // endregion
 
+  // region isExistingAndAuthorized
   /**
    * test if the token is valid and maps to existing user
    */
@@ -132,7 +148,9 @@ public class AuthorizationServiceIntegrationTest {
 
     // when try auth -> then exception
     assertThrows(ResponseStatusException.class,
-        () -> authorizationService.isAuthorized("invalid token", createdUser.getUserId()));
+        ()
+            -> authorizationService.isExistingAndAuthorized(
+                "invalid token", createdUser.getUserId()));
   }
 
   /**
@@ -144,7 +162,81 @@ public class AuthorizationServiceIntegrationTest {
     assertTrue(userRepository.findById(1L).isEmpty());
 
     // when try auth -> then exception
-    assertThrows(
-        ResponseStatusException.class, () -> authorizationService.isAuthorized("token", 1L));
+    assertThrows(ResponseStatusException.class,
+        () -> authorizationService.isExistingAndAuthorized("token", 1L));
   }
+  // endregion
+
+  // region isAuthorizedAndBelongsToTeam
+  // integration tests for isAuthorized() call above
+  @Test
+  public void isAuthorizedAndBelongsToTeam_validToken_doesBelong_success() {
+    // given user
+    User testUser = new User();
+    testUser.setName("Bruce Wayne");
+    testUser.setUsername("batman");
+    testUser.setPassword("alfred123");
+    User createdUser = userService.createUser(testUser);
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("Justice League");
+    testTeam.setDescription("We are the Justice League!");
+    Team createdTeam = teamService.createTeam(testTeam);
+
+    // given team user
+    teamUserService.createTeamUser(createdTeam.getTeamId(), createdUser.getUserId());
+
+    // when try auth -> success -> returns authUser
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(
+        testUser.getToken(), testTeam.getTeamId());
+
+    // then
+    assertEquals(testUser.getUsername(), authorizedUser.getUsername());
+    assertEquals(createdUser.getToken(), authorizedUser.getToken()); // generated value
+  }
+  @Test
+  public void isAuthorizedAndBelongsToTeam_invalidToken_doesNotBelong_failure() {
+    // given user
+    User testUser = new User();
+    testUser.setName("Clark Kent");
+    testUser.setUsername("superman");
+    testUser.setPassword("lois123");
+    User createdUser = userService.createUser(testUser);
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("Justice League");
+    testTeam.setDescription("We are the Justice League!");
+    Team createdTeam = teamService.createTeam(testTeam);
+
+    // when try auth with invalid token -> failure -> throws ResponseStatusException
+    assertThrows(ResponseStatusException.class, () -> {
+      authorizationService.isAuthorizedAndBelongsToTeam("invalidToken", createdTeam.getTeamId());
+    });
+  }
+
+  @Test
+  public void isAuthorizedAndBelongsToTeam_validToken_doesNotBelong_failure() {
+    // given user
+    User testUser = new User();
+    testUser.setName("Diana Prince");
+    testUser.setUsername("wonderwoman");
+    testUser.setPassword("steve123");
+    User createdUser = userService.createUser(testUser);
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("Justice League");
+    testTeam.setDescription("We are the Justice League!");
+    Team createdTeam = teamService.createTeam(testTeam);
+
+    // when try auth with valid token but user not in team -> failure -> throws
+    // ResponseStatusException
+    assertThrows(ResponseStatusException.class, () -> {
+      authorizationService.isAuthorizedAndBelongsToTeam(
+          createdUser.getToken(), createdTeam.getTeamId());
+    });
+  }
+  // endregion
 }

@@ -1,16 +1,21 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
+import ch.uzh.ifi.hase.soprafs24.service.TaskService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,12 +31,14 @@ public class TeamController {
   private final TeamService teamService;
   private final AuthorizationService authorizationService;
   private final TeamUserService teamUserService;
+  private final TaskService taskService;
 
   TeamController(TeamService teamService, AuthorizationService authorizationService,
-      TeamUserService teamUserService) {
+      TeamUserService teamUserService, TaskService taskService) {
     this.teamService = teamService;
     this.authorizationService = authorizationService;
     this.teamUserService = teamUserService;
+    this.taskService = taskService;
   }
 
   @PostMapping("/teams")
@@ -60,16 +67,11 @@ public class TeamController {
   @ResponseBody
   public List<UserGetDTO> getUsersOfTeam(
       @PathVariable Long teamId, @RequestHeader("Authorization") String token) {
-    // check if user is authorized (valid token)
-    User authorizedUser = authorizationService.isAuthorized(token);
+    // check if user is authorized (valid token) also throws 404 if teamId not found
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
-    // get users of team (throws 404 if teamId not found)
+    // get users of team
     List<User> users = teamUserService.getUsersOfTeam(teamId);
-
-    // check if user is in returned user list
-    if (!users.contains(authorizedUser)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not in team");
-    }
 
     // convert internal representation of users back to API
     List<UserGetDTO> userGetDTOs = new ArrayList<>();
@@ -78,5 +80,25 @@ public class TeamController {
     }
 
     return userGetDTOs;
+  }
+
+  @PostMapping("/teams/{ID}/tasks")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public TaskGetDTO createTask(@PathVariable("ID") Long teamId,
+      @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token) and if the user exists
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // convert API task to internal representation
+    Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
+    // we hereby also check whether the team exists or not!!
+    taskInput.setTeam(teamService.getTeamByTeamId(teamId));
+
+    // create task
+    Task createdTask = taskService.createTask(taskInput);
+
+    // convert internal representation of task back to API
+    return DTOMapper.INSTANCE.convertEntityToTaskGetDTO(createdTask);
   }
 }
