@@ -64,7 +64,7 @@ public class TaskServiceIntegrationTest {
   }
 
   /**
-   * Test for creating a new task with empty title
+   * Test for creating a new task with empty title (is not successful because title is required)
    */
   @Test
   public void createTask_emptyTitle_throwsException() {
@@ -86,10 +86,10 @@ public class TaskServiceIntegrationTest {
   }
 
   /**
-   * Test for creating a new task with empty description
+   * Test for creating a new task with empty description (is successfully, because default value ok)
    */
   @Test
-  public void createTask_emptyDescription_throwsException() {
+  public void createTask_emptyDescription_defaultValue_success() {
     // given a team
     Team team = new Team();
     team.setName("Team A");
@@ -104,7 +104,7 @@ public class TaskServiceIntegrationTest {
     testTask.setTeam(team);
 
     // when & then
-    assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
+    assertDoesNotThrow(() -> taskService.createTask(testTask));
   }
 
   /**

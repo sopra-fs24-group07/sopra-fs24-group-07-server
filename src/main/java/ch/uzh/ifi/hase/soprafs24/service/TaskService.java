@@ -40,7 +40,9 @@ public class TaskService {
   public Task createTask(Task newTask) {
     // check that title and description are not null or empty
     ServiceHelpers.checkValidString(newTask.getTitle(), "title");
-    ServiceHelpers.checkValidString(newTask.getDescription(), "description");
+    if (newTask.getDescription() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description cannot be null.");
+    }
     if (newTask.getTeam() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Team cannot be null.");
     }
