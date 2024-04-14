@@ -379,6 +379,10 @@ public class TeamControllerTest {
   }
 
   // GET
+
+  /**
+   * Test for fetching a Task with valid input (happy-path)
+   */
   @Test
   public void getTasks_validInput_returnTasks() throws Exception {
     // given
@@ -405,6 +409,9 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$[0].description", is(task.getDescription())));
   }
 
+  /**
+   * Test for trying to fetch a Task, where there is no task in team
+   */
   @Test
   public void getTasks_noTasksInTeam_throwsError() throws Exception {
     // given
@@ -426,6 +433,9 @@ public class TeamControllerTest {
                 "No tasks found for team with id 1")));
   }
 
+  /**
+   * Test for trying to fetch a Task, where i'm not authorized to access
+   */
   @Test
   public void getTasks_unauthorizedAccess_throwsError() throws Exception {
     // given
@@ -450,6 +460,9 @@ public class TeamControllerTest {
 
   // PUT
 
+  /**
+   * Test for updating a task with valid inputs (happy-path)
+   */
   @Test
   public void updateTask_validInput_taskUpdated() throws Exception {
     // given
@@ -490,6 +503,9 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$.description", is(task.getDescription())));
   }
 
+  /**
+   * Test for trying to update a task, but i'm not authorized to do so
+   */
   @Test
   public void updateTask_unauthorizedAccess_throwsError() throws Exception {
     // given
@@ -519,6 +535,9 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  /**
+   * Test for trying to update a task, but the task doesn't exist
+   */
   @Test
   public void updateTask_taskDoesNotExist_throwsError() throws Exception {
     // given
