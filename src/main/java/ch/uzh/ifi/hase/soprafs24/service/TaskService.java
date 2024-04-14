@@ -2,7 +2,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,14 @@ import org.springframework.web.server.ResponseStatusException;
 @Transactional
 public class TaskService {
   private final Logger log = LoggerFactory.getLogger(TaskService.class);
-
+  private final TeamService teamService;
   private final TaskRepository taskRepository;
 
   @Autowired
-  public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository) {
+  public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
+      @Qualifier("teamService") TeamService teamService) {
     this.taskRepository = taskRepository;
+    this.teamService = teamService;
   }
 
   /**
@@ -55,5 +59,17 @@ public class TaskService {
 
     log.debug("Created Information for Task: {}", newTask);
     return newTask;
+  }
+
+  /**
+   * Get tasks method.
+   *
+   * @param teamId for tasks to be taken from
+   * @return List of tasks
+   */
+  public List<Task> getTasksByTeamId(Long teamId) {
+    Team team = teamService.getTeamByTeamId(teamId);
+    List<Task> tasks = taskRepository.findByTeam(team);
+    return tasks; // just return the list as it is, whether it's empty or not
   }
 }
