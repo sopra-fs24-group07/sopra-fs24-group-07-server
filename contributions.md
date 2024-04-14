@@ -107,6 +107,8 @@ timeline
   Team invitation
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/33:
   Fixing team creation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/80:
+  Setup DB on GCP
 
 ### B1s9l
 
