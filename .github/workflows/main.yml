@@ -38,19 +38,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Database todo update to prod vars
-      - name: Set database password
-        run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
-
-      - name: Set database URL to dev GCP
-        run: echo "dbUrl=${{ secrets.DB_URL_DEV }}" > dburl.properties
-
-#      # add password from secret to app.yaml
-#      - name: Add database password to app.yaml
-#        run: |
-#          echo "env_variables:" >> app.yaml
-#          echo "  dbPassword: ${{ secrets.DB_PASSWORD_DEV }}" >> app.yaml
-#          cat app.yaml
+      - name: Add database variables to application properties
+        run: |
+          echo "spring.datasource.url=${{ secrets.DB_URL_DEV }}" >> src/main/resources/application.properties
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD_DEV }}" >> src/main/resources/application.properties
 
       - name: Deploy to App Engine
         id: deploy
@@ -59,11 +50,6 @@ jobs:
           deliverables: app.yaml
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-        # Database todo update to dev
-        env:
-#          SPRING_PROFILES_ACTIVE: prod
-          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }} -DdbUrl=${{ secrets.DB_URL_DEV }}'
-#          GRADLE_OPTS: '-DdbPassword=${{ secrets.DB_PASSWORD_DEV }}'
 
       - name: Test
         run: |
