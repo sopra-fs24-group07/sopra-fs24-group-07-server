@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TaskService;
@@ -446,5 +448,112 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  // PUT
+
+  @Test
+  public void updateTask_validInput_taskUpdated() throws Exception {
+    // given
+    Task task = new Task();
+    task.setTaskId(1L);
+    task.setTitle("Test Task");
+    task.setDescription("This is a test task.");
+
+    TaskPutDTO taskPutDTO = new TaskPutDTO();
+    taskPutDTO.setTitle("Updated Task");
+    taskPutDTO.setDescription("This is an updated test task.");
+
+    User mockUser = new User();
+    mockUser.setUserId(1L);
+    mockUser.setToken("1234");
+
+    // mock the return of isAuthorizedAndBelongsToTeam()
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(mockUser);
+
+    // mock the return of updateTask()
+    given(taskService.updateTask(Mockito.any(), Mockito.anyLong())).willReturn(task);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/1/tasks/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPutDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.taskId", is(task.getTaskId().intValue())))
+        .andExpect(jsonPath("$.title", is(task.getTitle())))
+        .andExpect(jsonPath("$.description", is(task.getDescription())));
+  }
+
+  @Test
+  public void updateTask_unauthorizedAccess_throwsError() throws Exception {
+    // given
+    TaskPutDTO taskPutDTO = new TaskPutDTO();
+    taskPutDTO.setTitle("Updated Task");
+    taskPutDTO.setDescription("This is an updated test task.");
+
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/1/tasks/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPutDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
+  @Test
+  public void updateTask_taskDoesNotExist_throwsError() throws Exception {
+    // given
+    TaskPutDTO taskPutDTO = new TaskPutDTO();
+    taskPutDTO.setTitle("Updated Task");
+    taskPutDTO.setDescription("This is an updated test task.");
+
+    User mockUser = new User();
+    mockUser.setUserId(1L);
+    mockUser.setToken("1234");
+
+    // mock the return of isAuthorizedAndBelongsToTeam()
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(mockUser);
+
+    // mock the return of updateTask()
+    given(taskService.updateTask(Mockito.any(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found."));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/1/tasks/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(taskPutDTO))
+            .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains("Task not found.")));
+  }
   // endregion
 }
