@@ -375,5 +375,76 @@ public class TeamControllerTest {
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
+
+  // GET
+  @Test
+  public void getTasks_validInput_returnTasks() throws Exception {
+    // given
+    Task task = new Task();
+    task.setTaskId(1L);
+    task.setTitle("Test Task");
+    task.setDescription("This is a test task.");
+
+    List<Task> tasks = new ArrayList<>();
+    tasks.add(task);
+
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
+    given(taskService.getTasksByTeamId(Mockito.anyLong())).willReturn(tasks);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].taskId", is(task.getTaskId().intValue())))
+        .andExpect(jsonPath("$[0].title", is(task.getTitle())))
+        .andExpect(jsonPath("$[0].description", is(task.getDescription())));
+  }
+
+  @Test
+  public void getTasks_noTasksInTeam_throwsError() throws Exception {
+    // given
+    given(taskService.getTasksByTeamId(Mockito.anyLong()))
+        .willThrow(
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id 1"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains(
+                "No tasks found for team with id 1")));
+  }
+
+  @Test
+  public void getTasks_unauthorizedAccess_throwsError() throws Exception {
+    // given
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorized(Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
   // endregion
 }
