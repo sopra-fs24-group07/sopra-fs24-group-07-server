@@ -119,6 +119,12 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/27:
   Profile Render Done
 
+### Monti934
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/7:
+  Edit Task
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/8:
+  Display Task Details
+
 ## 13.04.2024 - 19.04.2024
 
 ## 20.04.2024 - 26.04.2024
