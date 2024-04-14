@@ -52,6 +52,12 @@ public interface DTOMapper {
   @Mapping(target = "description", source = "description", defaultValue = "")
   Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
 
+  @Mapping(target = "taskId", source = "taskId")
+  @Mapping(target = "title", source = "title")
+  @Mapping(target = "description", source = "description", defaultValue = "")
+  @Mapping(target = "status", source = "status")
+  Task convertTaskPutDTOtoEntity(TaskPutDTO taskPutDTO);
+
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "creationDate", target = "creationDate")
