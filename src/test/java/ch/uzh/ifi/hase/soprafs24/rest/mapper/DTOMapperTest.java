@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
@@ -125,6 +126,25 @@ public class DTOMapperTest {
     assertEquals(task.getTitle(), taskGetDTO.getTitle());
     assertEquals(task.getDescription(), taskGetDTO.getDescription());
     assertEquals(task.getStatus(), taskGetDTO.getStatus()); // compare enums directly
+  }
+
+  @Test
+  public void testUpdateTask_fromTaskPutDTO_toTask_success() {
+    // create TaskPutDTO
+    TaskPutDTO taskPutDTO = new TaskPutDTO();
+    taskPutDTO.setTaskId(1L);
+    taskPutDTO.setTitle("new title");
+    taskPutDTO.setDescription("new description");
+    taskPutDTO.setStatus(TaskStatus.IN_SESSION);
+
+    // MAP -> Create Task
+    Task task = DTOMapper.INSTANCE.convertTaskPutDTOtoEntity(taskPutDTO);
+
+    // check content
+    assertEquals(taskPutDTO.getTaskId(), task.getTaskId());
+    assertEquals(taskPutDTO.getTitle(), task.getTitle());
+    assertEquals(taskPutDTO.getDescription(), task.getDescription());
+    assertEquals(taskPutDTO.getStatus(), task.getStatus());
   }
 
   // endregion
