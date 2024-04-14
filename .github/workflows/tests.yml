@@ -40,7 +40,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          dbURL: jdbc:postgresql://localhost:5432/test_db
+          dbUrl: jdbc:postgresql://localhost:5432/test_db
           dbPassword: test_password
 #          DB_UNM: test_user
 #          DB_DDL_AUTO: create
@@ -49,7 +49,7 @@ jobs:
       - name: Test with Gradle
         run: ./gradlew test
         env:
-          dbURL: jdbc:postgresql://localhost:5432/test_db
+          dbUrl: jdbc:postgresql://localhost:5432/test_db
           dbPassword: test_password
 #          DB_UNM: test_user
 #          DB_DDL_AUTO: create
