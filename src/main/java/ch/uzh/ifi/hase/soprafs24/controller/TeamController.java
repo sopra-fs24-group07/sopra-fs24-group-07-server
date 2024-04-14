@@ -118,20 +118,14 @@ public class TeamController {
         .collect(Collectors.toList());
   }
 
-  @PutMapping("/teams/{teamId}/tasks/{taskId}")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
   public TaskGetDTO updateTask(@PathVariable Long teamId, @PathVariable Long taskId,
-      @RequestBody Task taskInput, @RequestHeader("Authorization") String token) {
+      @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token) and if the user exists
     authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
-    // check if the input task's Id matches the taskId in the path
-    if (!taskId.equals(taskInput.getTaskId())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task Id does not match");
-    }
-
-    // set the team to the taskInput
+    // convert API task to internal representation
+    Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
+    taskInput.setTaskId(taskId);
     taskInput.setTeam(teamService.getTeamByTeamId(teamId));
 
     // update task
