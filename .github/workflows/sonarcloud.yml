@@ -45,27 +45,21 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Set database password
-        run: echo "dbPassword=test_password" > dbpassword.properties
-
-      - name: Set database URL to dev GCP
-        run: echo "dbUrl=jdbc:postgresql://localhost:5432/test_db" > dburl.properties
+#      todo remove cat
+      - name: Add database variables to application properties
+        run: |
+          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/test_db" >> src/main/resources/application.properties
+          echo "spring.datasource.password=test_password" >> src/main/resources/application.properties
+          cat src/main/resources/application.properties
 
       - name: Test and analyze with sonarcloud
         run: ./gradlew test sonar --info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GRADLE_OPTS: '-DdbPassword=test_password -DdbUrl=jdbc:postgresql://localhost:5432/test_db'
-#          dbUrl: jdbc:postgresql://localhost:5432/test_db
-#          dbPassword: test_password
 
       - name: Build and analyze with sonarcloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          dbUrl: jdbc:postgresql://localhost:5432/test_db
-          dbPassword: test_password
-#          DB_UNM: test_user
-#          DB_DDL_AUTO: create
         run: ./gradlew build sonar --info
