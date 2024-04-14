@@ -118,6 +118,7 @@ public class TeamController {
         .collect(Collectors.toList());
   }
 
+
   @PutMapping("/teams/{teamId}/tasks/{taskId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
@@ -125,15 +126,19 @@ public class TeamController {
       @RequestBody TaskPostDTO taskPostDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token) and if the user exists
     authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
-
+  
     // convert API task to internal representation
     Task taskInput = DTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
+    
+    // set the taskId from the request path to the taskInput
     taskInput.setTaskId(taskId);
+  
+    // set the team to the taskInput
     taskInput.setTeam(teamService.getTeamByTeamId(teamId));
-
+  
     // update task
     Task updatedTask = taskService.updateTask(taskInput, teamId);
-
+  
     // convert internal representation of task back to API
     return DTOMapper.INSTANCE.convertEntityToTaskGetDTO(updatedTask);
   }
