@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -178,5 +179,87 @@ public class TaskServiceTest {
     // call the method under test and assert an exception is thrown
     assertThrows(
         ResponseStatusException.class, () -> taskService.getTasksByTeamId(testTeam.getTeamId()));
+  }
+
+  // PUT
+
+  /**
+   * Test for updating a task with valid input (happy-path)
+   */
+  @Test
+  public void updateTask_validInputs_success() {
+    // given
+    Task updatedTask = new Task();
+    updatedTask.setTaskId(testTask.getTaskId());
+    updatedTask.setTitle("Updated Task Title");
+    updatedTask.setDescription("Updated Task Description");
+    updatedTask.setStatus(TaskStatus.DONE);
+    updatedTask.setTeam(testTeam);
+
+    // when
+    Mockito.when(taskRepository.findById(testTask.getTaskId())).thenReturn(Optional.of(testTask));
+    Mockito.when(teamService.getTeamByTeamId(testTeam.getTeamId())).thenReturn(testTeam);
+
+    // then
+    Task returnedTask = taskService.updateTask(updatedTask, testTeam.getTeamId());
+
+    Mockito.verify(taskRepository, Mockito.times(1)).save(Mockito.any());
+
+    assertEquals(updatedTask.getTaskId(), returnedTask.getTaskId());
+    assertEquals(updatedTask.getTitle(), returnedTask.getTitle());
+    assertEquals(updatedTask.getDescription(), returnedTask.getDescription());
+    assertEquals(updatedTask.getStatus(), returnedTask.getStatus());
+  }
+
+  /**
+   * Test for trying to update a task that does nnot exist
+   */
+  @Test
+  public void updateTask_nonExistingTask_throwsException() {
+    // given
+    Task updatedTask = new Task();
+    updatedTask.setTaskId(2L); // non-existing task id
+    updatedTask.setTitle("Updated Task Title");
+    updatedTask.setDescription("Updated Task Description");
+    updatedTask.setStatus(TaskStatus.DONE);
+    updatedTask.setTeam(testTeam);
+
+    // when
+    Mockito.when(taskRepository.findById(updatedTask.getTaskId())).thenReturn(Optional.empty());
+    Mockito.when(teamService.getTeamByTeamId(testTeam.getTeamId())).thenReturn(testTeam);
+
+    // then
+    assertThrows(ResponseStatusException.class,
+        () -> taskService.updateTask(updatedTask, testTeam.getTeamId()));
+    Mockito.verify(taskRepository, Mockito.times(0)).save(Mockito.any());
+  }
+
+  /**
+   * Test for trying to update a task that does not belong to a team
+   */
+  @Test
+  public void updateTask_taskDoesNotBelongToTeam_throwsException() {
+    // given
+    Task updatedTask = new Task();
+    updatedTask.setTaskId(testTask.getTaskId());
+    updatedTask.setTitle("Updated Task Title");
+    updatedTask.setDescription("Updated Task Description");
+    updatedTask.setStatus(TaskStatus.DONE);
+
+    Team differentTeam = new Team();
+    differentTeam.setTeamId(2L);
+    differentTeam.setName("team2");
+    differentTeam.setDescription("This is team 2");
+
+    updatedTask.setTeam(differentTeam);
+
+    // when
+    Mockito.when(taskRepository.findById(testTask.getTaskId())).thenReturn(Optional.of(testTask));
+    Mockito.when(teamService.getTeamByTeamId(differentTeam.getTeamId())).thenReturn(differentTeam);
+
+    // then
+    assertThrows(ResponseStatusException.class,
+        () -> taskService.updateTask(updatedTask, differentTeam.getTeamId()));
+    Mockito.verify(taskRepository, Mockito.times(0)).save(Mockito.any());
   }
 }
