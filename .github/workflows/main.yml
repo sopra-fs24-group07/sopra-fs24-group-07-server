@@ -43,7 +43,7 @@ jobs:
         run: echo "dbPassword=${{ secrets.DB_PASSWORD_DEV }}" > dbpassword.properties
 
       - name: Set database URL to dev GCP
-        run: echo "dbURL=${{ secrets.DB_URL_DEV }}" > dburl.properties
+        run: echo "dbUrl=${{ secrets.DB_URL_DEV }}" > dburl.properties
 
 #      # add password from secret to app.yaml
 #      - name: Add database password to app.yaml
