@@ -62,8 +62,7 @@ public class TaskServiceTest {
   @Test
   public void createTask_validInputs_success() {
     // when -> try to find teamId in the teamService -> return dummy team
-    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
-        .thenReturn(testTeam); // changed getTeam() to getTeamByTeamId()
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
     // when -> any object is being saved in the taskRepository -> return the dummy testTask
     Task createdTask = taskService.createTask(testTask);
@@ -121,11 +120,63 @@ public class TaskServiceTest {
     taskWithNonExistingTeam.setTeam(null);
 
     // when -> try to find teamId in the teamService -> return null
-    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
-        .thenReturn(null); // changed getTeam() to getTeamByTeamId()
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(null);
 
     // when/then -> try to create task with non-existing team -> should throw an exception
     assertThrows(
         ResponseStatusException.class, () -> taskService.createTask(taskWithNonExistingTeam));
+  }
+
+  // GET
+  /**
+   * Test for getting all tasks of a team if team exists and has tasks
+   */
+  @Test
+  public void getTasksByTeamId_validInputs_success() {
+    // when -> try to find teamId in the teamService -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> try to find tasks by team in the taskRepository -> return list with dummy task
+    Mockito.when(taskRepository.findByTeam(Mockito.any())).thenReturn(tasks);
+
+    // call the method under test
+    List<Task> foundTasks = taskService.getTasksByTeamId(testTeam.getTeamId());
+
+    // assert found list with one task
+    assertEquals(1, foundTasks.size());
+    assertEquals(testTask, foundTasks.get(0));
+  }
+
+  /**
+   * Test for getting all tasks of a team if team exists but has no tasks
+   */
+  @Test
+  public void getTasksByTeamId_validInputs_noTasks() {
+    // when -> try to find teamId in the teamService -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> try to find tasks by team in the taskRepository -> return empty list
+    Mockito.when(taskRepository.findByTeam(Mockito.any())).thenReturn(new ArrayList<>());
+
+    // call the method under test
+    List<Task> foundTasks = taskService.getTasksByTeamId(testTeam.getTeamId());
+
+    // assert found empty list
+    assertEquals(0, foundTasks.size());
+  }
+
+  /**
+   * Test for getting all tasks of a team if team does not exist
+   */
+  @Test
+  public void getTasksByTeamId_invalidInputs_teamDoesNotExist_throwsException() {
+    // when -> try to find teamId in the teamService -> return null
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenThrow(new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Team not found with id " + testTeam.getTeamId()));
+
+    // call the method under test and assert an exception is thrown
+    assertThrows(
+        ResponseStatusException.class, () -> taskService.getTasksByTeamId(testTeam.getTeamId()));
   }
 }
