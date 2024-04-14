@@ -146,7 +146,7 @@ public class TeamController {
   @PutMapping("/teams/{teamId}/tasks/{taskId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public TaskGetDTO updateTask(@PathVariable Long teamId, @PathVariable Long taskId,
+  public TaskGetDTO updateTaskWithPUTDTO(@PathVariable Long teamId, @PathVariable Long taskId,
       @RequestBody TaskPutDTO taskPutDTO, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token) and if the user exists
     authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
