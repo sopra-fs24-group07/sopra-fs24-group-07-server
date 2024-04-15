@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Session Service
@@ -33,6 +34,7 @@ public class SessionService {
    * start the session. The creation date is automatically set on tuple creation.
    *
    * @param teamId the team id of the team to create the session for
+   * @throws ResponseStatusException with status 404 if the team does not exist
    * @return the created session
    */
   public Session createSession(Long teamId) {
