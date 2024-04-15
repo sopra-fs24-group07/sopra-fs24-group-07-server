@@ -101,6 +101,44 @@ timeline
 
 ## 06.04.2024 - 12.04.2024
 
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/57:
+  Team invitation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/33:
+  Fixing team creation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/80:
+  Setup DB on GCP
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/5:
+  Create Team UI form done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/26:
+  Profile View Done
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/27:
+  Profile Render Done
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/7:
+  Edit Task
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/8:
+  Display Task Details
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/32:
+  Create task/ get tasks API endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/33:
+  Create task and get tasks service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/35:
+  Create task and get tasks tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/110:
+  PUT Task API Endpoint and Services
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/111:
+  PUT Task tests and docu
+
 ## 13.04.2024 - 19.04.2024
 
 ## 20.04.2024 - 26.04.2024
