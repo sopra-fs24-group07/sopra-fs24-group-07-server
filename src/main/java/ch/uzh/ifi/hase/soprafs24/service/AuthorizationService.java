@@ -37,14 +37,13 @@ public class AuthorizationService {
    * Logs in the user with the given username and password
    * @param username the username of the user
    * @param password the password of the user
-   * @return the token of the user, null otherwise
+   * @return the user, null otherwise
    */
-  public String login(String username, String password) {
+  public User login(String username, String password) {
     log.info("Trying to log in user '{}'", username); // monitor login attempts
 
     User foundUser = userRepository.findByUsername(username);
-    return foundUser != null && foundUser.getPassword().equals(password) ? foundUser.getToken()
-                                                                         : null;
+    return foundUser != null && foundUser.getPassword().equals(password) ? foundUser : null;
   }
 
   /**

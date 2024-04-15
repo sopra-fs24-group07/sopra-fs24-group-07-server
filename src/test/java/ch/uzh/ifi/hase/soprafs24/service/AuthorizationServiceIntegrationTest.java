@@ -52,10 +52,11 @@ public class AuthorizationServiceIntegrationTest {
     User createdUser = userService.createUser(testUser);
 
     // when
-    String token = authorizationService.login(testUser.getUsername(), testUser.getPassword());
+    User user = authorizationService.login(testUser.getUsername(), testUser.getPassword());
 
     // then
-    assertEquals(token, testUser.getToken());
+    assertEquals(createdUser.getToken(), user.getToken());
+    assertEquals(createdUser.getUserId(), user.getUserId());
   }
 
   /**
@@ -67,10 +68,10 @@ public class AuthorizationServiceIntegrationTest {
     assertNull(userRepository.findByUsername("batman"));
 
     // when
-    String token = authorizationService.login("batman", "alfred123");
+    User user = authorizationService.login("batman", "alfred123");
 
     // then
-    assertNull(token);
+    assertNull(user);
   }
   // endregion
 
