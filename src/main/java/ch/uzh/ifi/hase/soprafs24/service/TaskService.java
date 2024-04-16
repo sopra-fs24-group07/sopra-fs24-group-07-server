@@ -80,10 +80,11 @@ public class TaskService {
    * @return updatedTask
    */
   public Task updateTask(Task task, Long teamId) {
-    Task existingTask = taskRepository.findById(task.getTaskId()).orElse(null);
+    // Reusing the getTask method
+    Task existingTask = getTask(task.getTaskId());
 
-    // check that task exist and belongs to the correct team
-    if (existingTask == null || !existingTask.getTeam().getTeamId().equals(teamId)) {
+    // check that task belongs to the correct team
+    if (!existingTask.getTeam().getTeamId().equals(teamId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
     }
 
@@ -103,9 +104,10 @@ public class TaskService {
    * Get a task by its Id.
    *
    * @param taskId Id of the task to be fetched
-   * @return Task if found, null otherwise
+   * @return Task if found, throws ResponseStatusException otherwise
    */
   public Task getTask(Long taskId) {
-    return taskRepository.findById(taskId).orElse(null);
+    return taskRepository.findById(taskId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found."));
   }
 }
