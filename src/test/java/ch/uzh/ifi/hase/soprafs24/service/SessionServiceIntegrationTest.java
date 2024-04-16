@@ -178,6 +178,7 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // when
@@ -186,6 +187,7 @@ public class SessionServiceIntegrationTest {
     // then
     assertNotNull(endedSession.getEndDateTime());
     assertEquals(endedSession.getSessionId(), testSession.getSessionId());
+    assertEquals(testSession.getGoalMinutes(), endedSession.getGoalMinutes());
     assertEquals(endedSession.getTeam().getTeamId(), testTeam.getTeamId());
   }
 
@@ -202,6 +204,7 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // given past session
@@ -209,6 +212,7 @@ public class SessionServiceIntegrationTest {
     testSession2.setTeam(testTeam);
     testSession2.setStartDateTime(LocalDateTime.now().minusHours(1).minusDays(1));
     testSession2.setEndDateTime(LocalDateTime.now().minusDays(1));
+    testSession2.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession2);
 
     // when
@@ -247,6 +251,7 @@ public class SessionServiceIntegrationTest {
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
     testSession.setEndDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // when
@@ -266,6 +271,8 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setSessionId(mockGoalMinutes);
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // when (have something stored, but not that team)
