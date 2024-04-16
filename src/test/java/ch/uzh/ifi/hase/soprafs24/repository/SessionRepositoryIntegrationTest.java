@@ -23,6 +23,7 @@ public class SessionRepositoryIntegrationTest {
   @Autowired private TeamRepository teamRepository;
 
   private LocalDateTime testStartDateTime;
+  private Long mockGoalMinutes;
 
   @BeforeEach
   public void setup() {
@@ -30,6 +31,7 @@ public class SessionRepositoryIntegrationTest {
     teamRepository.deleteAll();
 
     testStartDateTime = LocalDateTime.now();
+    mockGoalMinutes = 30L;
   }
 
   private Team createTeam() {
@@ -52,6 +54,8 @@ public class SessionRepositoryIntegrationTest {
     Session session = new Session();
     session.setTeam(team);
     session.setStartDateTime(testStartDateTime);
+    session.setGoalMinutes(mockGoalMinutes);
+    session.setGoalMinutes(30L);
     entityManager.persist(session);
     entityManager.flush();
 
@@ -62,6 +66,7 @@ public class SessionRepositoryIntegrationTest {
     assertTrue(found.isPresent());
     assertEquals(session, found.get());
     assertNotNull(found.get().getSessionId());
+    assertEquals(session.getGoalMinutes(), found.get().getGoalMinutes());
     assertEquals(testStartDateTime, found.get().getStartDateTime());
     assertEquals(team.getTeamId(), found.get().getTeam().getTeamId());
   }
@@ -75,6 +80,7 @@ public class SessionRepositoryIntegrationTest {
     Session session = new Session();
     session.setTeam(team);
     session.setStartDateTime(testStartDateTime);
+    session.setGoalMinutes(mockGoalMinutes);
     entityManager.persist(session);
     entityManager.flush();
 
@@ -96,6 +102,7 @@ public class SessionRepositoryIntegrationTest {
     Session session = new Session();
     session.setTeam(team);
     session.setStartDateTime(LocalDateTime.now());
+    session.setGoalMinutes(mockGoalMinutes);
     entityManager.persist(session);
     entityManager.flush();
 
@@ -103,6 +110,7 @@ public class SessionRepositoryIntegrationTest {
     Session session2 = new Session();
     session2.setTeam(team);
     session2.setStartDateTime(LocalDateTime.now().minusHours(1));
+    session2.setGoalMinutes(mockGoalMinutes);
     entityManager.persist(session2);
     entityManager.flush();
 
@@ -124,6 +132,7 @@ public class SessionRepositoryIntegrationTest {
     Session session = new Session();
     session.setTeam(team);
     session.setStartDateTime(LocalDateTime.now());
+    session.setGoalMinutes(mockGoalMinutes);
     entityManager.persist(session);
     entityManager.flush();
 
@@ -131,6 +140,7 @@ public class SessionRepositoryIntegrationTest {
     Session session2 = new Session();
     session2.setTeam(team);
     session2.setStartDateTime(LocalDateTime.now().minusHours(1));
+    session2.setGoalMinutes(mockGoalMinutes);
     entityManager.persist(session2);
     entityManager.flush();
 
