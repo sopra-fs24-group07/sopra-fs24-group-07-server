@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.SessionRepository;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,25 @@ public class SessionService {
 
     log.debug("Created session: {} at {}", createdSession, createdSession.getStartDateTime());
     return createdSession;
+  }
+
+  /**
+   * Get all sessions that a team has participated in and might still be participating in.
+   *
+   * @param teamId the team id of the team to get the sessions for
+   * @throws ResponseStatusException with status 404 if the team does not exist
+   * @return the list sessions of the team
+   */
+  public List<Session> getSessionsByTeamId(Long teamId) {
+    log.debug("Get all sessions for team with teamId '{}'", teamId);
+
+    // get team (404 if not found)
+    Team team = teamService.getTeamByTeamId(teamId);
+
+    // get all sessions for the team
+    List<Session> sessions = sessionRepository.findByTeam(team);
+
+    log.debug("Found {} sessions: {}", sessions.size(), sessions);
+    return sessions;
   }
 }

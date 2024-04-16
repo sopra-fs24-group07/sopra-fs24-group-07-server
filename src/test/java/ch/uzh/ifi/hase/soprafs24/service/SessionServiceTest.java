@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.SessionRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -72,6 +73,53 @@ public class SessionServiceTest {
     // then -> an exception is thrown
     assertThrows(
         ResponseStatusException.class, () -> sessionService.createSession(99L)); // team not found
+  }
+  // endregion
+
+  // region getSessionsByTeamId tests
+
+  @Test
+  public void getSessionsByTeamId_validInputs_success() {
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> call sessionRepository to get all sessions for the team -> return the dummy
+    // testSession
+    Mockito.when(sessionRepository.findByTeam(Mockito.any()))
+        .thenReturn(java.util.List.of(testSession));
+
+    // then -> the session is saved successfully
+    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
+
+    // check if the session is returned
+    assertEquals(1, sessions.size());
+    assertEquals(testSession, sessions.get(0));
+  }
+
+  @Test
+  public void getSessionsByTeamId_noSessions_success() {
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> call sessionRepository to get all sessions for the team -> return an empty list
+    Mockito.when(sessionRepository.findByTeam(Mockito.any())).thenReturn(java.util.List.of());
+
+    // then -> the session is saved successfully
+    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
+
+    // check if the session is returned
+    assertEquals(0, sessions.size());
+  }
+
+  @Test
+  public void getSessionsByTeamId_invalidTeam_throwsException() {
+    // when -> call task service to get the team -> return 404 because team not found
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.getSessionsByTeamId(99L)); // team not found
   }
   // endregion
 }
