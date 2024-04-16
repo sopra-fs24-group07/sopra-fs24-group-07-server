@@ -130,4 +130,73 @@ public class SessionServiceTest {
         () -> sessionService.getSessionsByTeamId(99L)); // team not found
   }
   // endregion
+
+  // region endSession tests
+  @Test
+  public void endSession_validInputs_success() {
+    // given test session with no end date
+    testSession.setEndDateTime(null);
+
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> call sessionRepository to get all sessions for the team -> return the dummy
+    // testSession
+    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
+        .thenReturn(java.util.List.of(testSession));
+
+    // then -> the session is saved successfully
+    Session endedSession = sessionService.endSession(testTeam.getTeamId());
+
+    // check if the session is returned
+    assertEquals(testSession, endedSession);
+    assertNotNull(endedSession.getEndDateTime());
+  }
+
+  /* test if no active session, only ended sessions */
+  @Test
+  public void endSession_noActiveSession_throwsException() {
+    // given test session with end date
+    testSession.setEndDateTime(testStartDateTime.plusHours(1));
+
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> call sessionRepository to get all sessions for the team -> return list with ended
+    // session
+    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
+        .thenReturn(java.util.List.of(testSession));
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.endSession(testTeam.getTeamId())); // no active session
+  }
+
+  /* test if no sessions for team */
+  @Test
+  public void endSession_noSession_throwsException() {
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> call sessionRepository to get all sessions for the team -> return an empty list
+    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
+        .thenReturn(java.util.List.of());
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.endSession(testTeam.getTeamId())); // no active session
+  }
+
+  /* test if no sessions for team */
+  @Test
+  public void endSession_invalidTeam_throwsException() {
+    // when -> call task service to get the team -> return 404 because team not found
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.endSession(99L)); // team not found
+  }
+  // endregion
 }

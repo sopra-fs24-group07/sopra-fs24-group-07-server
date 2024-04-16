@@ -153,4 +153,113 @@ public class SessionServiceIntegrationTest {
     assertEquals(testSession2.getSessionId(), found.get(1).getSessionId());
   }
   // endregion
+
+  // region endSession tests
+  @Test
+  public void endSession_validInputs_success() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given active session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    Session endedSession = sessionService.endSession(testTeam.getTeamId());
+
+    // then
+    assertNotNull(endedSession.getEndDateTime());
+    assertEquals(endedSession.getSessionId(), testSession.getSessionId());
+    assertEquals(endedSession.getTeam().getTeamId(), testTeam.getTeamId());
+  }
+
+  @Test
+  public void endSession_validInputs_multipleSessions_success() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given active session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    sessionRepository.saveAndFlush(testSession);
+
+    // given past session
+    Session testSession2 = new Session();
+    testSession2.setTeam(testTeam);
+    testSession2.setStartDateTime(LocalDateTime.now().minusHours(1).minusDays(1));
+    testSession2.setEndDateTime(LocalDateTime.now().minusDays(1));
+    sessionRepository.saveAndFlush(testSession2);
+
+    // when
+    Session endedSession = sessionService.endSession(testTeam.getTeamId());
+
+    // then
+    assertNotNull(endedSession.getEndDateTime());
+    assertEquals(testSession.getSessionId(), endedSession.getSessionId());
+    assertEquals(testSession.getTeam().getTeamId(), endedSession.getTeam().getTeamId());
+  }
+
+  @Test
+  public void endSession_noSessionsForTeam() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // when
+    assertThrows(
+        ResponseStatusException.class, () -> sessionService.endSession(testTeam.getTeamId()));
+  }
+
+  @Test
+  public void endSession_noActiveSessionsForTeam() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setEndDateTime(LocalDateTime.now());
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    assertThrows(
+        ResponseStatusException.class, () -> sessionService.endSession(testTeam.getTeamId()));
+  }
+
+  @Test
+  public void endSession_noExistingTeam() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    sessionRepository.saveAndFlush(testSession);
+
+    // when (have something stored, but not that team)
+    assertThrows(ResponseStatusException.class, () -> sessionService.endSession(99L));
+  }
+  // endregion
 }
