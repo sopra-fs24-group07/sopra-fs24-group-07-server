@@ -140,13 +140,14 @@ public class SessionServiceTest {
     // when -> call task service to get the team -> return the dummy testTeam
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
-    // when -> call sessionRepository to get all sessions for the team -> return the dummy
-    // testSession
-    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
-        .thenReturn(java.util.List.of(testSession));
+    // when call to getSessionsByTeamId -> mock return dummy session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
 
     // then -> the session is saved successfully
-    Session endedSession = sessionService.endSession(testTeam.getTeamId());
+    Session endedSession = spySessionService.endSession(testTeam.getTeamId());
 
     // check if the session is returned
     assertEquals(testSession, endedSession);
@@ -162,14 +163,15 @@ public class SessionServiceTest {
     // when -> call task service to get the team -> return the dummy testTeam
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
-    // when -> call sessionRepository to get all sessions for the team -> return list with ended
-    // session
-    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
-        .thenReturn(java.util.List.of(testSession));
+    // when call to getSessionsByTeamId -> mock return ended session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
 
     // then -> an exception is thrown
     assertThrows(ResponseStatusException.class,
-        () -> sessionService.endSession(testTeam.getTeamId())); // no active session
+        () -> spySessionService.endSession(testTeam.getTeamId())); // no active session
   }
 
   /* test if no sessions for team */
@@ -178,13 +180,15 @@ public class SessionServiceTest {
     // when -> call task service to get the team -> return the dummy testTeam
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
-    // when -> call sessionRepository to get all sessions for the team -> return an empty list
-    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
-        .thenReturn(java.util.List.of());
+    // when call to getSessionsByTeamId -> mock return empty list
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of())
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
 
     // then -> an exception is thrown
     assertThrows(ResponseStatusException.class,
-        () -> sessionService.endSession(testTeam.getTeamId())); // no active session
+        () -> spySessionService.endSession(testTeam.getTeamId())); // no active session
   }
 
   /* test if no sessions for team */

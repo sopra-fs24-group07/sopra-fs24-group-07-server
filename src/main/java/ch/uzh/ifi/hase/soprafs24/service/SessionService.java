@@ -91,11 +91,8 @@ public class SessionService {
   public Session endSession(Long teamId) {
     log.debug("Ending session for team with teamId '{}'", teamId);
 
-    // get team (404 if not found)
-    Team team = teamService.getTeamByTeamId(teamId);
-
     // get all sessions for the team (more recent first)
-    List<Session> sessions = sessionRepository.findByTeamOrderByStartDateTimeDesc(team);
+    List<Session> sessions = getSessionsByTeamId(teamId);
 
     // check if the team has an active session
     if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null) {
