@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.SessionRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class SessionService {
     // create session
     Session newSession = new Session();
     newSession.setTeam(team);
+    newSession.setStartDateTime(LocalDateTime.now());
 
     // save session in the database
     Session createdSession = sessionRepository.save(newSession);

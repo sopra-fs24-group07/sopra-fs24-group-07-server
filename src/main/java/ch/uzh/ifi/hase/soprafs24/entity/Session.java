@@ -20,7 +20,7 @@ public class Session implements Serializable {
   // foreign key to team
   @ManyToOne @JoinColumn(name = "teamId", nullable = false) private Team team;
 
-  @CreationTimestamp private LocalDateTime startDateTime;
+  @Column(nullable = false) private LocalDateTime startDateTime;
 
   @Column(nullable = true) private LocalDateTime endDateTime;
 

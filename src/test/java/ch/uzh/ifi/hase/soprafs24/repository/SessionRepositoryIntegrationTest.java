@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,6 +21,16 @@ public class SessionRepositoryIntegrationTest {
 
   @Autowired private SessionRepository sessionRepository;
   @Autowired private TeamRepository teamRepository;
+
+  private LocalDateTime testStartDateTime;
+
+  @BeforeEach
+  public void setup() {
+    sessionRepository.deleteAll();
+    teamRepository.deleteAll();
+
+    testStartDateTime = LocalDateTime.now();
+  }
 
   private Team createTeam() {
     Team team = new Team();
@@ -39,6 +51,7 @@ public class SessionRepositoryIntegrationTest {
     // given session
     Session session = new Session();
     session.setTeam(team);
+    session.setStartDateTime(testStartDateTime);
     entityManager.persist(session);
     entityManager.flush();
 
@@ -48,6 +61,8 @@ public class SessionRepositoryIntegrationTest {
     // then
     assertTrue(found.isPresent());
     assertEquals(session, found.get());
+    assertNotNull(found.get().getSessionId());
+    assertEquals(testStartDateTime, found.get().getStartDateTime());
     assertEquals(team.getTeamId(), found.get().getTeam().getTeamId());
   }
 
@@ -59,6 +74,7 @@ public class SessionRepositoryIntegrationTest {
     // given session
     Session session = new Session();
     session.setTeam(team);
+    session.setStartDateTime(testStartDateTime);
     entityManager.persist(session);
     entityManager.flush();
 

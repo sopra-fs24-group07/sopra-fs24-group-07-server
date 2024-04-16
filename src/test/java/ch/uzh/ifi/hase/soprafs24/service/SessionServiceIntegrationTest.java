@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.SessionRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -71,6 +72,7 @@ public class SessionServiceIntegrationTest {
 
     Session testSession = new Session();
     testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
     sessionRepository.saveAndFlush(testSession);
 
     // when
@@ -113,6 +115,7 @@ public class SessionServiceIntegrationTest {
 
     Session testSession = new Session();
     testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
     sessionRepository.saveAndFlush(testSession);
 
     // when (have something stored, but not that team)

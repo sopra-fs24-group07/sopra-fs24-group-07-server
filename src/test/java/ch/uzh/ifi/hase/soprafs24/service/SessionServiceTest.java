@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.SessionRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,14 @@ public class SessionServiceTest {
 
   private Session testSession;
   private Team testTeam;
+  private LocalDateTime testStartDateTime;
 
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
+
+    // time
+    testStartDateTime = LocalDateTime.now();
 
     // given team
     testTeam = new Team();
@@ -39,6 +44,7 @@ public class SessionServiceTest {
     testSession = new Session();
     testSession.setSessionId(1L);
     testSession.setTeam(testTeam);
+    testSession.setStartDateTime(testStartDateTime);
 
     // when -> any object is being saved in the sessionRepository -> return the dummy testSession
     Mockito.when(sessionRepository.save(Mockito.any())).thenReturn(testSession);
@@ -57,6 +63,7 @@ public class SessionServiceTest {
     Session createdSession = sessionService.createSession(testTeam.getTeamId());
     assertEquals(testSession.getSessionId(), createdSession.getSessionId());
     assertEquals(testSession.getTeam(), createdSession.getTeam());
+    assertEquals(testStartDateTime, createdSession.getStartDateTime());
   }
 
   @Test
