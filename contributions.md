@@ -134,10 +134,6 @@ timeline
   Create task and get tasks service
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/35:
   Create task and get tasks tests and docu
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/110:
-  PUT Task API Endpoint and Services
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/111:
-  PUT Task tests and docu
 
 ## 13.04.2024 - 19.04.2024
 
