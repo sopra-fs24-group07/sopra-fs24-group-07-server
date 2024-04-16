@@ -92,7 +92,7 @@ public class SessionServiceTest {
 
     // when -> call sessionRepository to get all sessions for the team -> return the dummy
     // testSession
-    Mockito.when(sessionRepository.findByTeam(Mockito.any()))
+    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
         .thenReturn(java.util.List.of(testSession));
 
     // then -> the session is saved successfully
@@ -109,7 +109,8 @@ public class SessionServiceTest {
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
     // when -> call sessionRepository to get all sessions for the team -> return an empty list
-    Mockito.when(sessionRepository.findByTeam(Mockito.any())).thenReturn(java.util.List.of());
+    Mockito.when(sessionRepository.findByTeamOrderByStartDateTimeDesc(Mockito.any()))
+        .thenReturn(java.util.List.of());
 
     // then -> the session is saved successfully
     List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());

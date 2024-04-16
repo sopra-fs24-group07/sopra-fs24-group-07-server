@@ -71,8 +71,8 @@ public class SessionService {
     // get team (404 if not found)
     Team team = teamService.getTeamByTeamId(teamId);
 
-    // get all sessions for the team
-    List<Session> sessions = sessionRepository.findByTeam(team);
+    // get all sessions for the team (more recent first)
+    List<Session> sessions = sessionRepository.findByTeamOrderByStartDateTimeDesc(team);
 
     log.debug("Found {} sessions: {}", sessions.size(), sessions);
     return sessions;

@@ -122,5 +122,35 @@ public class SessionServiceIntegrationTest {
     assertThrows(ResponseStatusException.class, () -> sessionService.getSessionsByTeamId(99L));
   }
 
+  /* Test if the descending order works */
+  @Test
+  public void getSessionsByTeamId_desc_success() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given session more recent (at pos 0)
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    sessionRepository.saveAndFlush(testSession);
+
+    // given session less recent (at pos 1)
+    Session testSession2 = new Session();
+    testSession2.setTeam(testTeam);
+    testSession2.setStartDateTime(LocalDateTime.now().minusHours(1));
+    sessionRepository.saveAndFlush(testSession2);
+
+    // when
+    List<Session> found = sessionService.getSessionsByTeamId(testTeam.getTeamId());
+
+    // then (only test ordering, other characteristics are tested in other tests)
+    assertEquals(2, found.size());
+    assertEquals(testSession.getSessionId(), found.get(0).getSessionId());
+    assertEquals(testSession2.getSessionId(), found.get(1).getSessionId());
+  }
   // endregion
 }

@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository("sessionRepository")
 public interface SessionRepository extends JpaRepository<Session, Long> {
-  List<Session> findByTeam(Team team);
+  List<Session> findByTeamOrderByStartDateTimeDesc(Team team);
+
+  /* just for verifying ascending order in tests */
+  List<Session> findByTeamOrderByStartDateTimeAsc(Team team);
 }
