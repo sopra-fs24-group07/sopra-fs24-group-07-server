@@ -27,10 +27,13 @@ public class SessionServiceIntegrationTest {
   @Autowired private SessionService sessionService;
   @Autowired private TeamService teamService;
 
+  private Long mockGoalMinutes;
+
   @BeforeEach
   public void setup() {
     sessionRepository.deleteAll();
     teamRepository.deleteAll();
+    mockGoalMinutes = 30L;
   }
 
   @AfterEach
@@ -50,12 +53,14 @@ public class SessionServiceIntegrationTest {
     teamRepository.saveAndFlush(testTeam);
 
     // when
-    Session createdSession = sessionService.createSession(testTeam.getTeamId());
+    Session createdSession = sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes);
 
     // then
     assertNotNull(createdSession.getSessionId());
     assertNotNull(createdSession.getStartDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
     assertNull(createdSession.getEndDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
     assertEquals(createdSession.getTeam().getTeamId(), testTeam.getTeamId());
   }
   // endregion
@@ -73,6 +78,7 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // when
@@ -86,6 +92,7 @@ public class SessionServiceIntegrationTest {
         testSession.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         createdSession.get(0).getStartDateTime().format(
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    assertEquals(mockGoalMinutes, createdSession.get(0).getGoalMinutes());
     assertNull(createdSession.get(0).getEndDateTime());
   }
   @Test
@@ -116,6 +123,7 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // when (have something stored, but not that team)
@@ -136,12 +144,14 @@ public class SessionServiceIntegrationTest {
     Session testSession = new Session();
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
     // given session less recent (at pos 1)
     Session testSession2 = new Session();
     testSession2.setTeam(testTeam);
     testSession2.setStartDateTime(LocalDateTime.now().minusHours(1));
+    testSession2.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession2);
 
     // when

@@ -36,10 +36,11 @@ public class SessionService {
    * start the session. The creation date is automatically set on tuple creation.
    *
    * @param teamId the team id of the team to create the session for
+   * @param goalMinutes the goal in minutes for the session
    * @throws ResponseStatusException with status 404 if the team does not exist
    * @return the created session
    */
-  public Session createSession(Long teamId) {
+  public Session createSession(Long teamId, Long goalMinutes) {
     log.debug("Creating session for team with teamId '{}'", teamId);
 
     // get team (404 if not found)
@@ -49,6 +50,7 @@ public class SessionService {
     Session newSession = new Session();
     newSession.setTeam(team);
     newSession.setStartDateTime(LocalDateTime.now());
+    newSession.setGoalMinutes(goalMinutes);
 
     // save session in the database
     Session createdSession = sessionRepository.save(newSession);

@@ -24,6 +24,9 @@ public class Session implements Serializable {
 
   @Column(nullable = true) private LocalDateTime endDateTime;
 
+  /** The goal set for the session in minutes. */
+  @Column(nullable = false) private Long goalMinutes;
+
   public Long getSessionId() {
     return sessionId;
   }
@@ -54,5 +57,13 @@ public class Session implements Serializable {
 
   public void setEndDateTime(LocalDateTime endDateTime) {
     this.endDateTime = endDateTime;
+  }
+
+  public Long getGoalMinutes() {
+    return goalMinutes;
+  }
+
+  public void setGoalMinutes(Long goalMinutes) {
+    this.goalMinutes = goalMinutes;
   }
 }

@@ -24,6 +24,7 @@ public class SessionServiceTest {
   @InjectMocks private SessionService sessionService;
 
   private Session testSession;
+  private Long mockGoalMinutes;
   private Team testTeam;
   private LocalDateTime testStartDateTime;
 
@@ -33,6 +34,7 @@ public class SessionServiceTest {
 
     // time
     testStartDateTime = LocalDateTime.now();
+    mockGoalMinutes = 30L;
 
     // given team
     testTeam = new Team();
@@ -45,6 +47,7 @@ public class SessionServiceTest {
     testSession.setSessionId(1L);
     testSession.setTeam(testTeam);
     testSession.setStartDateTime(testStartDateTime);
+    testSession.setGoalMinutes(mockGoalMinutes);
 
     // when -> any object is being saved in the sessionRepository -> return the dummy testSession
     Mockito.when(sessionRepository.save(Mockito.any())).thenReturn(testSession);
@@ -60,10 +63,11 @@ public class SessionServiceTest {
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
     // then -> the session is saved successfully
-    Session createdSession = sessionService.createSession(testTeam.getTeamId());
+    Session createdSession = sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes);
     assertEquals(testSession.getSessionId(), createdSession.getSessionId());
     assertEquals(testSession.getTeam(), createdSession.getTeam());
     assertEquals(testStartDateTime, createdSession.getStartDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
   }
 
   @Test
@@ -78,8 +82,8 @@ public class SessionServiceTest {
         .thenThrow(DataIntegrityViolationException.class);
 
     // then -> an exception is thrown
-    assertThrows(
-        ResponseStatusException.class, () -> sessionService.createSession(99L)); // team not found
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.createSession(99L, mockGoalMinutes)); // team not found
   }
   // endregion
 
