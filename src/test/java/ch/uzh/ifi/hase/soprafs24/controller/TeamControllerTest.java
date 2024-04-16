@@ -262,7 +262,7 @@ public class TeamControllerTest {
 
   // endregion
 
-  // region TaskControllerTest
+  // region TaskControllerTest for POST
 
   // POST
 
@@ -378,6 +378,10 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  // endregion
+
+  // region TaskControllerTest for GET
+
   // GET
 
   /**
@@ -457,6 +461,10 @@ public class TeamControllerTest {
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
+
+  // endregion
+
+  // region TaskControllerTest for PUT
 
   // PUT
 
