@@ -21,7 +21,7 @@ public class CommentService {
 
   public Comment createComment(Comment newComment) {
     ServiceHelpers.checkValidString(newComment.getText(), "text");
-    if(newComment.getTask() == null || newComment.getUser() == null) {
+    if (newComment.getTask() == null || newComment.getUser() == null) {
       throw new IllegalArgumentException("Task and User must be set");
     }
 
