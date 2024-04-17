@@ -173,4 +173,18 @@ public class TeamUserRepositoryIntegrationTest {
     assertEquals(found.get(0).getUser(), user);
   }
   // endregion
+
+  // region findByTeamAndUser tests
+  @Test
+  public void whenFindByTeamAndUser_thenReturnTeamUser() {
+    // when
+    TeamUser found = teamUserRepository.findByTeamAndUser(team, user);
+
+    // then
+    assertNotNull(found.getTeamUserId());
+    assertNotNull(found.getJoinTimestamp());
+    assertEquals(user.getUserId(), found.getUser().getUserId());
+    assertEquals(team.getTeamId(), found.getTeam().getTeamId());
+  }
+  // endregion
 }

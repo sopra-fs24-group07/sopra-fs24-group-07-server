@@ -38,4 +38,9 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, TeamUserId> 
    *     .collect(Collectors.toList());
    */
   List<TeamUser> findByUser(User user);
+
+  /**
+   * Get by team and user
+   */
+  TeamUser findByTeamAndUser(Team team, User user);
 }
