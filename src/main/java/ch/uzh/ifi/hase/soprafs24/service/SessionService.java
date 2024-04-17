@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,6 +46,13 @@ public class SessionService {
 
     // get team (404 if not found)
     Team team = teamService.getTeamByTeamId(teamId);
+
+    // check that no current session is active
+    List<Session> existingSessions = getSessionsByTeamId(teamId);
+    if (!existingSessions.isEmpty() && existingSessions.get(0).getEndDateTime() == null) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "There is already an active session for this team.");
+    }
 
     // create session
     Session newSession = new Session();

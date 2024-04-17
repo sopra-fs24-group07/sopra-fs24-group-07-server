@@ -63,6 +63,28 @@ public class SessionServiceIntegrationTest {
     assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
     assertEquals(createdSession.getTeam().getTeamId(), testTeam.getTeamId());
   }
+
+  @Test
+  public void createSession_validInputs_existingActiveSession_expectsError() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given active session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now());
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes));
+  }
+
   // endregion
 
   // region getSessionsByTeam tests
