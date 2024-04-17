@@ -72,4 +72,42 @@ public class TaskService {
     List<Task> tasks = taskRepository.findByTeam(team);
     return tasks; // just return the list as it is, whether it's empty or not
   }
+
+  /**
+   * Update task method.
+   *
+   * @param task to be updated
+   * @return updatedTask
+   */
+  public Task updateTask(Task task, Long teamId) {
+    // Reusing the getTask method
+    Task existingTask = getTask(task.getTaskId());
+
+    // check that task belongs to the correct team
+    if (!existingTask.getTeam().getTeamId().equals(teamId)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
+    }
+
+    // update allowed fields
+    existingTask.setTitle(task.getTitle());
+    existingTask.setDescription(task.getDescription());
+    existingTask.setStatus(task.getStatus());
+
+    Task updatedTask = taskRepository.save(existingTask);
+    taskRepository.flush();
+
+    log.debug("Updated Information for Task: {}", updatedTask);
+    return updatedTask;
+  }
+
+  /**
+   * Get a task by its Id.
+   *
+   * @param taskId Id of the task to be fetched
+   * @return Task if found, throws ResponseStatusException otherwise
+   */
+  public Task getTask(Long taskId) {
+    return taskRepository.findById(taskId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found."));
+  }
 }
