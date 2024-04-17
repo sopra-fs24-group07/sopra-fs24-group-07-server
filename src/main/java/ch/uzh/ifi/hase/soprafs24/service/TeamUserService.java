@@ -128,4 +128,33 @@ public class TeamUserService {
 
     return users;
   }
+
+  /**
+   * Delete a user from a team. Auth and belonging check needs to be done in controller.
+   * @param teamId team where the user is deleted from
+   * @param userId user that is deleted
+   * @return the deleted user (for testing)
+   */
+  public TeamUser deleteUserOfTeam(Long teamId, Long userId) {
+    // check that the team exists
+    Team team = teamService.getTeamByTeamId(teamId);
+
+    // check that the user exists
+    // check that the user and team exist
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // get the appropriate team user link to delete
+    TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, user);
+    if (teamUser == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not in team");
+    }
+
+    // delete selected team user
+    teamUserRepository.deleteById(teamUser.getTeamUserId());
+
+    log.debug("Deleted teamUser {}: user '{}' from team '{}'", teamUser, user.getUsername(),
+        team.getName()); // monitoring
+    return teamUser;
+  }
 }
