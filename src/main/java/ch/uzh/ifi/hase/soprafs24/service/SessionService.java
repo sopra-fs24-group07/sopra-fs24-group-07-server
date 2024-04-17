@@ -38,7 +38,8 @@ public class SessionService {
    *
    * @param teamId the team id of the team to create the session for
    * @param goalMinutes the goal in minutes for the session
-   * @throws ResponseStatusException with status 404 if the team does not exist
+   * @throws ResponseStatusException with status 404 if the team does not exist; 409 if already
+   *     active session
    * @return the created session
    */
   public Session createSession(Long teamId, Long goalMinutes) {
