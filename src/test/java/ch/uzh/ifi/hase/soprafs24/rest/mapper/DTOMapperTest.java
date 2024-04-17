@@ -140,5 +140,24 @@ public class DTOMapperTest {
     assertEquals(task.getStatus(), taskGetDTO.getStatus()); // compare enums directly
   }
 
+  @Test
+  public void testUpdateTask_fromTaskPutDTO_toTask_success() {
+    // create TaskPutDTO
+    TaskPutDTO taskPutDTO = new TaskPutDTO();
+    taskPutDTO.setTaskId(1L);
+    taskPutDTO.setTitle("new title");
+    taskPutDTO.setDescription("new description");
+    taskPutDTO.setStatus(TaskStatus.IN_SESSION);
+
+    // MAP -> Create Task
+    Task task = DTOMapper.INSTANCE.convertTaskPutDTOtoEntity(taskPutDTO);
+
+    // check content
+    assertEquals(taskPutDTO.getTaskId(), task.getTaskId());
+    assertEquals(taskPutDTO.getTitle(), task.getTitle());
+    assertEquals(taskPutDTO.getDescription(), task.getDescription());
+    assertEquals(taskPutDTO.getStatus(), task.getStatus());
+  }
+
   // endregion
 }
