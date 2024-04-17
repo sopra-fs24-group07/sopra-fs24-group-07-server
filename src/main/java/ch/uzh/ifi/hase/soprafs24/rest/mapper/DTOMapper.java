@@ -75,6 +75,8 @@ public interface DTOMapper {
   convertEntityToSessionGetDTO(Session session);
 
   default String formatLocalDateTime(LocalDateTime localDateTime) {
-    return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    return localDateTime == null
+        ? null
+        : localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
   }
 }
