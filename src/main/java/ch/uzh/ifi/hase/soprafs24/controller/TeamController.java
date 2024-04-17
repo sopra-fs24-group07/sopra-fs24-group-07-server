@@ -83,6 +83,17 @@ public class TeamController {
     return userGetDTOs;
   }
 
+  @DeleteMapping("/teams/{teamId}/users/{userId}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteUserFromTeam(@PathVariable Long teamId, @PathVariable Long userId,
+      @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token) also throws 404 if teamId not found
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, userId, teamId);
+
+    // delete user from team
+    teamUserService.deleteUserOfTeam(teamId, userId);
+  }
+
   @PostMapping("/teams/{ID}/tasks")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody

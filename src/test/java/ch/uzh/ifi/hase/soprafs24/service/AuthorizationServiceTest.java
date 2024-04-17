@@ -277,6 +277,41 @@ public class AuthorizationServiceTest {
   }
   // endregion
 
+  // region isAuthorizedAndBelongsToTeam with userId
+  // because we verify (with a spy mock) that the other methods were called, we do not need to test
+  // the other methods, because they are already tested
+  @Test
+  public void isAuthorizedAndBelongsToTeam_validToken_doesBelong_success_withUserId() {
+    // given
+    User testUser = new User();
+    testUser.setUserId(1L);
+    testUser.setToken("batman's token");
+
+    // when -> call to isExistingAndAuthorized -> mock return
+    AuthorizationService tempAuthService = Mockito.spy(authorizationService);
+    Mockito.doReturn(testUser)
+        .when(tempAuthService)
+        .isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong());
+
+    // when -> call to isAuthorizedAndBelongsToTeam -> user found
+    Mockito.doReturn(testUser)
+        .when(tempAuthService)
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    // then (does not throw exception)
+    User authUser = tempAuthService.isAuthorizedAndBelongsToTeam("batman's token", 1L, 1L);
+
+    // verify the other methods were called
+    Mockito.verify(tempAuthService, Mockito.times(1))
+        .isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong());
+    Mockito.verify(tempAuthService, Mockito.times(1))
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    assertEquals(authUser.getUserId(), testUser.getUserId());
+  }
+
+  // endregion
+
   // region deprecated
   // /**
   //  * test that if token and userId correspond, true is returned

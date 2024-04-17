@@ -11,10 +11,13 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Test class for using the TeamUserResource REST resource.
@@ -217,6 +220,82 @@ public class TeamUserServiceIntegrationTest {
     assertEquals(testUser.getUserId(), users.get(0).getUserId());
     assertEquals(testUser.getUsername(), users.get(0).getUsername());
     assertEquals(testUser.getName(), users.get(0).getName());
+  }
+
+  // endregion
+
+  // region delete user from team tests
+  @Test
+  public void deleteUserFromTeam_validInputs_success() {
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("Justice League");
+    testTeam.setDescription("We are the Justice League!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given teamUser link
+    TeamUser testTeamUser = new TeamUser(testTeam, testUser);
+    teamUserRepository.saveAndFlush(testTeamUser);
+
+    // when
+    assertNotNull(teamUserRepository.findByTeamAndUser(testTeam, testUser));
+    teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId());
+
+    // then
+    assertTrue(teamUserRepository.findByTeam(testTeam).isEmpty());
+    assertNull(teamUserRepository.findByTeamAndUser(testTeam, testUser));
+  }
+
+  /* delete unsuccessful: team user does not exist (should be caught from controller) */
+  @Test
+  public void deleteUserFromTeam_teamUserDoesNotExist_throwsException() {
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("Justice League");
+    testTeam.setDescription("We are the Justice League!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // no team user link
+
+    // when -> then
+    assertThrows(ResponseStatusException.class,
+        () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
+  }
+
+  /* delete unsuccessful: team does not exist */
+  @Test
+  public void deleteUserFromTeam_teamDoesNotExist_throwsException() {
+    // given no team
+
+    // given user
+    User testUser = new User();
+    testUser.setUsername("batman");
+    testUser.setName("Bruce Wayne");
+    testUser.setPassword("alfred123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // thus also no team user link
+
+    // when -> then
+    assertThrows(ResponseStatusException.class,
+        () -> teamUserService.deleteUserOfTeam(99L, testUser.getUserId()));
   }
 
   // endregion

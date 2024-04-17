@@ -310,4 +310,86 @@ public class TeamUserServiceTest {
   }
 
   // endregion
+
+  // region delete teamUser
+  /* delete successful */
+  @Test
+  public void deleteUserOfTeam_validInput_successful() {
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(testTeam);
+    // when -> try to find userId in the repository -> return dummy user
+    Mockito.when(userRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testUser));
+    // when -> try to find the teamUser link -> return dummy team user
+    Mockito.when(teamUserRepository.findByTeamAndUser(Mockito.any(), Mockito.any()))
+        .thenReturn(testTeamUser);
+
+    // when -> delete user from team -> return dummy teamUser
+    TeamUser deletedTeamUser =
+        teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId());
+
+    // then -> ok
+    assertEquals(testTeamUser.getTeamUserId(), deletedTeamUser.getTeamUserId());
+    assertEquals(testTeamUser.getUser().getUserId(), deletedTeamUser.getUser().getUserId());
+    assertEquals(testTeamUser.getTeam().getTeamId(), deletedTeamUser.getTeam().getTeamId());
+    // then -> verify delete not called
+    Mockito.verify(teamUserRepository, Mockito.times(1)).deleteById(Mockito.any());
+  }
+
+  /* delete unsuccessful: team user does not exist (should be caught from controller) */
+  @Test
+  public void deleteUserOfTeam_invalidInput_teamUserDoesNotExist_throwsException() {
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(testTeam);
+    // when -> try to find userId in the repository -> return dummy user
+    Mockito.when(userRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testUser));
+    // when -> try to find the teamUser link -> return null
+    Mockito.when(teamUserRepository.findByTeamAndUser(Mockito.any(), Mockito.any()))
+        .thenReturn(null);
+
+    // then -> expect exception
+    assertThrows(ResponseStatusException.class,
+        () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
+    // then -> verify delete not called
+    Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+  }
+
+  /* delete unsuccessful: team does not exist */
+  @Test
+  public void deleteUserOfTeam_invalidInput_teamDoesNotExist_throwsException() {
+    // when -> try to find teamId in the repository -> return null
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(null);
+    // when -> try to find userId in the repository -> return dummy user
+    Mockito.when(userRepository.findById(Mockito.any()))
+        .thenReturn(java.util.Optional.of(testUser));
+    // when -> try to find the teamUser link -> return null
+    // Mockito.when(teamUserRepository.findByTeamAndUser(Mockito.any(),
+    // Mockito.any())).thenReturn(null);
+
+    // then -> expect exception
+    assertThrows(ResponseStatusException.class,
+        () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
+    // then -> verify delete not called
+    Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+  }
+
+  /* delete unsuccessful: user does not exist */
+  @Test
+  public void deleteUserOfTeam_invalidInput_userDoesNotExist_throwsException() {
+    // when -> try to find teamId in the repository -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.anyLong())).thenReturn(testTeam);
+    // when -> try to find userId in the repository -> return null
+    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(java.util.Optional.empty());
+    // when -> try to find the teamUser link -> return null
+    // Mockito.when(teamUserRepository.findByTeamAndUser(Mockito.any(),
+    // Mockito.any())).thenReturn(null);
+
+    // then -> expect exception
+    assertThrows(ResponseStatusException.class,
+        () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
+    // then -> verify delete not called
+    Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+  }
+  // endregion
 }
