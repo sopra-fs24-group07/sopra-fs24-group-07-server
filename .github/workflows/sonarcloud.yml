@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze on Sonarcloud
     runs-on: ubuntu-latest
 
     services:
@@ -14,7 +14,7 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: test_password
         ports:
           - 5432:5432
@@ -45,12 +45,26 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build and analyze
+      - name: Add database variables to application properties
+        run: |
+          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/test_db" >> src/main/resources/application.properties
+          echo "spring.datasource.password=test_password" >> src/main/resources/application.properties
+          cat src/main/resources/application.properties
+
+      - name: Test and analyze with sonarcloud
+        run: ./gradlew test sonar --info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test report and analyze with sonarcloud
+        run: ./gradlew jacocoTestReport sonar --info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Build and analyze with sonarcloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          DB_URL: jdbc:postgresql://localhost:5432/test_db
-          DB_UNM: test_user
-          DB_PSW: test_password
-          DB_DDL_AUTO: create
         run: ./gradlew build sonar --info

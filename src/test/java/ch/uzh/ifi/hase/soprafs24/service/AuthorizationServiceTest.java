@@ -37,6 +37,7 @@ public class AuthorizationServiceTest {
 
     // given
     User testUser = new User();
+    testUser.setUserId(1L);
     testUser.setUsername("batman");
     testUser.setPassword(("i am"));
     testUser.setToken(testToken);
@@ -45,10 +46,11 @@ public class AuthorizationServiceTest {
     Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(testUser);
 
     // then -> attempt to login user
-    String token = authorizationService.login(testUser.getUsername(), testUser.getPassword());
+    User user = authorizationService.login(testUser.getUsername(), testUser.getPassword());
 
     // then
-    assertEquals(token, testToken);
+    assertEquals(user.getToken(), testToken);
+    assertEquals(user.getUserId(), testUser.getUserId());
   }
 
   /**
@@ -60,6 +62,7 @@ public class AuthorizationServiceTest {
 
     // given
     User testUser = new User();
+    testUser.setUserId(1L);
     testUser.setUsername("batman");
     testUser.setPassword(("i am"));
     testUser.setToken(testToken);
@@ -68,10 +71,10 @@ public class AuthorizationServiceTest {
     Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(null);
 
     // then -> attempt to login user -> wrong username
-    String token = authorizationService.login(testUser.getUsername(), testUser.getPassword());
+    User user = authorizationService.login(testUser.getUsername(), testUser.getPassword());
 
     // then
-    assertNull(token);
+    assertNull(user);
   }
 
   /**
@@ -83,6 +86,7 @@ public class AuthorizationServiceTest {
 
     // given
     User testUser = new User();
+    testUser.setUserId(1L);
     testUser.setUsername("batman");
     testUser.setPassword(("i am"));
     testUser.setToken(testToken);
@@ -91,10 +95,10 @@ public class AuthorizationServiceTest {
     Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(testUser);
 
     // then -> attempt to login user -> wrong password
-    String token = authorizationService.login(testUser.getUsername(), "No i am batman");
+    User user = authorizationService.login(testUser.getUsername(), "No i am batman");
 
     // then
-    assertNull(token);
+    assertNull(user);
   }
 
   // endregion

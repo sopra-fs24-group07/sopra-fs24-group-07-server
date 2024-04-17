@@ -26,11 +26,11 @@ public class AuthorizationController {
   AuthGetDTO login(@RequestBody LoginPostDTO loginPostDTO) {
     User loginUser = DTOMapper.INSTANCE.convertLoginPostDTOtoEntity(loginPostDTO);
 
-    String potentialToken =
+    User potentialUser =
         authorizationService.login(loginUser.getUsername(), loginUser.getPassword());
 
-    if (potentialToken != null) {
-      return DTOMapper.INSTANCE.convertEntityToAuthGetDTO(potentialToken);
+    if (potentialUser != null) {
+      return DTOMapper.INSTANCE.convertEntityToAuthGetDTO(potentialUser);
     }
     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login failed");
   }

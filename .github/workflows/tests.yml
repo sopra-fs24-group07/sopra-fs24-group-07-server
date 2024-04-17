@@ -40,6 +40,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
+          SPRING_PROFILES_ACTIVE: dev
           DB_URL: jdbc:postgresql://localhost:5432/test_db
           DB_UNM: test_user
           DB_PSW: test_password
@@ -49,6 +50,7 @@ jobs:
       - name: Test with Gradle
         run: ./gradlew test
         env:
+          SPRING_PROFILES_ACTIVE: dev
           DB_URL: jdbc:postgresql://localhost:5432/test_db
           DB_UNM: test_user
           DB_PSW: test_password

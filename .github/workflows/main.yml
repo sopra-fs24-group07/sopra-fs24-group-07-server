@@ -38,6 +38,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Add database variables to application properties
+        run: |
+          echo "spring.datasource.url=${{ secrets.DB_URL_DEV }}" >> src/main/resources/application.properties
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD_DEV }}" >> src/main/resources/application.properties
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
@@ -47,4 +52,7 @@ jobs:
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
 
       - name: Test
-        run: curl "${{ steps.deploy.outputs.url }}"
+        run: |
+          response=$(curl "${{ steps.deploy.outputs.url }}")
+          echo $response
+          if [[ "$response" == *"Service Unavailable"* ]]; then exit 1; else echo "App is up and running"; fi
