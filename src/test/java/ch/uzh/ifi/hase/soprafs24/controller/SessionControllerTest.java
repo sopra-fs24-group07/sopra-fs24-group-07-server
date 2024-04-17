@@ -38,6 +38,7 @@ public class SessionControllerTest {
 
   @MockBean private AuthorizationService authorizationService;
   @MockBean private SessionService sessionService;
+  @MockBean private PusherService pusherService;
 
   private Session testSession;
   private LocalDateTime testSessionStartDateTime;
@@ -85,7 +86,8 @@ public class SessionControllerTest {
     given(sessionService.createSession(Mockito.anyLong(), Mockito.anyLong()))
         .willReturn(testSession);
 
-    // todo pusher mock
+    // pusher mock
+    Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -120,7 +122,8 @@ public class SessionControllerTest {
         .willThrow(
             new ResponseStatusException(HttpStatus.CONFLICT, "There is already an active session"));
 
-    // todo pusher mock
+    // pusher mock
+    Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -147,7 +150,8 @@ public class SessionControllerTest {
     // given(sessionService.createSession(Mockito.anyLong(),
     // Mockito.anyLong())).willReturn(testSession);
 
-    // todo pusher mock
+    // pusher mock
+    // Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -174,7 +178,8 @@ public class SessionControllerTest {
     // given(sessionService.createSession(Mockito.anyLong(),
     // Mockito.anyLong())).willReturn(testSession);
 
-    // todo pusher mock
+    // pusher mock
+    // Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -305,7 +310,8 @@ public class SessionControllerTest {
     // when end session service -> return test session successfully
     given(sessionService.endSession(Mockito.anyLong())).willReturn(testSessionEnded);
 
-    // todo pusher mock
+    // pusher mock
+    Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")
@@ -333,7 +339,8 @@ public class SessionControllerTest {
     given(sessionService.endSession(Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.GONE, "Team has no active session"));
 
-    // todo pusher mock
+    // pusher mock
+    // Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")
@@ -349,6 +356,9 @@ public class SessionControllerTest {
     // when auth -> ok
     given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
         .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized"));
+
+    // pusher mock
+    // Mockito.doNothing().when(pusherService).startSession(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")

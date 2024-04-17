@@ -21,10 +21,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class SessionController {
   private final AuthorizationService authorizationService;
   private final SessionService sessionService;
+  private final PusherService pusherService;
 
-  SessionController(AuthorizationService authorizationService, SessionService sessionService) {
+  SessionController(AuthorizationService authorizationService, SessionService sessionService,
+      PusherService pusherService) {
     this.authorizationService = authorizationService;
     this.sessionService = sessionService;
+    this.pusherService = pusherService;
   }
 
   /**
@@ -52,6 +55,7 @@ public class SessionController {
     Session createdSession = sessionService.createSession(teamId, sessionInput.getGoalMinutes());
 
     // todo pusher call -> also exception handling
+    pusherService.startSession(teamId.toString());
 
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(createdSession);
@@ -104,7 +108,8 @@ public class SessionController {
     // end session (410 if no active session)
     Session endedSession = sessionService.endSession(teamId);
 
-    // todo pusher call with exception handling
+    // pusher call with exception handling
+    pusherService.stopSession(teamId.toString());
 
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(endedSession);
