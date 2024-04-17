@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -295,5 +296,71 @@ public class SessionControllerTest {
     // then
     mockMvc.perform(getRequest).andExpect(status().isNotFound());
   }
+  // endregion
+
+  // region end session
+  @Test
+  public void endSession_validInputs_success() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when end session service -> return test session successfully
+    given(sessionService.endSession(Mockito.anyLong())).willReturn(testSessionEnded);
+
+    // todo pusher mock
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(patchRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.sessionId", is(testSessionEnded.getSessionId().intValue())))
+        .andExpect(jsonPath("$.startDateTime",
+            is(testSessionEndedStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
+        .andExpect(jsonPath("$.goalMinutes", is(testSessionEnded.getGoalMinutes().intValue())))
+        .andExpect(jsonPath("$.endDateTime",
+            is(testSessionEndedEndDateTime.format(DateTimeFormatter.ofPattern(format)))));
+  }
+
+  @Test
+  public void endSession_validInputs_noActiveSession_expectsException() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when end session service -> return test session successfully
+    given(sessionService.endSession(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.GONE, "Team has no active session"));
+
+    // todo pusher mock
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(patchRequest).andExpect(status().isGone());
+  }
+
+  @Test
+  public void endSession_validInputs_notAuthorized_expectsException() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder patchRequest = patch("/api/v1/teams/1/sessions")
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .header("Authorization", "invalid-token");
+
+    // then
+    mockMvc.perform(patchRequest).andExpect(status().isUnauthorized());
+  }
+
   // endregion
 }
