@@ -115,6 +115,25 @@ public class AuthorizationService {
 
     return foundUser;
   }
+  /**
+   * Checks if the token exists and the user is in the team
+   *
+   * @param token the token to be checked
+   * @param teamId to be checked
+   * @return the user of the token/username
+   * @throws ResponseStatusException 404 if the team is not found; 401 if the token is invalid the
+   *     user does not belong to the team
+   */
+  public User isAuthorizedAndBelongsToTeam(String token, Long userId, Long teamId) {
+    log.info("Checking authorization for token '{}' with userId '{} and teamId '{}'", token, userId,
+        teamId); // monitor authorization attempts
+
+    // check if user is authorized
+    User foundUser = isExistingAndAuthorized(token, userId);
+
+    isAuthorizedAndBelongsToTeam(token, teamId);
+    return foundUser;
+  }
 
   // Deprecated
   // /**
