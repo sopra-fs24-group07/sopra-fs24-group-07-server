@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import static ch.uzh.ifi.hase.soprafs24.controller.ControllerTestHelper.asJsonString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,12 +35,17 @@ public class AuthorizationControllerTest {
    */
   @Test
   public void loginUser_validInput_successful() throws Exception {
+    // given user
+    User user = new User();
+    user.setUserId(1L);
+    user.setToken("token");
+
     // given
     LoginPostDTO loginPostDTO = new LoginPostDTO();
     loginPostDTO.setUsername("admin");
     loginPostDTO.setPassword("1234");
 
-    given(authorizationService.login(Mockito.anyString(), Mockito.anyString())).willReturn("token");
+    given(authorizationService.login(Mockito.anyString(), Mockito.anyString())).willReturn(user);
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest = post("/api/v1/login")
@@ -57,6 +63,11 @@ public class AuthorizationControllerTest {
    */
   @Test
   public void loginUser_invalidInput_expectException() throws Exception {
+    // given user
+    User user = new User();
+    user.setUserId(1L);
+    user.setToken("token");
+
     // given
     LoginPostDTO loginPostDTO = new LoginPostDTO();
     loginPostDTO.setUsername("admin");
@@ -71,22 +82,5 @@ public class AuthorizationControllerTest {
 
     // then expect error on call
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
-  }
-
-  /**
-   * Helper Method to convert userPostDTO into a JSON string such that the input
-   * can be processed
-   * Input will look like this: {"username": "Test User", "password": "password"}
-   *
-   * @param object
-   * @return string
-   */
-  private String asJsonString(final Object object) {
-    try {
-      return new ObjectMapper().writeValueAsString(object);
-    } catch (JsonProcessingException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format("The request body could not be created.%s", e.toString()));
-    }
   }
 }
