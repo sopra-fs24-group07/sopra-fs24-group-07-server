@@ -45,6 +45,9 @@ public class SessionService {
   public Session createSession(Long teamId, Long goalMinutes) {
     log.debug("Creating session for team with teamId '{}'", teamId);
 
+    ServiceHelpers.checkValidNumber(teamId, "teamId");
+    ServiceHelpers.checkValidNumber(goalMinutes, "goalMinutes");
+
     // get team (404 if not found)
     Team team = teamService.getTeamByTeamId(teamId);
 

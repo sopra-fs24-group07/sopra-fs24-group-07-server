@@ -16,4 +16,17 @@ public class ServiceHelpers {
           HttpStatus.BAD_REQUEST, field + " cannot be empty or only whitespace!");
     }
   }
+
+  /**
+   * Checks if a Long is valid (not null, not empty)
+   * @param n number to check
+   * @param field name of the field to check, is used in the exception message
+   * @throws ResponseStatusException if the string is invalid
+   */
+  public static void checkValidNumber(Long n, String field) {
+    if (n == null) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, field + " cannot be empty or only whitespace!");
+    }
+  }
 }
