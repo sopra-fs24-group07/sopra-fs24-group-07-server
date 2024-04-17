@@ -205,4 +205,93 @@ public class TaskServiceIntegrationTest {
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     assertTrue(exception.getReason().contains("Team not found")); // adjusted assertion
   }
+
+  // PUT
+
+  /**
+   * Test for updating an existing task with valid inputs
+   */
+  @Test
+  public void updateTask_validInputs_success() {
+    // given a team
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid");
+    Team savedTeam = teamRepository.saveAndFlush(team);
+
+    // given an existing task
+    Task existingTask = new Task();
+    existingTask.setTitle("Task A");
+    existingTask.setDescription("This is task A");
+    existingTask.setTeam(savedTeam);
+    existingTask.setStatus(TaskStatus.TODO); // set status
+    Task savedTask = taskRepository.saveAndFlush(existingTask);
+
+    // update task
+    savedTask.setTitle("Updated Task A");
+    savedTask.setDescription("This is updated task A");
+    savedTask.setStatus(TaskStatus.IN_SESSION); // update status
+
+    // when
+    Task updatedTask = taskService.updateTask(savedTask, savedTeam.getTeamId());
+
+    // then
+    assertEquals(savedTask.getTaskId(), updatedTask.getTaskId());
+    assertEquals("Updated Task A", updatedTask.getTitle());
+    assertEquals("This is updated task A", updatedTask.getDescription());
+    assertEquals(TaskStatus.IN_SESSION, updatedTask.getStatus()); // assert status
+  }
+
+  /**
+   * Test for updating a task with invalid TeamId
+   */
+  @Test
+  public void updateTask_invalidTeamId_throwsException() {
+    // given a valid team
+    Team validTeam = new Team();
+    validTeam.setName("Team A");
+    validTeam.setDescription("Lorem");
+    validTeam.setTeamUUID("team-uuid");
+    Team savedTeam = teamRepository.saveAndFlush(validTeam);
+
+    // given an existing task
+    Task existingTask = new Task();
+    existingTask.setTitle("Task A");
+    existingTask.setDescription("This is task A");
+    existingTask.setTeam(savedTeam);
+    existingTask.setStatus(TaskStatus.TODO); // set status
+    Task savedTask = taskRepository.saveAndFlush(existingTask);
+
+    // given an invalid team id
+    Long invalidTeamId = savedTeam.getTeamId() + 1;
+
+    // when & then
+    assertThrows(
+        ResponseStatusException.class, () -> taskService.updateTask(savedTask, invalidTeamId));
+  }
+
+  /**
+   * Test for tryinng to update a non-existing task
+   */
+  @Test
+  public void updateTask_nonExistingTask_throwsException() {
+    // given a team
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid");
+    Team savedTeam = teamRepository.saveAndFlush(team);
+
+    // given a non-existing task
+    Task nonExistingTask = new Task();
+    nonExistingTask.setTaskId(99L);
+    nonExistingTask.setTitle("Task A");
+    nonExistingTask.setDescription("This is task A");
+    nonExistingTask.setTeam(savedTeam);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> taskService.updateTask(nonExistingTask, savedTeam.getTeamId()));
+  }
 }
