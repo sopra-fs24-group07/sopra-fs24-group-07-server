@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
@@ -64,4 +65,13 @@ public interface DTOMapper {
   @Mapping(source = "creationDate", target = "creationDate")
   @Mapping(source = "status", target = "status")
   TaskGetDTO convertEntityToTaskGetDTO(Task task);
+
+  @Mapping(source = "text", target = "text")
+  Comment convertCommentPostDTOtoEntity(CommentPostDTO commentPostDTO);
+
+  @Mapping(source = "commentId", target = "commentId")
+  @Mapping(source = "text", target = "text")
+  @Mapping(source = "creationDate", target = "creationDate")
+  @Mapping(source = "user.userId", target = "authorId")
+  CommentGetDTO convertEntityToCommentGetDTO(Comment comment);
 }
