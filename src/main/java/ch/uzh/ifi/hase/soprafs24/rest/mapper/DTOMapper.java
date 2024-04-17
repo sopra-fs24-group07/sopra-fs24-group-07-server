@@ -1,9 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -59,4 +62,21 @@ public interface DTOMapper {
   @Mapping(source = "creationDate", target = "creationDate")
   @Mapping(source = "status", target = "status")
   TaskGetDTO convertEntityToTaskGetDTO(Task task);
+
+  @Mapping(source = "goalMinutes", target = "goalMinutes")
+  Session convertSessionPostDTOtoEntity(SessionPostDTO sessionPostDTO);
+
+  @Mapping(source = "sessionId", target = "sessionId")
+  @Mapping(
+      source = "startDateTime", target = "startDateTime", qualifiedByName = "formatLocalDateTime")
+  @Mapping(source = "endDateTime", target = "endDateTime", qualifiedByName = "formatLocalDateTime")
+  @Mapping(source = "goalMinutes", target = "goalMinutes")
+  SessionGetDTO
+  convertEntityToSessionGetDTO(Session session);
+
+  default String formatLocalDateTime(LocalDateTime localDateTime) {
+    return localDateTime == null
+        ? null
+        : localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  }
 }

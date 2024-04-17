@@ -38,7 +38,8 @@ public class SessionService {
    *
    * @param teamId the team id of the team to create the session for
    * @param goalMinutes the goal in minutes for the session
-   * @throws ResponseStatusException with status 404 if the team does not exist
+   * @throws ResponseStatusException with status 404 if the team does not exist; 409 if already
+   *     active session
    * @return the created session
    */
   public Session createSession(Long teamId, Long goalMinutes) {
@@ -46,6 +47,13 @@ public class SessionService {
 
     // get team (404 if not found)
     Team team = teamService.getTeamByTeamId(teamId);
+
+    // check that no current session is active
+    List<Session> existingSessions = getSessionsByTeamId(teamId);
+    if (!existingSessions.isEmpty() && existingSessions.get(0).getEndDateTime() == null) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "There is already an active session for this team.");
+    }
 
     // create session
     Session newSession = new Session();
