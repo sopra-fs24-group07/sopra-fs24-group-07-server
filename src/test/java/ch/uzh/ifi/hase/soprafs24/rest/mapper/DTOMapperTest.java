@@ -6,13 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -55,6 +49,24 @@ public class DTOMapperTest {
     assertEquals(user.getName(), userGetDTO.getName());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
   }
+  // endregion
+
+  // region auth mappings
+  @Test
+  public void testAuthGetDTO_success() {
+    // create User
+    User user = new User();
+    user.setToken("1");
+    user.setUserId(1L);
+
+    // MAP -> Create AuthGetDTO
+    AuthGetDTO authGetDTO = DTOMapper.INSTANCE.convertEntityToAuthGetDTO(user);
+
+    // check content
+    assertEquals(user.getToken(), authGetDTO.getToken());
+    assertEquals(user.getUserId(), authGetDTO.getUserId());
+  }
+
   // endregion
 
   // region team mappings
