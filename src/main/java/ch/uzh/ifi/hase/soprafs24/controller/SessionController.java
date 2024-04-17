@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,5 +55,32 @@ public class SessionController {
 
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(createdSession);
+  }
+
+  /**
+   * Get all sessions of a team by descending start date.
+   *
+   * @param teamId the team id of the team to get the sessions for
+   * @param token the token of the user
+   * @throws ResponseStatusException with status 401 if the user is not authorized; with status 404
+   * @return the list of sessions
+   */
+  @GetMapping("/teams/{ID}/sessions")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<SessionGetDTO> getSessionsOfTeam(
+      @PathVariable("ID") Long teamId, @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token) and if the user exists
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // get all sessions of the team
+    List<Session> sessions = sessionService.getSessionsByTeamId(teamId);
+
+    // convert internal representation of sessions back to API
+    List<SessionGetDTO> sessionGetDTOs = new ArrayList<>();
+    for (Session session : sessions) {
+      sessionGetDTOs.add(DTOMapper.INSTANCE.convertEntityToSessionGetDTO(session));
+    }
+    return sessionGetDTOs;
   }
 }

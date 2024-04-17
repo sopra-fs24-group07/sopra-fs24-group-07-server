@@ -189,4 +189,111 @@ public class SessionControllerTest {
     mockMvc.perform(postRequest).andExpect(status().isNotFound());
   }
   // endregion
+
+  // region get sessions
+  @Test
+  public void getSessionsByTeam_validInputs_success() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when get sessions service -> return test session successfully
+    given(sessionService.getSessionsByTeamId(Mockito.anyLong())).willReturn(List.of(testSession));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/teams/1/sessions")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].sessionId", is(1)))
+        .andExpect(jsonPath("$[0].startDateTime",
+            is(testSessionStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
+        .andExpect(jsonPath("$[0].goalMinutes", is(testSession.getGoalMinutes().intValue())))
+        .andExpect(jsonPath("$[0].endDateTime").doesNotExist());
+  }
+
+  @Test
+  public void getSessionsByTeam_validInputs_multipleSessions_success() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when get sessions service -> return test session successfully (active session first)
+    given(sessionService.getSessionsByTeamId(Mockito.anyLong()))
+        .willReturn(List.of(testSession, testSessionEnded));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/teams/1/sessions")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(jsonPath("$[0].sessionId", is(testSession.getSessionId().intValue())))
+        .andExpect(jsonPath("$[0].startDateTime",
+            is(testSessionStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
+        .andExpect(jsonPath("$[0].goalMinutes", is(testSession.getGoalMinutes().intValue())))
+        .andExpect(jsonPath("$[0].endDateTime").doesNotExist())
+        .andExpect(jsonPath("$[1].sessionId", is(testSessionEnded.getSessionId().intValue())))
+        .andExpect(jsonPath("$[1].startDateTime",
+            is(testSessionEndedStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
+        .andExpect(jsonPath("$[1].goalMinutes", is(testSessionEnded.getGoalMinutes().intValue())))
+        .andExpect(jsonPath("$[1].endDateTime",
+            is(testSessionEndedEndDateTime.format(DateTimeFormatter.ofPattern(format)))));
+  }
+
+  @Test
+  public void getSessionsByTeam_validInputs_noSessions_success() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when get sessions service -> return test session successfully (active session first)
+    given(sessionService.getSessionsByTeamId(Mockito.anyLong())).willReturn(List.of());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/teams/1/sessions")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
+  }
+
+  @Test
+  public void getSessionsByTeam_validInputs_notAuthorized_expectsException() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/teams/1/sessions")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "invalid-token");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  public void getSessionsByTeam_validInputs_teamNotFound_expectsException() throws Exception {
+    // when auth -> ok
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest = get("/api/v1/teams/1/sessions")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "valid-token");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isNotFound());
+  }
+  // endregion
 }
