@@ -45,6 +45,9 @@ public class SessionService {
   public Session createSession(Long teamId, Long goalMinutes) {
     log.debug("Creating session for team with teamId '{}'", teamId);
 
+    ServiceHelpers.checkValidNumber(teamId, "teamId");
+    ServiceHelpers.checkValidNumber(goalMinutes, "goalMinutes");
+
     // get team (404 if not found)
     Team team = teamService.getTeamByTeamId(teamId);
 
@@ -87,5 +90,39 @@ public class SessionService {
 
     log.debug("Found {} sessions: {}", sessions.size(), sessions);
     return sessions;
+  }
+
+  /**
+   * End the active session for a team, if the session is active. If the team has no active session,
+   * 410 is thrown.
+   *
+   * @param teamId the team id of the team to end the session for
+   * @throws ResponseStatusException with status 410 if the team has no active session; 404 if team
+   *     not found.
+   * @return the ended session
+   */
+  public Session endSession(Long teamId) {
+    log.debug("Ending session for team with teamId '{}'", teamId);
+
+    // get all sessions for the team (more recent first)
+    List<Session> sessions = getSessionsByTeamId(teamId);
+
+    // check if the team has an active session
+    if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null) {
+      log.error("Team with teamId '{}' has no active session", teamId);
+      throw new ResponseStatusException(HttpStatus.GONE, "Team has no active session");
+    }
+
+    // end the session
+    Session activeSession = sessions.get(0);
+    activeSession.setEndDateTime(LocalDateTime.now());
+
+    // save session in the database
+    Session endedSession = sessionRepository.save(activeSession);
+    sessionRepository.flush();
+
+    log.debug("Ended session: {}; started at {}; ended at {}", endedSession,
+        endedSession.getStartDateTime(), endedSession.getEndDateTime());
+    return endedSession;
   }
 }

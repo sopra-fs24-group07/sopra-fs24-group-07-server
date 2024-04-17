@@ -83,4 +83,30 @@ public class SessionController {
     }
     return sessionGetDTOs;
   }
+
+  /**
+   * End a session of the team, if one is active.
+   *
+   * @param teamId the team id of the team to end the session for
+   * @param token the token of the user
+   * @throws ResponseStatusException with status 401 if the user is not authorized; with status 404
+   *     if the team not found
+   * @return the ended session
+   */
+  @PatchMapping("/teams/{ID}/sessions")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public SessionGetDTO endSession(
+      @PathVariable("ID") Long teamId, @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token) and if the user exists
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // end session (410 if no active session)
+    Session endedSession = sessionService.endSession(teamId);
+
+    // todo pusher call with exception handling
+
+    // convert internal representation of session back to API
+    return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(endedSession);
+  }
 }

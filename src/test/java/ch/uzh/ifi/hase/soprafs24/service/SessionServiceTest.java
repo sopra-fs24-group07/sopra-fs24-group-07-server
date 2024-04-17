@@ -134,4 +134,77 @@ public class SessionServiceTest {
         () -> sessionService.getSessionsByTeamId(99L)); // team not found
   }
   // endregion
+
+  // region endSession tests
+  @Test
+  public void endSession_validInputs_success() {
+    // given test session with no end date
+    testSession.setEndDateTime(null);
+
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when call to getSessionsByTeamId -> mock return dummy session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
+
+    // then -> the session is saved successfully
+    Session endedSession = spySessionService.endSession(testTeam.getTeamId());
+
+    // check if the session is returned
+    assertEquals(testSession, endedSession);
+    assertNotNull(endedSession.getEndDateTime());
+  }
+
+  /* test if no active session, only ended sessions */
+  @Test
+  public void endSession_noActiveSession_throwsException() {
+    // given test session with end date
+    testSession.setEndDateTime(testStartDateTime.plusHours(1));
+
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when call to getSessionsByTeamId -> mock return ended session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> spySessionService.endSession(testTeam.getTeamId())); // no active session
+  }
+
+  /* test if no sessions for team */
+  @Test
+  public void endSession_noSession_throwsException() {
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when call to getSessionsByTeamId -> mock return empty list
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of())
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> spySessionService.endSession(testTeam.getTeamId())); // no active session
+  }
+
+  /* test if no sessions for team */
+  @Test
+  public void endSession_invalidTeam_throwsException() {
+    // when -> call task service to get the team -> return 404 because team not found
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.endSession(99L)); // team not found
+  }
+  // endregion
 }
