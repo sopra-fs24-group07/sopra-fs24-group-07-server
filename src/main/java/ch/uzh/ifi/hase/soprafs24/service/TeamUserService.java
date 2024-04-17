@@ -133,6 +133,7 @@ public class TeamUserService {
    * Delete a user from a team. Auth and belonging check needs to be done in controller.
    * @param teamId team where the user is deleted from
    * @param userId user that is deleted
+   * @throws ResponseStatusException 404 if user not found, if team not found, or user not in team
    * @return the deleted user (for testing)
    */
   public TeamUser deleteUserOfTeam(Long teamId, Long userId) {
