@@ -1,8 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
@@ -140,5 +142,23 @@ public class DTOMapperTest {
     assertEquals(task.getStatus(), taskGetDTO.getStatus()); // compare enums directly
   }
 
+  // endregion
+
+  // session mappings
+  @Test
+  public void testCreateSession_fromSessionPostDTO_toSession_success() {
+    // create SessionPostDTO
+    SessionPostDTO sessionPostDTO = new SessionPostDTO();
+    sessionPostDTO.setGoalMinutes(30L);
+
+    // MAP -> Create Session
+    Session session = DTOMapper.INSTANCE.convertSessionPostDTOtoEntity(sessionPostDTO);
+
+    // check content
+    assertNull(session.getSessionId());
+    assertNull(session.getStartDateTime());
+    assertNull(session.getEndDateTime());
+    assertEquals(sessionPostDTO.getGoalMinutes(), session.getGoalMinutes());
+  }
   // endregion
 }
