@@ -85,6 +85,21 @@ public class SessionServiceIntegrationTest {
         () -> sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes));
   }
 
+  /* test if goalMins is null that the 400 error is thrown */
+  @Test
+  public void createSession_nullGoalMinutes_expectsError() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // when
+    assertThrows(ResponseStatusException.class,
+        () -> sessionService.createSession(testTeam.getTeamId(), null));
+  }
+
   // endregion
 
   // region getSessionsByTeam tests
