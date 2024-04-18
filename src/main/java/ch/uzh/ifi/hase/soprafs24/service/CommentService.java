@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,23 @@ public class CommentService {
 
     log.debug("Successfully created comment: {}", newComment);
     return newComment;
+  }
+
+  public List<Comment> getCommentsByTaskId(Long taskId) {
+    Task task = taskService.getTask(taskId);
+
+    if (task == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+    }
+
+    List<Comment> comments = commentRepository.findByTask(task);
+
+    if (comments == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comments not found");
+    }
+
+    log.debug("Successfully fetched comments for task: {}", taskId);
+
+    return comments;
   }
 }
