@@ -4,9 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -258,6 +256,93 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].userId", is(testUser.getUserId().intValue())))
         .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+
+  // endregion
+
+  // region deleteUserFromTeam tests
+  @Test
+  public void deleteUserFromTeam_validInput_success() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+    TeamUser teamUser = new TeamUser(testTeam, testUser);
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(testUser);
+    // when -> delete user from team -> testUser is in team
+    Mockito.doReturn(teamUser)
+        .when(teamUserService)
+        .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong());
+
+    // when -> perform delete request
+    MockHttpServletRequestBuilder deleteRequest = delete(
+        "/api/v1/teams/" + testTeam.getTeamId().toString() + "/users/" + testUser.getUserId())
+                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                      .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(deleteRequest).andExpect(status().isOk());
+    Mockito.verify(teamUserService, Mockito.times(1))
+        .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong());
+  }
+
+  @Test
+  public void deleteUserFromTeam_unauthorized_throwsError() throws Exception {
+    // e.g. also testUser not in team -> error
+
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform delete request
+    MockHttpServletRequestBuilder deleteRequest = delete(
+        "/api/v1/teams/" + testTeam.getTeamId().toString() + "/users/" + testUser.getUserId())
+                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                      .header("Authorization", "invalid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
+    Mockito.verify(teamUserService, Mockito.never())
+        .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong());
+  }
+
+  @Test
+  public void deleteUserFromTeam_somethingNotFound_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+
+    // testUser is in team
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(testUser);
+    // when -> delete user from team -> something not found
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+        .when(teamUserService)
+        .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong());
+
+    // when -> perform delete request
+    MockHttpServletRequestBuilder deleteRequest = delete("/api/v1/teams/"
+        + testTeam.getTeamId().toString() + "/users/" + testUser.getUserId().toString())
+                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                      .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
+    Mockito.verify(teamUserService, Mockito.times(1))
+        .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong()); // was called, but error
   }
 
   // endregion

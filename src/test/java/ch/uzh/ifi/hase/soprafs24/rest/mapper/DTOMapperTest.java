@@ -1,12 +1,16 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -159,5 +163,51 @@ public class DTOMapperTest {
     assertEquals(taskPutDTO.getStatus(), task.getStatus());
   }
 
+  // endregion
+
+  // session mappings
+  @Test
+  public void testCreateSession_fromSessionPostDTO_toSession_success() {
+    // create SessionPostDTO
+    SessionPostDTO sessionPostDTO = new SessionPostDTO();
+    sessionPostDTO.setGoalMinutes(30L);
+
+    // MAP -> Create Session
+    Session session = DTOMapper.INSTANCE.convertSessionPostDTOtoEntity(sessionPostDTO);
+
+    // check content
+    assertNull(session.getSessionId());
+    assertNull(session.getStartDateTime());
+    assertNull(session.getEndDateTime());
+    assertEquals(sessionPostDTO.getGoalMinutes(), session.getGoalMinutes());
+  }
+
+  @Test
+  public void testGetSession_fromSession_toSessionGetDTO_success() {
+    LocalDateTime startDateTime = LocalDateTime.now().minusHours(3);
+    LocalDateTime endDateTime = LocalDateTime.now();
+
+    // create Session
+    Session session = new Session();
+    session.setSessionId(1L);
+    session.setStartDateTime(startDateTime);
+    session.setEndDateTime(endDateTime);
+    session.setGoalMinutes(30L);
+
+    // MAP -> Create SessionGetDTO
+    SessionGetDTO sessionGetDTO = DTOMapper.INSTANCE.convertEntityToSessionGetDTO(session);
+
+    System.out.println(sessionGetDTO.getStartDateTime()); // to verify in output
+
+    // check content
+    assertEquals(session.getSessionId(), sessionGetDTO.getSessionId());
+    assertEquals(
+        session.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        sessionGetDTO.getStartDateTime());
+    assertEquals(
+        session.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        sessionGetDTO.getEndDateTime());
+    assertEquals(session.getGoalMinutes(), sessionGetDTO.getGoalMinutes());
+  }
   // endregion
 }
