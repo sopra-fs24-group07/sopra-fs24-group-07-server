@@ -27,12 +27,14 @@ public class TaskService {
   private final Logger log = LoggerFactory.getLogger(TaskService.class);
   private final TeamService teamService;
   private final TaskRepository taskRepository;
+  private final PusherService pusherService;
 
   @Autowired
   public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
-      @Qualifier("teamService") TeamService teamService) {
+      @Qualifier("teamService") TeamService teamService, PusherService pusherService) {
     this.taskRepository = taskRepository;
     this.teamService = teamService;
+    this.pusherService = pusherService;
   }
 
   /**
@@ -58,6 +60,14 @@ public class TaskService {
     taskRepository.flush();
 
     log.debug("Created Information for Task: {}", newTask);
+
+    // send pusher event
+    try {
+      pusherService.taskModification(newTask.getTeam().getTeamId().toString());
+    } catch (Exception e) {
+      log.error("Error while sending pusher event: {}", e.getMessage());
+    }
+
     return newTask;
   }
 
@@ -97,6 +107,14 @@ public class TaskService {
     taskRepository.flush();
 
     log.debug("Updated Information for Task: {}", updatedTask);
+
+    // Send pusher event
+    try {
+      pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());
+    } catch (Exception e) {
+      log.error("Error while sending pusher event: {}", e.getMessage());
+    }
+
     return updatedTask;
   }
 

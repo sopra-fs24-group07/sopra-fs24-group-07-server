@@ -27,4 +27,10 @@ public class PusherService {
   public void stopSession(String teamId) {
     triggerEvent("team-" + teamId, "session-update", Collections.singletonMap("status", "off"));
   }
+
+  /* pusher service when creating or modifying a task */
+  public void taskModification(String teamId) {
+    // todo
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
 }
