@@ -111,6 +111,75 @@ public class UserControllerTest {
 
   // endregion
 
+  // region getUser
+  @Test
+  public void getUser_success() throws Exception {
+    // given existing user
+    User user = new User();
+    user.setUserId(1L);
+    user.setUsername("batman");
+    user.setName("Bruce Wayne");
+    user.setPassword("Alfred1234");
+    user.setToken("1234");
+
+    // when -> check authorization -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = get("/api/v1/users/" + user.getUserId())
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())))
+        .andExpect(jsonPath("$.name", is(user.getName())))
+        .andExpect(jsonPath("$.username", is(user.getUsername())));
+  }
+
+  @Test
+  public void getUser_nonExistingUser() throws Exception {
+    // given non existing user
+
+    // when -> check authorization -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = get("/api/v1/users/73")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void getUser_notAuthorized() throws Exception {
+    // given existing user
+    User user = new User();
+    user.setUserId(1L);
+    user.setUsername("batman");
+    user.setName("Bruce Wayne");
+    user.setPassword("Alfred1234");
+    user.setToken("1234");
+
+    // when -> check authorization -> ok
+    given(authorizationService.isExistingAndAuthorized(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = get("/api/v1/users/73")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .header("Authorization", "invalid-token");
+
+    // then
+    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
+  }
+  // endregion
+
   // region update user
 
   // Alihan: Update User happy path
