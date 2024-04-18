@@ -62,11 +62,7 @@ public class TaskService {
     log.debug("Created Information for Task: {}", newTask);
 
     // send pusher event
-    try {
-      pusherService.taskModification(newTask.getTeam().getTeamId().toString());
-    } catch (Exception e) {
-      log.error("Error while sending pusher event: {}", e.getMessage());
-    }
+    pusherService.taskModification(newTask.getTeam().getTeamId().toString());
 
     return newTask;
   }
@@ -106,15 +102,10 @@ public class TaskService {
     Task updatedTask = taskRepository.save(existingTask);
     taskRepository.flush();
 
-    log.debug("Updated Information for Task: {}", updatedTask);
-
     // Send pusher event
-    try {
-      pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());
-    } catch (Exception e) {
-      log.error("Error while sending pusher event: {}", e.getMessage());
-    }
+    pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());
 
+    log.debug("Updated Information for Task: {}", updatedTask);
     return updatedTask;
   }
 
