@@ -32,22 +32,16 @@ public class CommentService {
 
     Task task = taskService.getTask(taskId);
 
-    if (task == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
-    }
+    // if (newComment == null) {
+    //   throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to save comment");
+    // }
 
     newComment.setTask(task);
 
     newComment = commentRepository.save(newComment);
-
-    if (newComment == null) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save comment");
-    }
-
     commentRepository.flush();
 
     log.debug("Successfully created comment: {}", newComment);
-
     return newComment;
   }
 }
