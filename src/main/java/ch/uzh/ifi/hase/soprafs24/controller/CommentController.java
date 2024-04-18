@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Comment;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -25,15 +26,17 @@ public class CommentController {
   @ResponseBody
   public CommentGetDTO createComment(@PathVariable Long teamId, @PathVariable Long taskId,
       @RequestBody CommentPostDTO commentPostDTO, @RequestHeader("Authorization") String token) {
+    // Get the user for that user token in header and check if that token is in team
+    User authorUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // Convert API comment to internal representation
     Comment commentInput = DTOMapper.INSTANCE.convertCommentPostDTOtoEntity(commentPostDTO);
+    commentInput.setUser(authorUser);
 
-    // Check if the user exists and if the token belongs to that user.
-    authorizationService.isExistingAndAuthorized(token, commentInput.getUser().getUserId());
-
-    // Create the comment
+    // Create comment
     Comment createdComment = commentService.createComment(commentInput, taskId);
 
-    // convert internal representation of comment back to API
+    // Convert internal representation of comment back to API
     return DTOMapper.INSTANCE.convertEntityToCommentGetDTO(createdComment);
   }
 }
