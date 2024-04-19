@@ -218,13 +218,14 @@ public class DTOMapperTest {
     // create CommentPostDTO
     CommentPostDTO commentPostDTO = new CommentPostDTO();
     commentPostDTO.setText("This is a comment");
+    commentPostDTO.setUserId(1L);
 
     // MAP -> Create Comment
     Comment comment = DTOMapper.INSTANCE.convertCommentPostDTOtoEntity(commentPostDTO);
 
     // check content
     assertEquals(commentPostDTO.getText(), comment.getText());
+    assertEquals(commentPostDTO.getUserId(), comment.getUser().getUserId());
   }
-
   // endregion
 }

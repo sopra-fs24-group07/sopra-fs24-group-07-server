@@ -70,6 +70,7 @@ public interface DTOMapper {
   TaskGetDTO convertEntityToTaskGetDTO(Task task);
 
   @Mapping(source = "text", target = "text")
+  @Mapping(source = "userId", target = "user.userId")
   Comment convertCommentPostDTOtoEntity(CommentPostDTO commentPostDTO);
 
   @Mapping(source = "commentId", target = "commentId")
