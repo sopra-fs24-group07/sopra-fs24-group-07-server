@@ -15,17 +15,18 @@ public class PusherService {
 
   private final Pusher pusher;
 
+  public PusherService(Pusher pusher) {
+    // add the pusher object of the config.PusherConfig via dependency injection (inversion of
+    // control)
+    this.pusher = pusher;
+  }
+
   public void triggerEvent(String channel, String event, Object data) {
     try {
       pusher.trigger(channel, event, data);
     } catch (Exception e) {
       log.error("Error while sending pusher event: {}", e.getMessage());
     }
-  }
-  public PusherService() {
-    pusher = new Pusher("1787826", "98eb073ecf324dc1bf65", "8f7fed92f02890d41525");
-    pusher.setCluster("eu");
-    pusher.setEncrypted(true);
   }
 
   public void startSession(String teamId) {
