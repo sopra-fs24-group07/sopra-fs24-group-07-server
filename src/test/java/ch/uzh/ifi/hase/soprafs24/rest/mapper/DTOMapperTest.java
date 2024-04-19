@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
@@ -208,6 +209,23 @@ public class DTOMapperTest {
         session.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         sessionGetDTO.getEndDateTime());
     assertEquals(session.getGoalMinutes(), sessionGetDTO.getGoalMinutes());
+  }
+  // endregion
+
+  // region comment mappings
+  @Test
+  public void testCreateComment_fromCommentPostDTO_toComment_success() {
+    // create CommentPostDTO
+    CommentPostDTO commentPostDTO = new CommentPostDTO();
+    commentPostDTO.setText("This is a comment");
+    commentPostDTO.setUserId(1L);
+
+    // MAP -> Create Comment
+    Comment comment = DTOMapper.INSTANCE.convertCommentPostDTOtoEntity(commentPostDTO);
+
+    // check content
+    assertEquals(commentPostDTO.getText(), comment.getText());
+    assertEquals(commentPostDTO.getUserId(), comment.getUser().getUserId());
   }
   // endregion
 }
