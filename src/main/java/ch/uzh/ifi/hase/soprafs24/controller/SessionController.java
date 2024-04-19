@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import ch.uzh.ifi.hase.soprafs24.service.PusherService; //PUSHER
+
 /*
  * Session Controller
  * This class is responsible for handling all REST request that are related to the sessions of a
@@ -21,13 +23,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class SessionController {
   private final AuthorizationService authorizationService;
   private final SessionService sessionService;
-  private final PusherService pusherService;
+  private final PusherService pusherService; //PUSHER ADDED
 
   SessionController(AuthorizationService authorizationService, SessionService sessionService,
-      PusherService pusherService) {
+      PusherService pusherService) { //PUSHER ADDED
     this.authorizationService = authorizationService;
     this.sessionService = sessionService;
-    this.pusherService = pusherService;
+    this.pusherService = pusherService; //PUSHER ADDED
   }
 
   /**
@@ -54,8 +56,8 @@ public class SessionController {
     // create session (409 if active session)
     Session createdSession = sessionService.createSession(teamId, sessionInput.getGoalMinutes());
 
-    // todo pusher call -> also exception handling
-    pusherService.startSession(teamId.toString());
+    // let other users know a session has been started
+    pusherService.startSession(teamId.toString()); //PUSHER
 
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(createdSession);
@@ -108,8 +110,8 @@ public class SessionController {
     // end session (410 if no active session)
     Session endedSession = sessionService.endSession(teamId);
 
-    // pusher call with exception handling
-    pusherService.stopSession(teamId.toString());
+    // let other users know a session has been ended
+    pusherService.stopSession(teamId.toString()); //PUSHER
 
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(endedSession);
