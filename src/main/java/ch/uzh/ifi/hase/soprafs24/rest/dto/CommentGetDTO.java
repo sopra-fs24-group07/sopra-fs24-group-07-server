@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class CommentGetDTO {
   private Long commentId;
   private Long authorId;
+  private String authorName;
   private String text;
   private LocalDateTime creationDate;
 
@@ -22,6 +23,14 @@ public class CommentGetDTO {
 
   public void setAuthorId(Long authorId) {
     this.authorId = authorId;
+  }
+
+  public String getAuthorName() {
+    return authorName;
+  }
+
+  public void setAuthorName(String authorName) {
+    this.authorName = authorName;
   }
 
   public String getText() {
