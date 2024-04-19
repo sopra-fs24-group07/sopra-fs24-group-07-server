@@ -165,14 +165,6 @@ public class CommentServiceIntegrationTest {
 
   @Test
   public void getComments_validInputs_success() {
-    // given a user
-    User testUser = new User();
-    testUser.setUsername("testUser");
-    testUser.setName("Test User");
-    testUser.setPassword("password123");
-    testUser.setToken("1");
-    userRepository.saveAndFlush(testUser);
-
     // given a team
     Team testTeam = new Team();
     testTeam.setName("Test Team");
@@ -187,6 +179,14 @@ public class CommentServiceIntegrationTest {
     testTask.setStatus(TaskStatus.TODO);
     testTask.setTeam(testTeam);
     taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
 
     // given a comment
     Comment testComment = new Comment();
