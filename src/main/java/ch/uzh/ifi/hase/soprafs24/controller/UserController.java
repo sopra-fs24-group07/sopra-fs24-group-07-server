@@ -53,6 +53,17 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
 
+  @GetMapping("/users/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO getUser(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    // Check if the user exists and the token is valid
+    User user = authorizationService.isExistingAndAuthorized(token, id);
+
+    // convert internal representation of user back to API
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+  }
+
   @PutMapping("/users/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
