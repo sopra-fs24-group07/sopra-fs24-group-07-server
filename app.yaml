@@ -13,5 +13,5 @@ vpc_access_connector:
 
 # env variables (psw) will be added in pipeline
 env_variables:
-  PUSHER_APP_ID=1787826
+  PUSHER_APP_ID: "1787826"
   # ...

@@ -64,8 +64,8 @@ jobs:
 
       - name: Add pusher credentials
         run: |
-          echo "  PUSHER_KEY={{ secrets.PUSHER_KEY }}" >> app.yaml
-          echo "  PUSHER_SECRET={{ secrets.PUSHER_SECRET }}" >> app.yaml
+          echo "  PUSHER_KEY: '${{ secrets.PUSHER_KEY }}'" >> app.yaml
+          echo "  PUSHER_SECRET: '${{ secrets.PUSHER_SECRET }}'" >> app.yaml
 
       - name: Deploy to App Engine
         id: deploy
