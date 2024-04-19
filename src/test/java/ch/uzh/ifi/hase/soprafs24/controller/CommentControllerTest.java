@@ -57,15 +57,16 @@ public class CommentControllerTest {
     Comment comment = new Comment();
     comment.setCommentId(1L);
     comment.setText("This is a test comment.");
+    comment.setUser(testUser);
 
     CommentPostDTO commentPostDTO = new CommentPostDTO();
     commentPostDTO.setText("This is a test comment.");
-    commentPostDTO.setUserId(1L);
+    commentPostDTO.setUserId(testUser.getUserId());
 
     // mock valid token
     Mockito
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
-            Mockito.anyString(), Mockito.eq(1L), Mockito.anyLong()))
+            Mockito.anyString(), Mockito.eq(testUser.getUserId()), Mockito.anyLong()))
         .thenReturn(testUser);
     // mock comment service
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
@@ -81,7 +82,9 @@ public class CommentControllerTest {
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.commentId", is(comment.getCommentId().intValue())))
-        .andExpect(jsonPath("$.text", is(comment.getText())));
+        .andExpect(jsonPath("$.text", is(comment.getText())))
+        .andExpect(jsonPath("$.authorId", is(comment.getUser().getUserId().intValue())))
+        .andExpect(jsonPath("$.authorName", is(comment.getUser().getName())));
   }
 
   /**
