@@ -37,8 +37,12 @@ public class PusherService {
     triggerEvent("team-" + teamId, "session-update", Collections.singletonMap("status", "off"));
   }
 
-  /* pusher service when creating or modifying a task */
-  public void taskModification(String teamId) {
-    // todo
+  public void updateTask(String teamId) {
+      triggerEvent("team-" + teamId, "task-update", Collections.singletonMap("tasks", "updated"));
+  }
+
+  public void updateTeam(String teamId) {
+      triggerEvent("team-" + teamId, "team-update", Collections.singletonMap("userId", "updated"));
   }
 }
+
