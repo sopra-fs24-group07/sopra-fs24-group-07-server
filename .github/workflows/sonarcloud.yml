@@ -51,25 +51,26 @@ jobs:
           echo "spring.datasource.password=test_password" >> src/main/resources/application.properties
           cat src/main/resources/application.properties
 
-      - name: Add pusher credentials
-        run: |
-          echo "PUSHER_KEY={{ secrets.PUSHER_KEY }}" >> app.yaml
-          echo "PUSHER_SECRET={{ secrets.PUSHER_SECRET }}" >> app.yaml
-
       - name: Test and analyze with sonarcloud
         run: ./gradlew test sonar --info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PUSH_KEY: ${{ secrets.PUSHER_KEY }}
+          PUSH_SECRET: ${{ secrets.PUSHER_SECRET }}
 
       - name: Test report and analyze with sonarcloud
         run: ./gradlew jacocoTestReport sonar --info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PUSH_KEY: ${{ secrets.PUSHER_KEY }}
+          PUSH_SECRET: ${{ secrets.PUSHER_SECRET }}
 
       - name: Build and analyze with sonarcloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PUSH_KEY: ${{ secrets.PUSHER_KEY }}
+          PUSH_SECRET: ${{ secrets.PUSHER_SECRET }}
         run: ./gradlew build sonar --info
