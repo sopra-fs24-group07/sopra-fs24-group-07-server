@@ -76,7 +76,9 @@ public interface DTOMapper {
   @Mapping(source = "text", target = "text")
   @Mapping(source = "creationDate", target = "creationDate")
   @Mapping(source = "user.userId", target = "authorId")
+  @Mapping(source = "user.username", target = "authorName")
   CommentGetDTO convertEntityToCommentGetDTO(Comment comment);
+  
   @Mapping(source = "goalMinutes", target = "goalMinutes")
   Session convertSessionPostDTOtoEntity(SessionPostDTO sessionPostDTO);
 
