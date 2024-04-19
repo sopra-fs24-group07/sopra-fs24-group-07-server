@@ -7,6 +7,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ public class CommentServiceTest {
   private Comment testComment;
   private Task testTask;
   private User testUser;
+  private List<Comment> comments;
 
   @BeforeEach
   public void setup() {
@@ -47,6 +50,9 @@ public class CommentServiceTest {
 
     testComment.setTask(testTask);
     testComment.setUser(testUser);
+
+    comments = new ArrayList<>();
+    comments.add(testComment);
 
     // when -> any object is being save in the commentRepository -> return the dummy testComment
     Mockito.when(commentRepository.save(Mockito.any())).thenReturn(testComment);
@@ -105,5 +111,58 @@ public class CommentServiceTest {
     // when/then -> try to create comment with empty fields -> should throw an exception
     assertThrows(ResponseStatusException.class,
         () -> commentService.createComment(emptyComment, testTask.getTaskId()));
+  }
+
+  // GET
+
+  /**
+   * Test for getting all comments of a task if task exists and has comments
+   */
+  @Test
+  public void getCommentsByTaskId_validInputs_success() {
+    // when -> try to find taskId in the taskService -> return dummy task
+    Mockito.when(taskService.getTask(Mockito.any())).thenReturn(testTask);
+
+    // when -> try to find comments by task in the commentRepository -> return list with dummy
+    // comment
+    Mockito.when(commentRepository.findByTask(Mockito.any())).thenReturn(comments);
+
+    // call the method under test
+    List<Comment> foundComments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // assert found list with one comment
+    assertEquals(1, foundComments.size());
+    assertEquals(testComment, foundComments.get(0));
+  }
+
+  /**
+   * Test for getting all comments of a task if task exists but has no comments
+   */
+  @Test
+  public void getCommentsByTaskId_validInputs_noComments() {
+    // when -> try to find taskId in the taskService -> return dummy task
+    Mockito.when(taskService.getTask(Mockito.any())).thenReturn(testTask);
+
+    // when -> try to find comments by task in the commentRepository -> return empty list
+    Mockito.when(commentRepository.findByTask(Mockito.any())).thenReturn(new ArrayList<>());
+
+    // call the method under test
+    List<Comment> foundComments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // assert found empty list
+    assertEquals(0, foundComments.size());
+  }
+
+  /**
+   * Test for getting all comments of a task if task does not exist
+   */
+  @Test
+  public void getCommentsByTaskId_invalidInputs_taskDoesNotExist_throwsException() {
+    // when -> try to find taskId in the taskService -> return null
+    Mockito.when(taskService.getTask(Mockito.any())).thenReturn(null);
+
+    // call the method under test and assert an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.getCommentsByTaskId(testTask.getTaskId()));
   }
 }
