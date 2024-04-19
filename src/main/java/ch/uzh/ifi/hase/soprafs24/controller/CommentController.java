@@ -42,7 +42,7 @@ public class CommentController {
     return DTOMapper.INSTANCE.convertEntityToCommentGetDTO(createdComment);
   }
 
-  @GetMapping
+  @GetMapping("/teams/{teamId}/tasks/{taskId}/comments")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<CommentGetDTO> getComments(@PathVariable Long teamId, @PathVariable Long taskId,
