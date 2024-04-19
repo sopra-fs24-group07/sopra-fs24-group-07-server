@@ -11,6 +11,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class CommentServiceIntegrationTest {
   @Autowired private CommentService commentService;
 
   @BeforeEach
+
+  @AfterEach
+
   public void setup() {
     commentRepository.deleteAll();
     taskRepository.deleteAll();
@@ -87,5 +91,77 @@ public class CommentServiceIntegrationTest {
     assertEquals(testComment.getText(), createdComment.getText());
     assertEquals(testTask.getTaskId(), createdComment.getTask().getTaskId());
     assertEquals(testUser.getUserId(), createdComment.getUser().getUserId());
+  }
+
+  @Test
+  public void createComment_emptyText_throwsException() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment with empty text
+    Comment testComment = new Comment();
+    testComment.setText("");
+    testComment.setTask(testTask);
+    testComment.setUser(testUser);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, testTask.getTaskId()));
+  }
+
+  @Test
+  public void createComment_nullText_throwsException() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment with null text
+    Comment testComment = new Comment();
+    testComment.setText(null);
+    testComment.setTask(testTask);
+    testComment.setUser(testUser);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, testTask.getTaskId()));
   }
 }
