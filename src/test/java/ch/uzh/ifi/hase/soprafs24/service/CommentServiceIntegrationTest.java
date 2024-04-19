@@ -11,6 +11,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -163,5 +164,89 @@ public class CommentServiceIntegrationTest {
     // when & then
     assertThrows(ResponseStatusException.class,
         () -> commentService.createComment(testComment, testTask.getTaskId()));
+  }
+
+  @Test
+  public void getComments_validInputs_success() {
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setTask(testTask);
+    testComment.setUser(testUser);
+    commentRepository.saveAndFlush(testComment);
+
+    // when
+    List<Comment> comments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // then
+    assertNotNull(comments);
+    assertEquals(1, comments.size());
+    assertEquals(testComment.getText(), comments.get(0).getText());
+  }
+
+  @Test
+  public void getComments_invalidTaskId_throwsException() {
+    // given a task id that does not exist
+    Long invalidTaskId = 999L;
+
+    // when & then
+    assertThrows(
+        ResponseStatusException.class, () -> commentService.getCommentsByTaskId(invalidTaskId));
+  }
+
+  @Test
+  public void getComments_noCommentsForTask_returnsEmptyList() {
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task with no comments
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // when
+    List<Comment> comments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // then
+    assertNotNull(comments);
+    assertTrue(comments.isEmpty());
   }
 }
