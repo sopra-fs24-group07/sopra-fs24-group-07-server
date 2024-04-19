@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import ch.uzh.ifi.hase.soprafs24.service.PusherService; //PUSHER
+
 /**
  * Task Service
  * This class is the "worker" and responsible for all functionality related to
@@ -27,14 +29,14 @@ public class TaskService {
   private final Logger log = LoggerFactory.getLogger(TaskService.class);
   private final TeamService teamService;
   private final TaskRepository taskRepository;
-  private final PusherService pusherService;
+  private final PusherService pusherService; //PUSHER ADDED
 
   @Autowired
   public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
-      @Qualifier("teamService") TeamService teamService, PusherService pusherService) {
+      @Qualifier("teamService") TeamService teamService, PusherService pusherService) {  //PUSHER ADDED
     this.taskRepository = taskRepository;
     this.teamService = teamService;
-    this.pusherService = pusherService;
+    this.pusherService = pusherService; //PUSHER ADDED
   }
 
   /**
@@ -61,8 +63,8 @@ public class TaskService {
 
     log.debug("Created Information for Task: {}", newTask);
 
-    // send pusher event
-    pusherService.taskModification(newTask.getTeam().getTeamId().toString());
+    // let other users know a task has been edited
+    pusherService.updateTask(newTask.getTeam().getTeamId().toString()); //PUSHER
 
     return newTask;
   }
@@ -103,7 +105,7 @@ public class TaskService {
     taskRepository.flush();
 
     // Send pusher event
-    pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());
+    pusherService.updateTask(updatedTask.getTeam().getTeamId().toString());
 
     log.debug("Updated Information for Task: {}", updatedTask);
     return updatedTask;
