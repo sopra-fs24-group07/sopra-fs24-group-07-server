@@ -61,6 +61,11 @@ jobs:
           echo "spring.datasource.url=${{ secrets.DB_URL_DEV }}" >> src/main/resources/application.properties
           echo "spring.datasource.password=${{ secrets.DB_PASSWORD_DEV }}" >> src/main/resources/application.properties
 
+      - name: Add pusher credentials
+        run: |
+          echo "  PUSHER_KEY={{ secrets.PUSHER_KEY }}" >> app.yaml
+          echo "  PUSHER_SECRET={{ secrets.PUSHER_SECRET }}" >> app.yaml
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
