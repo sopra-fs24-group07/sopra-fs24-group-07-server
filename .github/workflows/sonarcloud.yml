@@ -51,6 +51,11 @@ jobs:
           echo "spring.datasource.password=test_password" >> src/main/resources/application.properties
           cat src/main/resources/application.properties
 
+      - name: Add pusher credentials
+        run: |
+          echo "PUSHER_KEY={{ secrets.PUSHER_KEY }}" >> app.yaml
+          echo "PUSHER_SECRET={{ secrets.PUSHER_SECRET }}" >> app.yaml
+
       - name: Test and analyze with sonarcloud
         run: ./gradlew test sonar --info
         env:
