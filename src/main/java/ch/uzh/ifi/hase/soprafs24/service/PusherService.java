@@ -21,7 +21,7 @@ public class PusherService {
     this.pusher = pusher;
   }
 
-  public void triggerEvent(String channel, String event, Object data) {
+  private void triggerEvent(String channel, String event, Object data) {
     try {
       pusher.trigger(channel, event, data);
     } catch (Exception e) {
@@ -39,11 +39,6 @@ public class PusherService {
 
   /* pusher service when creating or modifying a task */
   public void taskModification(String teamId) {
-    try {
-      throw new UnsupportedOperationException("Not implemented yet");
-      // todo
-    } catch (Exception e) {
-      log.error("Error while sending pusher event: {}", e.getMessage());
-    }
+    // todo
   }
 }
