@@ -71,7 +71,7 @@ public class CommentControllerTest {
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
-        post("/teams/1/tasks/1/comments")
+        post("/api/v1/teams/1/tasks/1/comments")
             .contentType(MediaType.APPLICATION_JSON)
             .content(ControllerTestHelper.asJsonString(commentPostDTO))
             .header("Authorization", "1234");
@@ -106,7 +106,7 @@ public class CommentControllerTest {
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
-        post("/teams/1/tasks/1/comments")
+        post("/api/v1/teams/1/tasks/1/comments")
             .contentType(MediaType.APPLICATION_JSON)
             .content(ControllerTestHelper.asJsonString(commentPostDTO))
             .header("Authorization", "1234");
@@ -137,7 +137,7 @@ public class CommentControllerTest {
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
-        post("/teams/1/tasks/1/comments")
+        post("/api/v1/teams/1/tasks/1/comments")
             .contentType(MediaType.APPLICATION_JSON)
             .content(ControllerTestHelper.asJsonString(commentPostDTO))
             .header("Authorization", "1234");
