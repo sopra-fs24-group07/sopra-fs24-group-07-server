@@ -60,11 +60,12 @@ public class CommentControllerTest {
 
     CommentPostDTO commentPostDTO = new CommentPostDTO();
     commentPostDTO.setText("This is a test comment.");
+    commentPostDTO.setUserId(1L);
 
     // mock valid token
     Mockito
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
-            Mockito.anyString(), Mockito.anyLong()))
+            Mockito.anyString(), Mockito.eq(1L), Mockito.anyLong()))
         .thenReturn(testUser);
     // mock comment service
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
@@ -98,7 +99,7 @@ public class CommentControllerTest {
     // mock the return of isAuthorizedAndBelongsToTeam()
     Mockito
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
-            Mockito.anyString(), Mockito.anyLong()))
+            Mockito.anyString(), Mockito.eq(1L), Mockito.anyLong()))
         .thenReturn(mockUser);
     given(commentService.createComment(Mockito.any(), Mockito.anyLong()))
         .willThrow(
@@ -129,11 +130,12 @@ public class CommentControllerTest {
     // given
     CommentPostDTO commentPostDTO = new CommentPostDTO();
     commentPostDTO.setText("This is a test comment.");
+    commentPostDTO.setUserId(1L);
 
     Mockito
         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
         .when(authorizationService)
-        .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.any());
+        .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.eq(1L), Mockito.any());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =

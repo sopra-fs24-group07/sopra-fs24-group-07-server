@@ -26,12 +26,12 @@ public class CommentController {
   @ResponseBody
   public CommentGetDTO createComment(@PathVariable Long teamId, @PathVariable Long taskId,
       @RequestBody CommentPostDTO commentPostDTO, @RequestHeader("Authorization") String token) {
-    // Get the user for that user token in header and check if that token is in team
-    User authorUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
-
     // Convert API comment to internal representation
     Comment commentInput = DTOMapper.INSTANCE.convertCommentPostDTOtoEntity(commentPostDTO);
-    commentInput.setUser(authorUser);
+
+    // Check if user is authorized to create comment
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(
+        token, commentPostDTO.getUserId(), teamId);
 
     // Create comment
     Comment createdComment = commentService.createComment(commentInput, taskId);
