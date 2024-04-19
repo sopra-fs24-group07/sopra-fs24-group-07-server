@@ -44,8 +44,9 @@ jobs:
      - name: Test and analyze (no env variables)
        run: ./gradlew build
        env:
-          PUSH_KEY: ${{ secrets.PUSHER_KEY }}
-          PUSH_SECRET: ${{ secrets.PUSHER_SECRET }}
+          PUSHER_APP_ID: 1787826
+          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
+          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
 
   deploy:
     name: Deploying to Google Cloud
