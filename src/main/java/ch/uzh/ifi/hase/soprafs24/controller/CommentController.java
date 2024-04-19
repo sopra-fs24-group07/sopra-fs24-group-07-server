@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/teams/{teamId}/tasks/{taskId}/comments")
+@RequestMapping("api/v1")
 public class CommentController {
   private final CommentService commentService;
   private final AuthorizationService authorizationService;
@@ -21,7 +21,7 @@ public class CommentController {
     this.authorizationService = authorizationService;
   }
 
-  @PostMapping
+  @PostMapping("/teams/{teamId}/tasks/{taskId}/comments")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public CommentGetDTO createComment(@PathVariable Long teamId, @PathVariable Long taskId,
