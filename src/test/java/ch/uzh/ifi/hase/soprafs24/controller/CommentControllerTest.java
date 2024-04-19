@@ -15,6 +15,8 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.CommentService;
 import ch.uzh.ifi.hase.soprafs24.service.TaskService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -144,6 +146,85 @@ public class CommentControllerTest {
 
     // then
     mockMvc.perform(postRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
+  /**
+   * Test for fetching a Comment with valid input (happy-path)
+   */
+  @Test
+  public void getComments_validInput_returnComments() throws Exception {
+    // given
+    Comment comment = new Comment();
+    comment.setCommentId(1L);
+    comment.setText("This is a test comment.");
+
+    List<Comment> comments = new ArrayList<>();
+    comments.add(comment);
+
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(comments);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].commentId", is(comment.getCommentId().intValue())))
+        .andExpect(jsonPath("$[0].text", is(comment.getText())));
+  }
+
+  /**
+   * Test for trying to fetch a Comment, where there are no comments in task
+   */
+  @Test
+  public void getComments_noCommentsInTask_throwsError() throws Exception {
+    // given
+    given(commentService.getCommentsByTaskId(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "No comments found for task with id 1"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains(
+                "No comments found for task with id 1")));
+  }
+
+  /**
+   * Test for trying to fetch a Comment, where i'm not authorized to access
+   */
+  @Test
+  public void getComments_unauthorizedAccess_throwsError() throws Exception {
+    // given
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
         .andExpect(status().isUnauthorized())
         .andExpect(
             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
