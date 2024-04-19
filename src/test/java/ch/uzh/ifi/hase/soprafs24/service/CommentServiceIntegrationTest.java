@@ -80,7 +80,6 @@ public class CommentServiceIntegrationTest {
     // given a comment
     Comment testComment = new Comment();
     testComment.setText("This is a test comment");
-    testComment.setTask(testTask);
     testComment.setUser(testUser);
 
     // when
@@ -122,7 +121,6 @@ public class CommentServiceIntegrationTest {
     // given a comment with empty text
     Comment testComment = new Comment();
     testComment.setText("");
-    testComment.setTask(testTask);
     testComment.setUser(testUser);
 
     // when & then
@@ -158,7 +156,6 @@ public class CommentServiceIntegrationTest {
     // given a comment with null text
     Comment testComment = new Comment();
     testComment.setText(null);
-    testComment.setTask(testTask);
     testComment.setUser(testUser);
 
     // when & then

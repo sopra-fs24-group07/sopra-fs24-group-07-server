@@ -31,16 +31,18 @@ public class CommentService {
   public Comment createComment(Comment newComment, Long taskId) {
     ServiceHelpers.checkValidString(newComment.getText(), "text");
 
-    Task task = taskService.getTask(taskId);
+    // check that the task exists and add to comment
+    newComment.setTask(taskService.getTask(taskId));
 
-    // if (newComment == null) {
-    //   throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to save comment");
-    // }
-
-    newComment.setTask(task);
-
-    newComment = commentRepository.save(newComment);
-    commentRepository.flush();
+    // save
+    try {
+      newComment = commentRepository.save(newComment);
+      commentRepository.flush();
+    } catch (Exception e) {
+      log.error("Failed to create comment: {}", newComment, e);
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Failed to create comment: " + e.getMessage());
+    }
 
     log.debug("Successfully created comment: {}", newComment);
     return newComment;

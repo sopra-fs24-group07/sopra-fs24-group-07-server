@@ -48,7 +48,6 @@ public class CommentServiceTest {
     testUser.setUserId(1L);
     testUser.setUsername("user1");
 
-    testComment.setTask(testTask);
     testComment.setUser(testUser);
 
     comments = new ArrayList<>();
@@ -89,7 +88,6 @@ public class CommentServiceTest {
     // given
     Comment incompleteComment = new Comment();
     incompleteComment.setText(null);
-    incompleteComment.setTask(testTask);
     incompleteComment.setUser(testUser);
 
     // when/then -> try to create comment with missing fields -> should throw an exception
@@ -105,7 +103,6 @@ public class CommentServiceTest {
     // given
     Comment emptyComment = new Comment();
     emptyComment.setText("");
-    emptyComment.setTask(testTask);
     emptyComment.setUser(testUser);
 
     // when/then -> try to create comment with empty fields -> should throw an exception
