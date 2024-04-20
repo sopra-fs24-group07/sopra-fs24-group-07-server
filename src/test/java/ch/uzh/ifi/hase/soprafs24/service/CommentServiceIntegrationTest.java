@@ -50,6 +50,8 @@ public class CommentServiceIntegrationTest {
     userRepository.deleteAll();
   }
 
+  // region Comment Service Integration
+
   @Test
   public void createComment_validInputs_success() {
     String justiceTeam = "productiviteam";
@@ -163,6 +165,10 @@ public class CommentServiceIntegrationTest {
         () -> commentService.createComment(testComment, testTask.getTaskId()));
   }
 
+  // endregion
+
+  // region Comment Service Integration GET
+
   @Test
   public void getComments_validInputs_success() {
     // given a team
@@ -246,4 +252,6 @@ public class CommentServiceIntegrationTest {
     assertNotNull(comments);
     assertTrue(comments.isEmpty());
   }
+
+  // endregion
 }
