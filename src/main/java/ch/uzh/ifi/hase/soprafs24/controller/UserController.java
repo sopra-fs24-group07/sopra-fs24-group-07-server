@@ -18,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import ch.uzh.ifi.hase.soprafs24.service.PusherService; //PUSHER
-
 /**
  * User Controller
  * This class is responsible for handling all REST request that are related to
@@ -33,14 +31,12 @@ public class UserController {
   private final UserService userService;
   private final AuthorizationService authorizationService;
   private final TeamUserService teamUserService;
-  private final PusherService pusherService; //PUSHER
 
   UserController(UserService userService, AuthorizationService authorizationService,
-      TeamUserService teamUserService, PusherService pusherService) { //PUSHER ADDED
+      TeamUserService teamUserService) {
     this.userService = userService;
     this.authorizationService = authorizationService;
     this.teamUserService = teamUserService;
-    this.pusherService = pusherService; //PUSHER ADDED
   }
 
   // Account creation
@@ -125,12 +121,6 @@ public class UserController {
 
     // add user to existing team
     TeamUser createdTeamUser = teamUserService.createTeamUser(teamUUID, user.getUserId());
-
-    //update pusher
-    // teamId not present and no way to make pusher call to correct channel
-    //because pusher in client cant subscribe to a channel with teamUUID we need to somehow get the teamId in order
-    //to update members
-    //pusherService.updateTeam(teamId.toString());
 
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeamUser.getTeam());
   }

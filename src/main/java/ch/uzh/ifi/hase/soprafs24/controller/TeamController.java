@@ -21,8 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import ch.uzh.ifi.hase.soprafs24.service.PusherService; //PUSHER
-
 /*
  * Team Controller
  * This class is responsible for handling all REST request that are related to the team, and linking
@@ -35,15 +33,13 @@ public class TeamController {
   private final AuthorizationService authorizationService;
   private final TeamUserService teamUserService;
   private final TaskService taskService;
-  private final PusherService pusherService; //PUSHER
 
   TeamController(TeamService teamService, AuthorizationService authorizationService,
-      TeamUserService teamUserService, TaskService taskService, PusherService pusherService) { //PUSHER ADDED
+      TeamUserService teamUserService, TaskService taskService) {
     this.teamService = teamService;
     this.authorizationService = authorizationService;
     this.teamUserService = teamUserService;
     this.taskService = taskService;
-    this.pusherService = pusherService; //PUSHER ADDED
   }
 
   @PostMapping("/teams")
@@ -94,9 +90,6 @@ public class TeamController {
     // check if user is authorized (valid token) also throws 404 if teamId not found
     User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, userId, teamId);
 
-    // let other users know user list has been updated
-    pusherService.updateTeam(teamId.toString()); //PUSHER
-
     // delete user from team
     teamUserService.deleteUserOfTeam(teamId, userId);
   }
@@ -116,9 +109,6 @@ public class TeamController {
 
     // create task
     Task createdTask = taskService.createTask(taskInput);
-
-    // let other users know task list has been updated
-    pusherService.updateTask(teamId.toString()); //PUSHER
 
     // convert internal representation of task back to API
     return DTOMapper.INSTANCE.convertEntityToTaskGetDTO(createdTask);
@@ -156,9 +146,6 @@ public class TeamController {
 
     // update task
     Task updatedTask = taskService.updateTask(taskInput, teamId);
-
-    // let other users know task list has been updated
-    pusherService.updateTask(teamId.toString()); //PUSHER
 
     // convert internal representation of task back to API
     return DTOMapper.INSTANCE.convertEntityToTaskGetDTO(updatedTask);
