@@ -77,4 +77,30 @@ public class PusherServiceTest {
         .trigger(Mockito.eq(channel), Mockito.eq(event),
             Mockito.eq(Collections.singletonMap("status", "off")));
   }
+
+  @Test
+  public void testTaskModification_success() {
+    Mockito.doReturn(new Mockito())
+        .when(pusher)
+        .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
+
+    pusherService.taskModification("teamId");
+
+    Mockito.verify(pusher, Mockito.times(1))
+        .trigger(Mockito.eq(channel), Mockito.eq("task-update"),
+            Mockito.eq(Collections.singletonMap("tasks", "updated")));
+  }
+
+  @Test
+  public void testTaskModification_pusherException() {
+    Mockito.doThrow(new RuntimeException("Test exception"))
+        .when(pusher)
+        .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
+
+    pusherService.taskModification("teamId");
+
+    Mockito.verify(pusher, Mockito.times(1))
+        .trigger(Mockito.eq(channel), Mockito.eq("task-update"),
+            Mockito.eq(Collections.singletonMap("tasks", "updated")));
+  }
 }
