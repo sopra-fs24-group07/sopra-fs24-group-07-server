@@ -110,11 +110,11 @@ public class PusherServiceTest {
         .when(pusher)
         .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
 
-    pusherService.updateTeam("teamId");
+    pusherService.updateTeam("teamId", "teamId");
 
     Mockito.verify(pusher, Mockito.times(1))
         .trigger(Mockito.eq(channel), Mockito.eq("team-update"),
-            Mockito.eq(Collections.singletonMap("userId", "updated")));
+            Mockito.eq(Collections.singletonMap("userId", "userId")));
   }
 
   @Test
@@ -123,10 +123,10 @@ public class PusherServiceTest {
         .when(pusher)
         .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
 
-    pusherService.updateTeam("teamId");
+    pusherService.updateTeam("teamId", "teamId");
 
     Mockito.verify(pusher, Mockito.times(1))
         .trigger(Mockito.eq(channel), Mockito.eq("team-update"),
-            Mockito.eq(Collections.singletonMap("userId", "updated")));
+            Mockito.eq(Collections.singletonMap("userId", "userId")));
   }
 }
