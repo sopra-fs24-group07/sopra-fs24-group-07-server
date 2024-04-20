@@ -44,7 +44,7 @@ public class TeamUserServiceIntegrationTest {
     userRepository.deleteAll();
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString());
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   @Test
