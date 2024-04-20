@@ -49,16 +49,14 @@ public class CommentService {
   }
 
   public List<Comment> getCommentsByTaskId(Long taskId) {
+    // check that the task exists
     Task task = taskService.getTask(taskId);
 
-    if (task == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
-    }
-
+    // search for comments with that task
     List<Comment> comments = commentRepository.findByTask(task);
-
     if (comments == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comments not found");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_FOUND, "Comments not found for requested task.");
     }
 
     log.debug("Successfully fetched comments for task: {}", taskId);

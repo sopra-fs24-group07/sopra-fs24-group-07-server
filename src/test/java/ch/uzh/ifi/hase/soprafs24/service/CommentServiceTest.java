@@ -156,7 +156,8 @@ public class CommentServiceTest {
   @Test
   public void getCommentsByTaskId_invalidInputs_taskDoesNotExist_throwsException() {
     // when -> try to find taskId in the taskService -> return null
-    Mockito.when(taskService.getTask(Mockito.any())).thenReturn(null);
+    Mockito.when(taskService.getTask(Mockito.any()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found."));
 
     // call the method under test and assert an exception is thrown
     assertThrows(ResponseStatusException.class,
