@@ -25,6 +25,7 @@ public class TaskServiceTest {
   @Mock private TeamService teamService;
 
   @InjectMocks private TaskService taskService;
+  @Mock private PusherService pusherService;
 
   private Task testTask;
   private Team testTeam;
@@ -54,6 +55,9 @@ public class TaskServiceTest {
 
     // when -> any object is being save in the taskRepository -> return the dummy testTask
     Mockito.when(taskRepository.save(Mockito.any())).thenReturn(testTask);
+
+    // when pusher call -> mock
+    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
   // POST

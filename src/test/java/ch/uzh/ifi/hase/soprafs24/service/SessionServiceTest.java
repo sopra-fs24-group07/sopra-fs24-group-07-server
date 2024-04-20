@@ -71,6 +71,30 @@ public class SessionServiceTest {
   }
 
   @Test
+  public void createSession_validInputs_endedSessions_success() {
+    // given test session with end date
+    testSession.setEndDateTime(testStartDateTime.plusHours(1));
+
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when call to getSessionsByTeamId -> mock return ended session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
+
+    // then -> the session is saved successfully
+    Session createdSession = spySessionService.createSession(testTeam.getTeamId(), mockGoalMinutes);
+
+    // check if the session is returned
+    assertEquals(testSession.getSessionId(), createdSession.getSessionId());
+    assertEquals(testSession.getTeam(), createdSession.getTeam());
+    assertEquals(testStartDateTime, createdSession.getStartDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
+  }
+
+  @Test
   public void createSession_invalidInputs_throwsException() {
     // when -> call task service to get the team -> return 404 because team not found
     Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
@@ -84,6 +108,24 @@ public class SessionServiceTest {
     // then -> an exception is thrown
     assertThrows(ResponseStatusException.class,
         () -> sessionService.createSession(99L, mockGoalMinutes)); // team not found
+  }
+
+  /* test if there is already an active session */
+  @Test
+  public void createSession_activeSession_throwsException() {
+    // when -> call task service to get the team -> return the dummy testTeam
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when call to getSessionsByTeamId -> mock return active session
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(java.util.List.of(testSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(Mockito.anyLong());
+
+    // then -> an exception is thrown
+    assertThrows(ResponseStatusException.class,
+        () -> spySessionService.createSession(testTeam.getTeamId(), mockGoalMinutes)); // active
+    // session
   }
   // endregion
 

@@ -10,9 +10,11 @@ import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,11 +31,15 @@ public class TaskServiceIntegrationTest {
   @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
 
   @Autowired private TaskService taskService;
+  @MockBean private PusherService pusherService;
 
   @BeforeEach
   public void setup() {
     taskRepository.deleteAll();
     teamRepository.deleteAll();
+
+    // mock pusher service taskModification method
+    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
   // POST

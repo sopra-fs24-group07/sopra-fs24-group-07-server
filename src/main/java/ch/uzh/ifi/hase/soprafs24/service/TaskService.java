@@ -27,12 +27,14 @@ public class TaskService {
   private final Logger log = LoggerFactory.getLogger(TaskService.class);
   private final TeamService teamService;
   private final TaskRepository taskRepository;
+  private final PusherService pusherService;
 
   @Autowired
   public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
-      @Qualifier("teamService") TeamService teamService) {
+      @Qualifier("teamService") TeamService teamService, PusherService pusherService) {
     this.taskRepository = taskRepository;
     this.teamService = teamService;
+    this.pusherService = pusherService;
   }
 
   /**
@@ -58,6 +60,10 @@ public class TaskService {
     taskRepository.flush();
 
     log.debug("Created Information for Task: {}", newTask);
+
+    // send pusher event
+    pusherService.taskModification(newTask.getTeam().getTeamId().toString());
+
     return newTask;
   }
 
@@ -95,6 +101,9 @@ public class TaskService {
 
     Task updatedTask = taskRepository.save(existingTask);
     taskRepository.flush();
+
+    // Send pusher event
+    pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());
 
     log.debug("Updated Information for Task: {}", updatedTask);
     return updatedTask;

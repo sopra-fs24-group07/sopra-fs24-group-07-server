@@ -64,6 +64,36 @@ public class SessionServiceIntegrationTest {
     assertEquals(createdSession.getTeam().getTeamId(), testTeam.getTeamId());
   }
 
+  /* if there are only ended sessions -> should be able to create a new session */
+  @Test
+  public void createSession_validInputs_noActiveSessions_success() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given past session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now().minusHours(1).minusDays(1));
+    testSession.setEndDateTime(LocalDateTime.now().minusDays(1));
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    Session createdSession = sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes);
+
+    // then
+    assertNotNull(createdSession.getSessionId());
+    assertNotNull(createdSession.getStartDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
+    assertNull(createdSession.getEndDateTime());
+    assertEquals(mockGoalMinutes, createdSession.getGoalMinutes());
+    assertEquals(createdSession.getTeam().getTeamId(), testTeam.getTeamId());
+  }
+
   @Test
   public void createSession_validInputs_existingActiveSession_expectsError() {
     // given
@@ -80,9 +110,11 @@ public class SessionServiceIntegrationTest {
     testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 
-    // when
-    assertThrows(ResponseStatusException.class,
+    // when -> validate that the 409 error is thrown
+    Exception err = assertThrows(ResponseStatusException.class,
         () -> sessionService.createSession(testTeam.getTeamId(), mockGoalMinutes));
+    assertEquals(
+        "409 CONFLICT \"There is already an active session for this team.\"", err.getMessage());
   }
 
   /* test if goalMins is null that the 400 error is thrown */
