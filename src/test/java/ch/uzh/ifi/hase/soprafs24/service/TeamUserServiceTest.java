@@ -26,6 +26,8 @@ public class TeamUserServiceTest {
   @Mock private TeamService teamService;
   @InjectMocks private TeamUserService teamUserService;
 
+  @Mock private PusherService pusherService;
+
   private Team testTeam;
   private User testUser;
   private TeamUser testTeamUser;
@@ -51,6 +53,9 @@ public class TeamUserServiceTest {
 
     // when -> any object is being save in the teamUserRepository -> return the dummy testTeamUser
     Mockito.when(teamUserRepository.save(Mockito.any())).thenReturn(testTeamUser);
+
+    // when pusher call -> mock
+    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
   // region createTeamUser with teamId tests
@@ -70,6 +75,8 @@ public class TeamUserServiceTest {
 
     // then
     Mockito.verify(teamUserRepository, Mockito.times(1)).save(Mockito.any());
+
+    Mockito.verify(pusherService, Mockito.times(1)).updateTeam(Mockito.anyString());
 
     // check that team/user objects are expected
     assertEquals(testTeamUser.getUser(), createdTeamUser.getUser());

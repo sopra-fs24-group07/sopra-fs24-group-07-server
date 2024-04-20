@@ -29,16 +29,18 @@ public class TeamUserService {
   private final TeamRepository teamRepository;
   private final TeamUserRepository teamUserRepository;
   private final TeamService teamService;
+  private final PusherService pusherService;
 
   @Autowired
   public TeamUserService(@Qualifier("userRepository") UserRepository userRepository,
       @Qualifier("teamRepository") TeamRepository teamRepository,
       @Qualifier("teamUserRepository") TeamUserRepository teamUserRepository,
-      @Qualifier("teamService") TeamService teamService) {
+      @Qualifier("teamService") TeamService teamService, PusherService pusherService) {
     this.userRepository = userRepository;
     this.teamRepository = teamRepository;
     this.teamUserRepository = teamUserRepository;
     this.teamService = teamService;
+    this.pusherService = pusherService;
   }
 
   /**
@@ -63,6 +65,9 @@ public class TeamUserService {
     // save and flush
     teamUserRepository.save(teamUser);
     teamUserRepository.flush();
+
+    // notify
+    pusherService.updateTeam(team.getTeamId().toString());
 
     log.debug("Created Information for TeamUser: {}", teamUser);
 
@@ -153,6 +158,9 @@ public class TeamUserService {
 
     // delete selected team user
     teamUserRepository.deleteById(teamUser.getTeamUserId());
+
+    // sync with pusher
+    pusherService.updateTeam(team.getTeamId().toString());
 
     log.debug("Deleted teamUser {}: user '{}' from team '{}'", teamUser, user.getUsername(),
         team.getName()); // monitoring

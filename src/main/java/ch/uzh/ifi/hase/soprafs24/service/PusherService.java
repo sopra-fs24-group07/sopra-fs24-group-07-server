@@ -41,4 +41,8 @@ public class PusherService {
   public void taskModification(String teamId) {
     triggerEvent("team-" + teamId, "task-update", Collections.singletonMap("tasks", "updated"));
   }
+
+  public void updateTeam(String teamId) {
+    triggerEvent("team-" + teamId, "team-update", Collections.singletonMap("userId", "updated"));
+  }
 }
