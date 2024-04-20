@@ -57,7 +57,7 @@ public class TaskServiceTest {
     Mockito.when(taskRepository.save(Mockito.any())).thenReturn(testTask);
 
     // when pusher call -> mock
-    Mockito.doNothing().when(pusherService).updateTask(Mockito.anyString());
+    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
   // POST

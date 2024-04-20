@@ -39,7 +39,7 @@ public class TaskServiceIntegrationTest {
     teamRepository.deleteAll();
 
     // mock pusher service taskModification method
-    Mockito.doNothing().when(pusherService).updateTask(Mockito.anyString());
+    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
   // POST
