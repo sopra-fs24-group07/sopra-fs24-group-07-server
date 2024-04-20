@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,11 +35,16 @@ public class TeamUserServiceIntegrationTest {
   @Autowired private TeamUserService teamUserService;
   @Autowired private TeamService teamService;
 
+  @MockBean private PusherService pusherService;
+
   @BeforeEach
   public void setup() {
     teamUserRepository.deleteAll();
     teamRepository.deleteAll();
     userRepository.deleteAll();
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString());
   }
 
   @Test
