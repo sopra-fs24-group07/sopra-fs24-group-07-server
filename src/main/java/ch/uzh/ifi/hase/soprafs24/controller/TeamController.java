@@ -90,8 +90,6 @@ public class TeamController {
     // check if user is authorized (valid token) also throws 404 if teamId not found
     User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, userId, teamId);
 
-
-
     // delete user from team
     teamUserService.deleteUserOfTeam(teamId, userId);
   }
