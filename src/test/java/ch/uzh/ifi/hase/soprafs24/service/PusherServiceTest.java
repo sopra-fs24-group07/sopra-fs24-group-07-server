@@ -110,7 +110,7 @@ public class PusherServiceTest {
         .when(pusher)
         .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
 
-    pusherService.updateTeam("teamId", "teamId");
+    pusherService.updateTeam("teamId", "userId");
 
     Mockito.verify(pusher, Mockito.times(1))
         .trigger(Mockito.eq(channel), Mockito.eq("team-update"),
@@ -123,7 +123,7 @@ public class PusherServiceTest {
         .when(pusher)
         .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
 
-    pusherService.updateTeam("teamId", "teamId");
+    pusherService.updateTeam("teamId", "userId");
 
     Mockito.verify(pusher, Mockito.times(1))
         .trigger(Mockito.eq(channel), Mockito.eq("team-update"),
