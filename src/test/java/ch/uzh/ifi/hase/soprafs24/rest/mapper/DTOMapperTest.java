@@ -227,5 +227,28 @@ public class DTOMapperTest {
     assertEquals(commentPostDTO.getText(), comment.getText());
     assertEquals(commentPostDTO.getUserId(), comment.getUser().getUserId());
   }
+
+  @Test
+  public void testGetComment_fromComment_toCommentGetDTO_success() {
+    // create Comment
+    Comment comment = new Comment();
+    comment.setCommentId(1L);
+    comment.setText("This is a comment");
+    comment.setCreationDate(LocalDateTime.now());
+    User user = new User();
+    user.setUserId(10L);
+    user.setUsername("testUser");
+    comment.setUser(user);
+
+    // MAP -> Create CommentGetDTO
+    CommentGetDTO commentGetDTO = DTOMapper.INSTANCE.convertEntityToCommentGetDTO(comment);
+
+    // check content
+    assertEquals(comment.getCommentId(), commentGetDTO.getCommentId());
+    assertEquals(comment.getText(), commentGetDTO.getText());
+    assertEquals(comment.getCreationDate(), commentGetDTO.getCreationDate());
+    assertEquals(comment.getUser().getUserId(), commentGetDTO.getAuthorId());
+    assertEquals(comment.getUser().getUsername(), commentGetDTO.getAuthorName());
+  }
   // endregion
 }
