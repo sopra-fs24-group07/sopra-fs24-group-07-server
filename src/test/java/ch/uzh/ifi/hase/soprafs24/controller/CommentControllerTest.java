@@ -50,6 +50,8 @@ public class CommentControllerTest {
     testUser.setUserId(1L);
   }
 
+  // region Comment Controller POST
+
   /**
    * Test for creating a Comment with valid input
    */
@@ -159,6 +161,10 @@ public class CommentControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  // endregion
+
+  // region Comment Service Integration GET
+
   /**
    * Test for fetching a Comment with valid input (happy-path)
    */
@@ -238,4 +244,6 @@ public class CommentControllerTest {
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
+
+  // endregion
 }
