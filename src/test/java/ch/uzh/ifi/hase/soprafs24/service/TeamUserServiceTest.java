@@ -76,7 +76,8 @@ public class TeamUserServiceTest {
     // then
     Mockito.verify(teamUserRepository, Mockito.times(1)).save(Mockito.any());
 
-    Mockito.verify(pusherService, Mockito.times(1)).updateTeam(Mockito.anyString(), Mockito.anyString());
+    Mockito.verify(pusherService, Mockito.times(1))
+        .updateTeam(Mockito.anyString(), Mockito.anyString());
 
     // check that team/user objects are expected
     assertEquals(testTeamUser.getUser(), createdTeamUser.getUser());
