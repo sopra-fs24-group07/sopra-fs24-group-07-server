@@ -168,15 +168,13 @@ public class CommentControllerTest {
     Comment comment = new Comment();
     comment.setCommentId(1L);
     comment.setText("This is a test comment.");
-
-    List<Comment> comments = new ArrayList<>();
-    comments.add(comment);
+    comment.setUser(testUser);
 
     Mockito
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
             Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(testUser);
-    given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(comments);
+    given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(List.of(comment));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
@@ -185,8 +183,11 @@ public class CommentControllerTest {
     // then
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].commentId", is(comment.getCommentId().intValue())))
-        .andExpect(jsonPath("$[0].text", is(comment.getText())));
+        .andExpect(jsonPath("$[0].text", is(comment.getText())))
+        .andExpect(jsonPath("$[0].authorId", is(comment.getUser().getUserId().intValue())))
+        .andExpect(jsonPath("$[0].authorName", is(comment.getUser().getName())));
   }
 
   /**
