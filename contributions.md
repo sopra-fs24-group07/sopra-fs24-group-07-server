@@ -159,6 +159,14 @@ timeline
 ### B1s9l
 
 ### Monti934
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
+  Time goal input
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/18
+  Team management overview and invite users
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/12
+  Team Members UI
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/35
+  Kanban Board
 
 ### Alihan26
 
