@@ -137,4 +137,27 @@ timeline
 
 ## 13.04.2024 - 19.04.2024
 
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/68:
+  Session start endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/71:
+  Session start service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/72:
+  Session end endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/72:
+  Session end service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/78:
+  User endpoint get user data
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/79:
+  User service get user data
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/118:
+  pusher service setup (env vars/testing)
+
+### B1s9l
+
+### Monti934
+
+### Alihan26
+
 ## 20.04.2024 - 26.04.2024
