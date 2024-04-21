@@ -96,4 +96,38 @@ public class TaskRepositoryIntegrationTest {
     assertEquals(found.get(0).getTeam(), task.getTeam());
     assertNotNull(found.get(0).getCreationDate());
   }
+
+  /* test to get a list of tasks where status is not DELETED */
+  @Test
+  public void findByTeamAndStatusNot_success() {
+    // given
+    Task task = new Task();
+    task.setTitle("Task Title");
+    task.setDescription("Task Description");
+    task.setStatus(TaskStatus.TODO);
+    task.setTeam(team);
+    entityManager.persist(task);
+    entityManager.flush();
+
+    // given task2 with status DELETED
+    Task task2 = new Task();
+    task2.setTitle("Task Title 2");
+    task2.setDescription("Task Description 2");
+    task2.setStatus(TaskStatus.DELETED);
+    task2.setTeam(team);
+    entityManager.persist(task2);
+    entityManager.flush();
+
+    // when
+    List<Task> found = taskRepository.findByTeamAndStatusNot(team, TaskStatus.DELETED);
+
+    // then
+    assertEquals(1, found.size());
+    assertNotNull(found.get(0).getTaskId());
+    assertEquals(found.get(0).getTitle(), task.getTitle());
+    assertEquals(found.get(0).getDescription(), task.getDescription());
+    assertEquals(found.get(0).getStatus(), task.getStatus());
+    assertEquals(found.get(0).getTeam(), task.getTeam());
+    assertNotNull(found.get(0).getCreationDate());
+  }
 }

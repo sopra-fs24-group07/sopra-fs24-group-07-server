@@ -15,4 +15,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
   // List<Task> findByStatus(TaskStatus status);
 
   List<Task> findByTeam(Team team);
+
+  /** Select * from TASK where team = team and status <> status */
+  List<Task> findByTeamAndStatusNot(Team team, TaskStatus status);
 }
