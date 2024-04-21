@@ -193,6 +193,42 @@ public class TaskServiceIntegrationTest {
     assertTrue(tasks.stream().anyMatch(task -> task.getTaskId().equals(testTask2.getTaskId())));
   }
 
+  /* get tasks by team is but without deleted tasks */
+  @Test
+  public void getTasksByTeamId_validInputs_noDeletedTasks_success() {
+    // given a team with tasks
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid"); // set teamUUID
+    team = teamRepository.saveAndFlush(team);
+
+    Task testTask1 = new Task();
+    testTask1.setTitle("Task A");
+    testTask1.setDescription("This is task A");
+    testTask1.setTeam(team);
+    testTask1.setStatus(TaskStatus.TODO);
+    taskRepository.saveAndFlush(testTask1);
+
+    Task testTask2 = new Task();
+    testTask2.setTitle("Task B");
+    testTask2.setDescription("This is task B");
+    testTask2.setTeam(team);
+    testTask2.setStatus(TaskStatus.DELETED);
+    taskRepository.saveAndFlush(testTask2);
+
+    // when
+    List<Task> tasks = taskService.getTasksByTeamId(team.getTeamId());
+
+    // then
+    assertEquals(1, tasks.size());
+    assertEquals(tasks.get(0).getTaskId(), testTask1.getTaskId());
+    assertEquals(tasks.get(0).getTitle(), testTask1.getTitle());
+    assertEquals(tasks.get(0).getDescription(), testTask1.getDescription());
+    assertEquals(tasks.get(0).getStatus(), testTask1.getStatus());
+    assertEquals(tasks.get(0).getTeam().getTeamId(), testTask1.getTeam().getTeamId());
+  }
+
   @Test
   public void getTasksByTeamId_invalidTeamId_throwsException() {
     // given a valid team id
