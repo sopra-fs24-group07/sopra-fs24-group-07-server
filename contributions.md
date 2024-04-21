@@ -158,6 +158,22 @@ timeline
 
 ### B1s9l
 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/69
+  Share session state and content (pusher api)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/13
+  Team settings (only refinements)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/17
+  User profile edit UI & delete user UI
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/21
+  Session container (pusher sync)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/22
+  Session button
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
+  Time goal input (for session) (pusher sync)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/24
+  Session design change, render different views depending on session state
+  
+
 ### Monti934
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
   Time goal input
