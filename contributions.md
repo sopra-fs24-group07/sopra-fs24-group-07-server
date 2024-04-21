@@ -162,4 +162,13 @@ timeline
 
 ### Alihan26
 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/110
+  PUT Task API Endpoint and Services
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/111
+  PUT Task tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/40
+  Comments API endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/42
+  Comments tests and docu
+
 ## 20.04.2024 - 26.04.2024
