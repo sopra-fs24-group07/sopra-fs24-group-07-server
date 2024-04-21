@@ -75,7 +75,7 @@ public class TaskService {
    */
   public List<Task> getTasksByTeamId(Long teamId) {
     Team team = teamService.getTeamByTeamId(teamId);
-    List<Task> tasks = taskRepository.findByTeam(team);
+    List<Task> tasks = taskRepository.findByTeamAndStatusNot(team, TaskStatus.DELETED);
     return tasks; // just return the list as it is, whether it's empty or not
   }
 

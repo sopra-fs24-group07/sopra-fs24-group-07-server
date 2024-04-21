@@ -142,7 +142,9 @@ public class TaskServiceTest {
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
     // when -> try to find tasks by team in the taskRepository -> return list with dummy task
-    Mockito.when(taskRepository.findByTeam(Mockito.any())).thenReturn(tasks);
+    Mockito
+        .when(taskRepository.findByTeamAndStatusNot(Mockito.any(), Mockito.eq(TaskStatus.DELETED)))
+        .thenReturn(tasks);
 
     // call the method under test
     List<Task> foundTasks = taskService.getTasksByTeamId(testTeam.getTeamId());
@@ -161,7 +163,9 @@ public class TaskServiceTest {
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
     // when -> try to find tasks by team in the taskRepository -> return empty list
-    Mockito.when(taskRepository.findByTeam(Mockito.any())).thenReturn(new ArrayList<>());
+    Mockito
+        .when(taskRepository.findByTeamAndStatusNot(Mockito.any(), Mockito.eq(TaskStatus.DELETED)))
+        .thenReturn(new ArrayList<>());
 
     // call the method under test
     List<Task> foundTasks = taskService.getTasksByTeamId(testTeam.getTeamId());
