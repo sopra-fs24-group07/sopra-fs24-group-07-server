@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
@@ -19,6 +20,7 @@ public class UserServiceTest {
   @Mock private UserRepository userRepository;
 
   @InjectMocks private UserService userService;
+  @Mock private TeamUserService teamUserService;
 
   private User testUser;
 
@@ -228,7 +230,10 @@ public class UserServiceTest {
   @Test
   public void deleteUser_existingUser_success() {
     // given
-    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(testUser));
+
+    // when -> get all teams of user and delete all teams of user
+    Mockito.when(teamUserService.getTeamsOfUser(Mockito.anyLong())).thenReturn(List.of());
 
     // when
     userService.deleteUser(testUser.getUserId());
@@ -237,11 +242,30 @@ public class UserServiceTest {
     Mockito.verify(userRepository, Mockito.times(1)).delete(Mockito.any());
   }
 
+  /* if user has teams */
+  @Test
+  public void deleteUser_existingUserWithTeams_success() {
+    // given
+    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(testUser));
+
+    // when -> get all teams of user and delete all teams of user
+    Mockito.when(teamUserService.getTeamsOfUser(Mockito.any())).thenReturn(List.of(new Team()));
+    Mockito.when(teamUserService.deleteUserOfTeam(Mockito.any(), Mockito.any())).thenReturn(null);
+
+    // when
+    userService.deleteUser(testUser.getUserId());
+
+    // then
+    Mockito.verify(userRepository, Mockito.times(1)).delete(Mockito.any());
+    Mockito.verify(teamUserService, Mockito.times(1))
+        .deleteUserOfTeam(Mockito.any(), Mockito.any());
+  }
+
   @Test
   public void deleteUser_nonExistingUser_throwsException() {
     // given
     Long nonExistingUserId = 2L;
-    Mockito.when(userRepository.findById(nonExistingUserId)).thenReturn(Optional.empty());
+    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
     // then
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser(nonExistingUserId));

@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
@@ -29,9 +31,13 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  private final TeamUserService teamUserService;
+
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository) {
+  public UserService(
+      @Qualifier("userRepository") UserRepository userRepository, TeamUserService teamUserService) {
     this.userRepository = userRepository;
+    this.teamUserService = teamUserService;
   }
 
   // User creation:
@@ -85,6 +91,13 @@ public class UserService {
     User existingUser = userRepository.findById(userId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
+    // delete all teams that the user is part of (this will also call pusher realtime update)
+    List<Team> teams = teamUserService.getTeamsOfUser(existingUser.getUserId());
+    for (Team team : teams) {
+      teamUserService.deleteUserOfTeam(team.getTeamId(), existingUser.getUserId());
+    }
+
+    // delete user
     userRepository.delete(existingUser);
     userRepository.flush();
 

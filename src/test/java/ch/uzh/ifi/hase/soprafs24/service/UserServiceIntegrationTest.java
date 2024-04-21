@@ -2,16 +2,21 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,8 +30,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceIntegrationTest {
   @Qualifier("userRepository") @Autowired private UserRepository userRepository;
   @Qualifier("teamUserRepository") @Autowired private TeamUserRepository teamUserRepository;
+  @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
 
   @Autowired private UserService userService;
+  @Autowired private TeamUserService teamUserService;
+  @Autowired private TeamService teamService;
+  @MockBean private PusherService pusherService;
 
   @BeforeEach
   public void setup() {
@@ -36,8 +45,11 @@ public class UserServiceIntegrationTest {
     //     "fk4bpysmsga1jvt3v3tsn8o6hc9" FOREIGN KEY (user_id) REFERENCES users(user_id)
     //     "fkiuwi96twuthgvhnarqj34mnjv" FOREIGN KEY (team_id) REFERENCES team(team_id)
     teamUserRepository.deleteAll();
-
+    teamRepository.deleteAll();
     userRepository.deleteAll();
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   // region create user
@@ -218,6 +230,34 @@ public class UserServiceIntegrationTest {
 
     // assertion to throw error
     assertThrows(ResponseStatusException.class, () -> userService.deleteUser(99L));
+  }
+
+  /* delete user successfully, which also has teams */
+  @Test
+  public void deleteUser_existingUserWithTeams_success() {
+    // given user to delete which is in the db
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("the A-team");
+    testTeam.setDescription("there is no plan B");
+    testTeam.setTeamUUID("team-uuid");
+    Team createdTeam = teamRepository.saveAndFlush(testTeam);
+
+    // given user is in the team
+    TeamUser testTeamUser = new TeamUser(testTeam, testUser);
+    teamUserRepository.saveAndFlush(testTeamUser);
+
+    // execute delete action
+    userService.deleteUser(createdUser.getUserId());
+
+    // check if user really does not exist anymore
+    assertTrue(userRepository.findById(createdUser.getUserId()).isEmpty());
   }
 
   // endregion
