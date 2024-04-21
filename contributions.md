@@ -145,12 +145,14 @@ timeline
   Session start service
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/72:
   Session end endpoint
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/72:
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/73:
   Session end service
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/78:
   User endpoint get user data
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/79:
   User service get user data
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/96:
+  Leave team endpoint/service
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/118:
   pusher service setup (env vars/testing)
 
