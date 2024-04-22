@@ -3,12 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TaskService;
@@ -61,6 +56,25 @@ public class TeamController {
 
     // convert internal representation of team back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeam);
+  }
+
+  @PutMapping("/teams/{teamId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public TeamGetDTO updateTeam(@PathVariable Long teamId, @RequestBody TeamPutDTO teamPutDTO,
+      @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token)
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // convert API team to internal representation
+    Team teamToUpdate = DTOMapper.INSTANCE.convertTeamPutDTOtoEntity(teamPutDTO);
+    teamToUpdate.setTeamId(teamId);
+
+    // updated team
+    Team updatedTeam = teamService.updateTeam(teamToUpdate);
+
+    // convert internal representation of team back to API
+    return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(updatedTeam);
   }
 
   @GetMapping("/teams/{teamId}/users")

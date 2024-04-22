@@ -15,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPutDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import ch.uzh.ifi.hase.soprafs24.service.TaskService;
 import ch.uzh.ifi.hase.soprafs24.service.TeamService;
@@ -345,6 +346,119 @@ public class TeamControllerTest {
         .deleteUserOfTeam(Mockito.anyLong(), Mockito.anyLong()); // was called, but error
   }
 
+  // endregion
+
+  // region updateTeam tests
+  @Test
+  public void updateTeam_validInput_success() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setName("productiviteam");
+    testTeam.setDescription("We are the most productive team in sopra");
+
+    // given updated team
+    Team testUpdatedTeam = new Team();
+    testUpdatedTeam.setTeamId(1L);
+    testUpdatedTeam.setName("productiviERteam");
+    testUpdatedTeam.setDescription("We are the MORE most productive team in sopra");
+
+    // given teamPutDTO
+    TeamPutDTO teamPutDTO = new TeamPutDTO();
+    teamPutDTO.setName(testUpdatedTeam.getName());
+    teamPutDTO.setDescription(testUpdatedTeam.getDescription());
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+    // when -> update team -> testUser is in team
+    given(teamService.updateTeam(Mockito.any())).willReturn(testUpdatedTeam);
+
+    // when -> perform put request
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/" + testTeam.getTeamId().toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamPutDTO))
+            .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.teamId", is(testUpdatedTeam.getTeamId().intValue())))
+        .andExpect(jsonPath("$.name", is(testUpdatedTeam.getName())))
+        .andExpect(jsonPath("$.description", is(testUpdatedTeam.getDescription())));
+  }
+
+  @Test
+  public void updateTeam_unauthorized_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setName("productiviteam");
+    testTeam.setDescription("We are the most productive team in sopra");
+
+    // given updated team
+    Team testUpdatedTeam = new Team();
+    testUpdatedTeam.setTeamId(1L);
+    testUpdatedTeam.setName("productiviERteam");
+    testUpdatedTeam.setDescription("We are the MORE most productive team in sopra");
+
+    // given teamPutDTO
+    TeamPutDTO teamPutDTO = new TeamPutDTO();
+    teamPutDTO.setName(testUpdatedTeam.getName());
+    teamPutDTO.setDescription(testUpdatedTeam.getDescription());
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform put request
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/" + testTeam.getTeamId().toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamPutDTO))
+            .header("Authorization", "invalid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  public void updateTeam_somethingNotFound_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setName("productiviteam");
+    testTeam.setDescription("We are the most productive team in sopra");
+
+    // given updated team
+    Team testUpdatedTeam = new Team();
+    testUpdatedTeam.setTeamId(1L);
+    testUpdatedTeam.setName("productiviERteam");
+    testUpdatedTeam.setDescription("We are the MORE most productive team in sopra");
+
+    // given teamPutDTO
+    TeamPutDTO teamPutDTO = new TeamPutDTO();
+    teamPutDTO.setName(testUpdatedTeam.getName());
+    teamPutDTO.setDescription(testUpdatedTeam.getDescription());
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+    // when -> update team -> something not found
+    given(teamService.updateTeam(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    // when -> perform put request
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/" + testTeam.getTeamId().toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamPutDTO))
+            .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
   // endregion
 
   // region TaskControllerTest for POST
