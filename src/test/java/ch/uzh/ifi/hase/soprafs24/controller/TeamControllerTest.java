@@ -459,6 +459,43 @@ public class TeamControllerTest {
     // then -> validate result for unauthorized
     mockMvc.perform(putRequest).andExpect(status().isNotFound());
   }
+
+  @Test
+  public void updateTeam_badRequest_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setName("productiviteam");
+    testTeam.setDescription("We are the most productive team in sopra");
+
+    // given updated team
+    Team testUpdatedTeam = new Team();
+    testUpdatedTeam.setTeamId(1L);
+    testUpdatedTeam.setName("");
+    testUpdatedTeam.setDescription("We are the MORE most productive team in sopra");
+
+    // given teamPutDTO
+    TeamPutDTO teamPutDTO = new TeamPutDTO();
+    teamPutDTO.setName(testUpdatedTeam.getName());
+    teamPutDTO.setDescription(testUpdatedTeam.getDescription());
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+    // when -> update team -> something not found
+    given(teamService.updateTeam(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+    // when -> perform put request
+    MockHttpServletRequestBuilder putRequest =
+        put("/api/v1/teams/" + testTeam.getTeamId().toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamPutDTO))
+            .header("Authorization", "valid-token");
+
+    // then -> validate result for unauthorized
+    mockMvc.perform(putRequest).andExpect(status().isBadRequest());
+  }
   // endregion
 
   // region TaskControllerTest for POST

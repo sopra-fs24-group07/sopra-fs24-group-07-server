@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Test class for using the TeamResource REST resource.
@@ -262,7 +263,7 @@ public class TeamServiceIntegrationTest {
     teamToUpdate.setDescription("We are even more productive!");
 
     // then
-    assertThrows(RuntimeException.class, () -> teamService.updateTeam(teamToUpdate));
+    assertThrows(ResponseStatusException.class, () -> teamService.updateTeam(teamToUpdate));
   }
 
   // endregion
