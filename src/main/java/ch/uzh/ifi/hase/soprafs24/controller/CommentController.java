@@ -11,16 +11,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ch.uzh.ifi.hase.soprafs24.service.*;
 
 @RestController
 @RequestMapping("api/v1")
 public class CommentController {
   private final CommentService commentService;
   private final AuthorizationService authorizationService;
+  private final PusherService pusherService;
 
-  CommentController(CommentService commentService, AuthorizationService authorizationService) {
+  CommentController(CommentService commentService, AuthorizationService authorizationService, PusherService pusherService) {
     this.commentService = commentService;
     this.authorizationService = authorizationService;
+    this.pusherService = pusherService;
   }
 
   @PostMapping("/teams/{teamId}/tasks/{taskId}/comments")
@@ -37,6 +40,9 @@ public class CommentController {
 
     // Create comment
     Comment createdComment = commentService.createComment(commentInput, taskId);
+
+    // Push new task
+    pusherService.updateComments(teamId.toString());
 
     // Convert internal representation of comment back to API
     return DTOMapper.INSTANCE.convertEntityToCommentGetDTO(createdComment);
