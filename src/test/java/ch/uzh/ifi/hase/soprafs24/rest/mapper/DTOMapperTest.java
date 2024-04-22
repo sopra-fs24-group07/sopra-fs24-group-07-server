@@ -91,6 +91,21 @@ public class DTOMapperTest {
   }
 
   @Test
+  public void testCreateTeam_fromTeamPutDTO_success() {
+    // create TeamPostDTO
+    TeamPutDTO teamPutDTO = new TeamPutDTO();
+    teamPutDTO.setName("name");
+    teamPutDTO.setDescription("description");
+
+    // MAP -> Create Team
+    Team team = DTOMapper.INSTANCE.convertTeamPutDTOtoEntity(teamPutDTO);
+
+    // check content
+    assertEquals(teamPutDTO.getName(), team.getName());
+    assertEquals(teamPutDTO.getDescription(), team.getDescription());
+  }
+
+  @Test
   public void testGetTeam_fromTeam_toTeamGetDTO_success() {
     // create Team
     Team team = new Team();
@@ -166,7 +181,7 @@ public class DTOMapperTest {
 
   // endregion
 
-  // session mappings
+  // region session mappings
   @Test
   public void testCreateSession_fromSessionPostDTO_toSession_success() {
     // create SessionPostDTO

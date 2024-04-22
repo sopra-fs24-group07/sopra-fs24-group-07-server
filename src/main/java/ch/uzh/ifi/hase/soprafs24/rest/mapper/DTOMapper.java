@@ -48,6 +48,10 @@ public interface DTOMapper {
   @Mapping(source = "description", target = "description")
   Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
 
+  @Mapping(source = "name", target = "name")
+  @Mapping(source = "description", target = "description")
+  Team convertTeamPutDTOtoEntity(TeamPutDTO teamPutDTO);
+
   @Mapping(source = "teamId", target = "teamId")
   @Mapping(source = "teamUUID", target = "teamUUID")
   @Mapping(source = "name", target = "name")
