@@ -138,7 +138,7 @@ public class CommentServiceTest {
 
     // when -> try to find comments by task in the commentRepository -> return list with dummy
     // comment
-    Mockito.when(commentRepository.findByTask(Mockito.any())).thenReturn(comments);
+    Mockito.when(commentRepository.findByTaskOrderByCreationDateDesc(Mockito.any())).thenReturn(comments);
 
     // call the method under test
     List<Comment> foundComments = commentService.getCommentsByTaskId(testTask.getTaskId());
@@ -181,7 +181,7 @@ public class CommentServiceTest {
   }
 
   /**
-   * Test if the findByTask has a null return value
+   * Test if the findByTaskOrderByCreationDateDesc has a null return value
    */
   @Test
   public void getCommentsByTaskId_nullComments_throwsException() {
@@ -189,7 +189,7 @@ public class CommentServiceTest {
     Mockito.when(taskService.getTask(Mockito.any())).thenReturn(testTask);
 
     // when -> try to find comments by task in the commentRepository -> return null
-    Mockito.when(commentRepository.findByTask(Mockito.any())).thenReturn(null);
+    Mockito.when(commentRepository.findByTaskOrderByCreationDateDesc(Mockito.any())).thenReturn(null);
 
     // call the method under test and assert an exception is thrown
     assertThrows(ResponseStatusException.class,
