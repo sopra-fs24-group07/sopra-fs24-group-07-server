@@ -158,4 +158,112 @@ public class TeamServiceIntegrationTest {
     assertEquals(2, teamRepository.findAll().size());
   }
   // endregion
+
+  // region updateTeam tests
+
+  @Test
+  public void updateTeam_validInputs_success() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(testTeam);
+
+    // update team
+    Team teamToUpdate = new Team();
+    teamToUpdate.setTeamId(testTeam.getTeamId());
+    teamToUpdate.setName("productivierTeam");
+    teamToUpdate.setDescription("We are even more productive!");
+
+    // update team call
+    Team updatedTeam = teamService.updateTeam(teamToUpdate);
+
+    // then
+    assertEquals(teamToUpdate.getTeamId(), updatedTeam.getTeamId());
+    assertEquals(teamToUpdate.getName(), updatedTeam.getName());
+    assertEquals(teamToUpdate.getDescription(), updatedTeam.getDescription());
+  }
+
+  /* test if changing team name to an existing team name is ok*/
+  @Test
+  public void updateTeam_validInputs_changeNameToExistingName_success() {
+    // given
+    Team testTeam1 = new Team();
+    testTeam1.setName("productiviTeam");
+    testTeam1.setDescription("We are a productive team!");
+    testTeam1.setTeamUUID("team-uuid1");
+
+    Team testTeam2 = new Team();
+    testTeam2.setName("productivierTeam");
+    testTeam2.setDescription("We are even more productive!");
+    testTeam2.setTeamUUID("team-uuid2");
+
+    // when
+    teamRepository.saveAndFlush(testTeam1);
+    teamRepository.saveAndFlush(testTeam2);
+
+    // update team1
+    Team teamToUpdate = new Team();
+    teamToUpdate.setTeamId(testTeam1.getTeamId());
+    teamToUpdate.setName("productivierTeam");
+    teamToUpdate.setDescription("We are even more productive!");
+
+    // update team call
+    Team updatedTeam = teamService.updateTeam(teamToUpdate);
+    // fetch team by id
+    Team foundTeam = teamService.getTeamByTeamId(testTeam1.getTeamId());
+
+    // then
+    assertEquals(testTeam1.getTeamId(), foundTeam.getTeamId());
+    assertEquals(testTeam1.getTeamUUID(), foundTeam.getTeamUUID());
+    assertEquals(teamToUpdate.getName(), foundTeam.getName());
+    assertEquals(teamToUpdate.getDescription(), foundTeam.getDescription());
+  }
+
+  @Test
+  public void updateTeam_teamNotFound_throwsException() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(testTeam);
+
+    // update team
+    Team teamToUpdate = new Team();
+    teamToUpdate.setTeamId(999L); // wrong id
+    teamToUpdate.setName("productivierTeam");
+    teamToUpdate.setDescription("We are even more productive!");
+
+    // then
+    assertThrows(RuntimeException.class, () -> teamService.updateTeam(teamToUpdate));
+  }
+
+  @Test
+  public void updateTeam_invalidName_throwsException() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+
+    // when
+    teamRepository.saveAndFlush(testTeam);
+
+    // update team
+    Team teamToUpdate = new Team();
+    teamToUpdate.setTeamId(testTeam.getTeamId());
+    teamToUpdate.setName(""); // empty name
+    teamToUpdate.setDescription("We are even more productive!");
+
+    // then
+    assertThrows(RuntimeException.class, () -> teamService.updateTeam(teamToUpdate));
+  }
+
+  // endregion
 }

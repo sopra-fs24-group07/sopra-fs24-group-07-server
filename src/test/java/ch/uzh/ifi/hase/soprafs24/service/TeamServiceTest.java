@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public class TeamServiceTest {
@@ -138,6 +139,68 @@ public class TeamServiceTest {
 
     // then -> attempt to create team with empty name -> check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> teamService.createTeam(invalidTeam));
+  }
+  // endregion
+
+  // region edit team tests
+
+  @Test
+  public void updateTeam_validInputs_success() {
+    // given
+    Team updatedTeam = new Team();
+    updatedTeam.setTeamId(1L);
+    updatedTeam.setName("updatedName");
+    updatedTeam.setDescription("updatedDescription");
+    updatedTeam.setTeamUUID("team-uuid");
+
+    // when get team by id is called (spy)
+    TeamService tempTeamService = Mockito.spy(teamService);
+    Mockito.doReturn(testTeam).when(tempTeamService).getTeamByTeamId(Mockito.any());
+
+    // when update team is called
+    Team savedUpdatedTeam = tempTeamService.updateTeam(updatedTeam);
+
+    // then
+    Mockito.verify(teamRepository, Mockito.times(1)).save(Mockito.any());
+    assertEquals(testTeam.getTeamId(), savedUpdatedTeam.getTeamId());
+    assertEquals(updatedTeam.getName(), savedUpdatedTeam.getName());
+    assertEquals(updatedTeam.getDescription(), savedUpdatedTeam.getDescription());
+  }
+
+  @Test
+  public void updateTeam_invalidInputs_throwsException() {
+    // given
+    Team updatedTeam = new Team();
+    updatedTeam.setTeamId(1L);
+    updatedTeam.setName(""); // empty name
+    updatedTeam.setDescription("updatedDescription");
+    updatedTeam.setTeamUUID("team-uuid");
+
+    // when get team by id is called (spy)
+    TeamService tempTeamService = Mockito.spy(teamService);
+    Mockito.doReturn(testTeam).when(tempTeamService).getTeamByTeamId(Mockito.any());
+
+    // then -> attempt to update team with empty name -> check that an error is thrown
+    assertThrows(ResponseStatusException.class, () -> tempTeamService.updateTeam(updatedTeam));
+  }
+
+  @Test
+  public void updateTeam_teamNotFound_throwsException() {
+    // given
+    Team updatedTeam = new Team();
+    updatedTeam.setTeamId(99L);
+    updatedTeam.setName("updatedName");
+    updatedTeam.setDescription("updatedDescription");
+    updatedTeam.setTeamUUID("team-uuid");
+
+    // when get team by id is called (spy)
+    TeamService tempTeamService = Mockito.spy(teamService);
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+        .when(tempTeamService)
+        .getTeamByTeamId(Mockito.any());
+
+    // then -> attempt to update team with invalid id -> check that an error is thrown
+    assertThrows(ResponseStatusException.class, () -> tempTeamService.updateTeam(updatedTeam));
   }
   // endregion
 }

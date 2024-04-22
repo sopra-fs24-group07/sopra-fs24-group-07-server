@@ -84,4 +84,30 @@ public class TeamService {
     log.debug("Created Information for Team: {} with id {}", newTeam, newTeam.getTeamId());
     return newTeam;
   }
+
+  /**
+   * Update team method. The only constraint is that the name cannot be empty string.
+   *
+   * @param updatedTeam team to be updated
+   * @throws ResponseStatusException 404 if team id not found
+   * @return updated team
+   */
+  public Team updateTeam(Team updatedTeam) {
+    // check if team exists (404 if not exist)
+    Team team = getTeamByTeamId(updatedTeam.getTeamId());
+
+    // check that name is not empty string
+    ServiceHelpers.checkValidString(updatedTeam.getName(), "Name");
+
+    // update variables
+    team.setName(updatedTeam.getName());
+    team.setDescription(updatedTeam.getDescription());
+
+    // save updated team
+    teamRepository.save(team);
+    teamRepository.flush();
+
+    log.debug("Updated Information for Team: {} with id {}", team, team.getTeamId());
+    return team;
+  }
 }
