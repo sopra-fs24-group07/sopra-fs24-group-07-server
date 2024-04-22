@@ -166,7 +166,7 @@ public class DTOMapperTest {
 
   // endregion
 
-  // session mappings
+  // region session mappings
   @Test
   public void testCreateSession_fromSessionPostDTO_toSession_success() {
     // create SessionPostDTO
