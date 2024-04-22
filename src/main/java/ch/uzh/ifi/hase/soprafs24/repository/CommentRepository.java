@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("commentRepository")
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
   /**
    * Finds a comment by its Creation Date in Descending Order
    * @param task
