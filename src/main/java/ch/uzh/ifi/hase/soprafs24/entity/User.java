@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -28,6 +29,8 @@ public class User implements Serializable {
   @Column(nullable = false) private String password;
 
   @Column(nullable = false, unique = true) private String token;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) private List<Comment> comments;
 
   // TODO image
 
