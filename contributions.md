@@ -172,9 +172,9 @@ timeline
   Time goal input (for session) (pusher sync)
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/24
   Session design change, render different views depending on session state
-  
 
 ### Monti934
+
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
   Time goal input
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/18
