@@ -137,4 +137,62 @@ timeline
 
 ## 13.04.2024 - 19.04.2024
 
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/68:
+  Session start endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/71:
+  Session start service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/72:
+  Session end endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/73:
+  Session end service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/78:
+  User endpoint get user data
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/79:
+  User service get user data
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/96:
+  Leave team endpoint/service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/118:
+  pusher service setup (env vars/testing)
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/69
+  Share session state and content (pusher api)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/13
+  Team settings (only refinements)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/17
+  User profile edit UI & delete user UI
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/21
+  Session container (pusher sync)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/22
+  Session button
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
+  Time goal input (for session) (pusher sync)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/24
+  Session design change, render different views depending on session state
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/23
+  Time goal input
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/18
+  Team management overview and invite users
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/12
+  Team Members UI
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/35
+  Kanban Board
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/110
+  PUT Task API Endpoint and Services
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/111
+  PUT Task tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/40
+  Comments API endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/42
+  Comments tests and docu
+
 ## 20.04.2024 - 26.04.2024
