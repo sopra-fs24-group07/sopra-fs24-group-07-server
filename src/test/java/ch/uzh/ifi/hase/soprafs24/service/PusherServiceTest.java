@@ -129,4 +129,30 @@ public class PusherServiceTest {
         .trigger(Mockito.eq(channel), Mockito.eq("team-update"),
             Mockito.eq(Collections.singletonMap("userId", "userId")));
   }
+
+  @Test
+  public void testUpdateComments_success() {
+    Mockito.doReturn(new Mockito())
+        .when(pusher)
+        .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
+
+    pusherService.updateComments("teamId");
+
+    Mockito.verify(pusher, Mockito.times(1))
+        .trigger(Mockito.eq(channel), Mockito.eq("comment-update"),
+            Mockito.eq(Collections.singletonMap("comments", "updated")));
+  }
+
+  @Test
+  public void testUpdateComments_pusherException() {
+    Mockito.doThrow(new RuntimeException("Test exception"))
+        .when(pusher)
+        .trigger(Mockito.anyString(), Mockito.anyString(), Mockito.any());
+
+    pusherService.updateComments("teamId");
+
+    Mockito.verify(pusher, Mockito.times(1))
+        .trigger(Mockito.eq(channel), Mockito.eq("comment-update"),
+            Mockito.eq(Collections.singletonMap("comments", "updated")));
+  }
 }

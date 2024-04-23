@@ -138,6 +138,9 @@ public class CommentControllerTest {
         .andExpect(result
             -> assertTrue(result.getResolvedException().getMessage().contains(
                 "Comment text cannot be null.")));
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
 
   /**
@@ -173,6 +176,9 @@ public class CommentControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
 
   // region Comment Service Integration GET
@@ -193,9 +199,6 @@ public class CommentControllerTest {
             Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(testUser);
     given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(List.of(comment));
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
@@ -224,9 +227,6 @@ public class CommentControllerTest {
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // then
     mockMvc.perform(getRequest)
