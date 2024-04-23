@@ -52,10 +52,6 @@ public class CommentControllerTest {
     testUser.setUserId(1L);
   }
 
-  private void mockPusherService() {
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
-  }
-
   // region Comment Controller POST
 
   /**
@@ -82,7 +78,7 @@ public class CommentControllerTest {
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
 
     // mock pusher service
-    mockPusherService();
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -125,7 +121,7 @@ public class CommentControllerTest {
             new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment text cannot be null."));
 
     // mock pusher service
-    mockPusherService();
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -142,6 +138,9 @@ public class CommentControllerTest {
         .andExpect(result
             -> assertTrue(result.getResolvedException().getMessage().contains(
                 "Comment text cannot be null.")));
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
 
   /**
@@ -160,7 +159,7 @@ public class CommentControllerTest {
         .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.eq(1L), Mockito.any());
 
     // mock pusher service
-    mockPusherService();
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -177,6 +176,9 @@ public class CommentControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
 
   // region Comment Service Integration GET
