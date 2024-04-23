@@ -45,4 +45,9 @@ public class PusherService {
   public void updateTeam(String teamId, String userId) {
     triggerEvent("team-" + teamId, "team-update", Collections.singletonMap("userId", userId));
   }
+
+  public void updateComments(String teamId) {
+    triggerEvent(
+        "team-" + teamId, "comment-update", Collections.singletonMap("comments", "updated"));
+  }
 }
