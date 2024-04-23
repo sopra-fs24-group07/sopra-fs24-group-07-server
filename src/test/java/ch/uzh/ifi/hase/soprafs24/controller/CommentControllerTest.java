@@ -52,6 +52,10 @@ public class CommentControllerTest {
     testUser.setUserId(1L);
   }
 
+  private void mockPusherService() {
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+  }
+
   // region Comment Controller POST
 
   /**
@@ -78,7 +82,7 @@ public class CommentControllerTest {
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+    mockPusherService();
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -121,7 +125,7 @@ public class CommentControllerTest {
             new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment text cannot be null."));
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+    mockPusherService();
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -156,7 +160,7 @@ public class CommentControllerTest {
         .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.eq(1L), Mockito.any());
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+    mockPusherService();
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -194,9 +198,6 @@ public class CommentControllerTest {
         .thenReturn(testUser);
     given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(List.of(comment));
 
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
-
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
@@ -224,9 +225,6 @@ public class CommentControllerTest {
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // then
     mockMvc.perform(getRequest)
