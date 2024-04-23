@@ -175,6 +175,68 @@ public class CommentControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  // region Comment Service Integration GET
+
+  /**
+   * Test for fetching a Comment with valid input (happy-path)
+   */
+  @Test
+  public void getComments_validInput_returnComments() throws Exception {
+    // given
+    Comment comment = new Comment();
+    comment.setCommentId(1L);
+    comment.setText("This is a test comment.");
+    comment.setUser(testUser);
+
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(commentService.getCommentsByTaskId(Mockito.anyLong())).willReturn(List.of(comment));
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].commentId", is(comment.getCommentId().intValue())))
+        .andExpect(jsonPath("$[0].text", is(comment.getText())))
+        .andExpect(jsonPath("$[0].authorId", is(comment.getUser().getUserId().intValue())))
+        .andExpect(jsonPath("$[0].authorName", is(comment.getUser().getName())));
+  }
+
+  /**
+   * Test for trying to fetch a Comment, where there are no comments in task
+   */
+  @Test
+  public void getComments_noCommentsInTask_throwsError() throws Exception {
+    // given
+    given(commentService.getCommentsByTaskId(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "No comments found for task with id 1"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/1/comments").header("Authorization", "1234");
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains(
+                "No comments found for task with id 1")));
+  }
   /**
    * Test for trying to fetch a Comment, where i'm not authorized to access
    */
