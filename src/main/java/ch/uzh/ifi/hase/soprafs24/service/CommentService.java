@@ -63,4 +63,19 @@ public class CommentService {
 
     return comments;
   }
+
+  public Comment deleteCommentById(Long commentId) {
+    // check that the comment exists
+    Comment comment = commentRepository.findById(commentId).orElseThrow(
+        ()
+            -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Comment not found with id: " + commentId));
+
+    // delete
+    commentRepository.delete(comment);
+    commentRepository.flush();
+
+    log.debug("Successfully deleted comment: {}", comment);
+    return comment;
+  }
 }

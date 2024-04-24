@@ -55,6 +55,9 @@ public class CommentServiceTest {
 
     // when -> any object is being save in the commentRepository -> return the dummy testComment
     Mockito.when(commentRepository.save(Mockito.any())).thenReturn(testComment);
+
+    // when -> delete any object in the commentRepository -> return the dummy testComment
+    Mockito.when(commentRepository.findById(Mockito.any())).thenReturn(Optional.of(testComment));
   }
 
   // region createComment tests
@@ -194,6 +197,34 @@ public class CommentServiceTest {
     // call the method under test and assert an exception is thrown
     assertThrows(ResponseStatusException.class,
         () -> commentService.getCommentsByTaskId(testTask.getTaskId()));
+  }
+  // endregion
+
+  // region getComment tests
+  @Test
+  public void getComment_validInputs_success() {
+    // when -> try to find commentId in the commentRepository -> return dummy comment
+    Mockito.when(commentRepository.findById(Mockito.any())).thenReturn(Optional.of(testComment));
+
+    // call the method under test
+    Comment foundComment = commentService.deleteCommentById(testComment.getCommentId());
+
+    // assert found comment
+    assertEquals(testComment.getCommentId(), foundComment.getCommentId());
+    Mockito.verify(commentRepository, Mockito.times(1)).delete(Mockito.any());
+  }
+
+  @Test
+  public void getComment_invalidInputs_commentDoesNotExist_throwsException() {
+    // when -> try to find commentId in the commentRepository -> return null
+    Mockito.when(commentRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+
+    // call the method under test and assert an exception is thrown (because findById is null will
+    // throw error)
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.deleteCommentById(testComment.getCommentId()));
+
+    Mockito.verify(commentRepository, Mockito.never()).delete(Mockito.any());
   }
   // endregion
 }
