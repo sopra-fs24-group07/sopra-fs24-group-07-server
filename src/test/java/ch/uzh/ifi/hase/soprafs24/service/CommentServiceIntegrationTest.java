@@ -40,9 +40,7 @@ public class CommentServiceIntegrationTest {
   @Autowired private CommentService commentService;
 
   @BeforeEach
-
   @AfterEach
-
   public void setup() {
     commentRepository.deleteAll();
     taskRepository.deleteAll();
