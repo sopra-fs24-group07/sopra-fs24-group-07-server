@@ -2,12 +2,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.TeamUserRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
+import ch.uzh.ifi.hase.soprafs24.repository.*;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -31,6 +28,8 @@ public class UserServiceIntegrationTest {
   @Qualifier("userRepository") @Autowired private UserRepository userRepository;
   @Qualifier("teamUserRepository") @Autowired private TeamUserRepository teamUserRepository;
   @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
+  @Qualifier("taskRepository") @Autowired private TaskRepository taskRepository;
+  @Qualifier("commentRepository") @Autowired private CommentRepository commentRepository;
 
   @Autowired private UserService userService;
   @Autowired private TeamUserService teamUserService;
@@ -44,6 +43,8 @@ public class UserServiceIntegrationTest {
     // Foreign-key constraints:
     //     "fk4bpysmsga1jvt3v3tsn8o6hc9" FOREIGN KEY (user_id) REFERENCES users(user_id)
     //     "fkiuwi96twuthgvhnarqj34mnjv" FOREIGN KEY (team_id) REFERENCES team(team_id)
+    commentRepository.deleteAll();
+    taskRepository.deleteAll();
     teamUserRepository.deleteAll();
     teamRepository.deleteAll();
     userRepository.deleteAll();
@@ -260,5 +261,46 @@ public class UserServiceIntegrationTest {
     assertTrue(userRepository.findById(createdUser.getUserId()).isEmpty());
   }
 
+  /* delete user successfully, which also has comments */
+  @Test
+  public void deleteUser_existingUserWithComments_success() {
+    // given user to delete which is in the db
+    User testUser = new User();
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    User createdUser = userService.createUser(testUser);
+
+    // given team
+    Team testTeam = new Team();
+    testTeam.setName("the A-team");
+    testTeam.setDescription("there is no plan B");
+    testTeam.setTeamUUID("team-uuid");
+    Team createdTeam = teamRepository.saveAndFlush(testTeam);
+
+    // given task
+    Task testTask = new Task();
+    testTask.setTitle("testTitle");
+    testTask.setDescription("testDescription");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(createdTeam);
+    Task createdTask = taskRepository.saveAndFlush(testTask);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("testText");
+    testComment.setTask(createdTask);
+    testComment.setUser(createdUser);
+    Comment createdComment = commentRepository.saveAndFlush(testComment);
+
+    // execute delete action
+    userService.deleteUser(createdUser.getUserId());
+
+    // check if user really does not exist anymore
+    assertTrue(userRepository.findById(createdUser.getUserId()).isEmpty());
+    assertTrue(commentRepository.findById(createdComment.getCommentId()).isEmpty());
+    assertTrue(taskRepository.findById(createdTask.getTaskId()).isPresent());
+    assertTrue(teamRepository.findById(createdTeam.getTeamId()).isPresent());
+  }
   // endregion
 }
