@@ -40,9 +40,7 @@ public class CommentServiceIntegrationTest {
   @Autowired private CommentService commentService;
 
   @BeforeEach
-
   @AfterEach
-
   public void setup() {
     commentRepository.deleteAll();
     taskRepository.deleteAll();
@@ -165,6 +163,62 @@ public class CommentServiceIntegrationTest {
         () -> commentService.createComment(testComment, testTask.getTaskId()));
   }
 
+  @Test
+  public void createComment_invalidTaskId_throwsException() {
+    // given a task id that does not exist
+    Long invalidTaskId = 999L;
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setUser(testUser);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, invalidTaskId));
+  }
+
+  @Test
+  public void createComment_invalidUserId_throwsException() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user id that does not exist in db
+    Long invalidUserId = 999L;
+    User testUser = new User();
+    testUser.setUsername("testUser");
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setUser(testUser);
+    testComment.setTask(testTask);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, testTask.getTaskId()));
+  }
+
   // endregion
 
   // region Comment Service Integration GET
@@ -253,5 +307,61 @@ public class CommentServiceIntegrationTest {
     assertTrue(comments.isEmpty());
   }
 
+  // endregion
+
+  // region delete comment
+  @Test
+  public void deleteComment_validInputs_success() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setTask(testTask);
+    testComment.setUser(testUser);
+    commentRepository.saveAndFlush(testComment);
+
+    // when
+    Comment deletedComment = commentService.deleteCommentById(testComment.getCommentId());
+
+    // then
+    assertNotNull(deletedComment);
+    assertEquals(testComment.getCommentId(), deletedComment.getCommentId());
+    assertTrue(commentRepository.findById(testComment.getCommentId()).isEmpty());
+  }
+
+  @Test
+  public void deleteComment_invalidCommentId_throwsException() {
+    // given a comment id that does not exist
+    Long invalidCommentId = 999L;
+
+    // verify that the comment does not exist (we want to test if the error is thrown)
+    assertTrue(commentRepository.findById(invalidCommentId).isEmpty());
+
+    // when & then
+    assertThrows(
+        ResponseStatusException.class, () -> commentService.deleteCommentById(invalidCommentId));
+  }
   // endregion
 }

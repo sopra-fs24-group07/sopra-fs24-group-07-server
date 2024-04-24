@@ -63,4 +63,25 @@ public class CommentService {
 
     return comments;
   }
+
+  /**
+   * Deletes a comment by its id
+   * @param commentId the id of the comment to delete
+   * @throws ResponseStatusException 404 if the comment does not exist
+   * @return the deleted comment
+   */
+  public Comment deleteCommentById(Long commentId) {
+    // check that the comment exists
+    Comment comment = commentRepository.findById(commentId).orElseThrow(
+        ()
+            -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Comment not found with id: " + commentId));
+
+    // delete
+    commentRepository.delete(comment);
+    commentRepository.flush();
+
+    log.debug("Successfully deleted comment: {}", comment);
+    return comment;
+  }
 }

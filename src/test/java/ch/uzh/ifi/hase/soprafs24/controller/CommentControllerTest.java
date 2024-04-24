@@ -50,6 +50,9 @@ public class CommentControllerTest {
   public void setup() {
     testUser = new User();
     testUser.setUserId(1L);
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
   }
 
   // region Comment Controller POST
@@ -76,9 +79,6 @@ public class CommentControllerTest {
         .thenReturn(testUser);
     // mock comment service
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -120,9 +120,6 @@ public class CommentControllerTest {
         .willThrow(
             new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment text cannot be null."));
 
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
-
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
         post("/api/v1/teams/1/tasks/1/comments")
@@ -158,9 +155,6 @@ public class CommentControllerTest {
         .when(authorizationService)
         .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.eq(1L), Mockito.any());
 
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
-
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
         post("/api/v1/teams/1/tasks/1/comments")
@@ -180,6 +174,7 @@ public class CommentControllerTest {
     // verify that pusher service wasn't called
     Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
+  // endregion
 
   // region Comment Service Integration GET
 
@@ -262,5 +257,78 @@ public class CommentControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  // endregion
+
+  // region Comment Controller DELETE
+  @Test
+  public void deleteComment_validInput_commentDeleted() throws Exception {
+    // given
+    Comment comment = new Comment();
+    comment.setCommentId(1L);
+    comment.setText("This is a test comment.");
+    comment.setUser(testUser);
+
+    // mock the return of isAuthorizedAndBelongsToTeam()
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.eq(1L), Mockito.anyLong()))
+        .thenReturn(testUser);
+
+    // mock the return of deleteCommentById()
+    given(commentService.deleteCommentById(Mockito.any())).willReturn(comment);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/teams/1/tasks/1/comments/1").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(deleteRequest).andExpect(status().isOk());
+
+    // verify the pusher service was called
+    Mockito.verify(pusherService, Mockito.times(1)).updateComments(Mockito.anyString());
+  }
+
+  @Test
+  public void deleteComment_unauthorizedAccess_throwsError() throws Exception {
+    // mock the return of isAuthorizedAndBelongsToTeam()
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/teams/1/tasks/1/comments/1").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.never()).updateComments(Mockito.anyString());
+  }
+
+  @Test
+  public void deleteComment_commentNotFound_throwsError() throws Exception {
+    // mock the return of isAuthorizedAndBelongsToTeam()
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.eq(1L), Mockito.anyLong()))
+        .thenReturn(testUser);
+
+    // given
+    given(commentService.deleteCommentById(Mockito.any()))
+        .willThrow(
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found with id: 1"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder deleteRequest =
+        delete("/api/v1/teams/1/tasks/1/comments/1").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
+
+    // verify that pusher service wasn't called
+    Mockito.verify(pusherService, Mockito.never()).updateComments(Mockito.anyString());
+  }
   // endregion
 }
