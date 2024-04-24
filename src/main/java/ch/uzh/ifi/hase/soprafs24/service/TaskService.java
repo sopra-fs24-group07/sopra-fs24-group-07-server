@@ -94,6 +94,8 @@ public class TaskService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found.");
     }
 
+    ServiceHelpers.checkValidString(existingTask.getTitle(), null);
+
     // update allowed fields
     existingTask.setTitle(task.getTitle());
     existingTask.setDescription(task.getDescription());
