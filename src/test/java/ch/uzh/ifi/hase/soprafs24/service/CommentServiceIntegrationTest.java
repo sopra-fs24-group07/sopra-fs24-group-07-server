@@ -163,6 +163,62 @@ public class CommentServiceIntegrationTest {
         () -> commentService.createComment(testComment, testTask.getTaskId()));
   }
 
+  @Test
+  public void createComment_invalidTaskId_throwsException() {
+    // given a task id that does not exist
+    Long invalidTaskId = 999L;
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setUser(testUser);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, invalidTaskId));
+  }
+
+  @Test
+  public void createComment_invalidUserId_throwsException() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user id that does not exist in db
+    Long invalidUserId = 999L;
+    User testUser = new User();
+    testUser.setUsername("testUser");
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText("This is a test comment");
+    testComment.setUser(testUser);
+    testComment.setTask(testTask);
+
+    // when & then
+    assertThrows(ResponseStatusException.class,
+        () -> commentService.createComment(testComment, testTask.getTaskId()));
+  }
+
   // endregion
 
   // region Comment Service Integration GET
