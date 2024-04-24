@@ -56,7 +56,7 @@ public class CommentService {
     List<Comment> comments = commentRepository.findByTaskOrderByCreationDateDesc(task);
     if (comments == null) {
       throw new ResponseStatusException(
-          HttpStatus.NOT_FOUND, "Comments not found for requested task.");
+          HttpStatus.CONFLICT, "Comments not found for requested task.");
     }
 
     log.debug("Successfully fetched comments for task: {}", taskId);

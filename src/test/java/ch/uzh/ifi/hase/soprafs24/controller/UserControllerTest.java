@@ -90,7 +90,7 @@ public class UserControllerTest {
     userPostDTO.setUsername("testUsername");
 
     given(userService.createUser(Mockito.any()))
-        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists"));
+        .willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists"));
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -101,7 +101,7 @@ public class UserControllerTest {
 
     // then
     mockMvc.perform(postRequest)
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isConflict())
         .andExpect(
             result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
         .andExpect(result
