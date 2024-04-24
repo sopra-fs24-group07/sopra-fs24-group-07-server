@@ -356,6 +356,9 @@ public class CommentServiceIntegrationTest {
     // given a comment id that does not exist
     Long invalidCommentId = 999L;
 
+    // verify that the comment does not exist (we want to test if the error is thrown)
+    assertTrue(commentRepository.findById(invalidCommentId).isEmpty());
+
     // when & then
     assertThrows(
         ResponseStatusException.class, () -> commentService.deleteCommentById(invalidCommentId));
