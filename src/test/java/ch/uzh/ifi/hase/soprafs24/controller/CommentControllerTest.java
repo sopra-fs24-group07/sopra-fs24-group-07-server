@@ -180,6 +180,7 @@ public class CommentControllerTest {
     // verify that pusher service wasn't called
     Mockito.verify(pusherService, Mockito.times(0)).updateComments(Mockito.anyString());
   }
+  // endregion
 
   // region Comment Service Integration GET
 
