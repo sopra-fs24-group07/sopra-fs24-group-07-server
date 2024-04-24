@@ -50,6 +50,9 @@ public class CommentControllerTest {
   public void setup() {
     testUser = new User();
     testUser.setUserId(1L);
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
   }
 
   // region Comment Controller POST
@@ -76,9 +79,6 @@ public class CommentControllerTest {
         .thenReturn(testUser);
     // mock comment service
     given(commentService.createComment(Mockito.any(), Mockito.anyLong())).willReturn(comment);
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
@@ -120,9 +120,6 @@ public class CommentControllerTest {
         .willThrow(
             new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment text cannot be null."));
 
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
-
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
         post("/api/v1/teams/1/tasks/1/comments")
@@ -157,9 +154,6 @@ public class CommentControllerTest {
         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
         .when(authorizationService)
         .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.eq(1L), Mockito.any());
-
-    // mock pusher service
-    Mockito.doNothing().when(pusherService).updateComments(Mockito.anyString());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest =
