@@ -65,4 +65,18 @@ public class CommentController {
         .map(DTOMapper.INSTANCE::convertEntityToCommentGetDTO)
         .collect(Collectors.toList());
   }
+
+  @DeleteMapping("/teams/{teamId}/tasks/{taskId}/comments/{commentId}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteComment(@PathVariable Long teamId, @PathVariable Long taskId,
+      @PathVariable Long commentId, @RequestHeader("Authorization") String token) {
+    // Check if user is authorized to delete comment
+    authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // Delete comment
+    commentService.deleteCommentById(commentId);
+
+    // pusher call
+    pusherService.updateComments(teamId.toString());
+  }
 }
