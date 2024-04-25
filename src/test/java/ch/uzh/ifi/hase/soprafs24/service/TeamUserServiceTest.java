@@ -82,6 +82,9 @@ public class TeamUserServiceTest {
     // check that team/user objects are expected
     assertEquals(testTeamUser.getUser(), createdTeamUser.getUser());
     assertEquals(testTeamUser.getTeam(), createdTeamUser.getTeam());
+
+    // check if save is called
+    Mockito.verify(teamUserRepository, Mockito.times(1)).save(Mockito.any());
   }
 
   /**
@@ -96,6 +99,9 @@ public class TeamUserServiceTest {
 
     assertThrows(ResponseStatusException.class,
         () -> teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId()));
+
+    // check if save is called
+    Mockito.verify(teamUserRepository, Mockito.never()).save(Mockito.any());
   }
 
   /**
@@ -112,6 +118,9 @@ public class TeamUserServiceTest {
 
     assertThrows(ResponseStatusException.class,
         () -> teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId()));
+
+    // check if save is called
+    Mockito.verify(teamUserRepository, Mockito.never()).save(Mockito.any());
   }
   // endregion
 
@@ -137,6 +146,8 @@ public class TeamUserServiceTest {
     assertEquals(createdTeamUser.getTeamUserId(), testTeamUser.getTeamUserId());
     assertEquals(createdTeamUser.getTeam(), testTeamUser.getTeam());
     assertEquals(createdTeamUser.getUser(), testTeamUser.getUser());
+
+    // check if save is called (not applicable because the createTeamUser method is mocked)
   }
 
   // endregion
