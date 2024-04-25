@@ -105,15 +105,12 @@ public class TeamService {
     team.setName(updatedTeam.getName());
     team.setDescription(updatedTeam.getDescription());
 
-    // notify other users of team edit
-    pusherService.updateTeam(updatedTeam.getTeamId().toString());
-
     // save updated team
     teamRepository.save(team);
     teamRepository.flush();
 
     // notify other users of team edit
-    pusherService.updateTeam(updatedTeam.getTeamId().toString(), "none");
+    pusherService.updateTeam(updatedTeam.getTeamId().toString());
 
     log.debug("Updated Information for Team: {} with id {}", team, team.getTeamId());
     return team;

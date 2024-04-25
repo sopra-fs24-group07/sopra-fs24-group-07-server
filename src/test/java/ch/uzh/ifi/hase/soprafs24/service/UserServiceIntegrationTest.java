@@ -50,7 +50,7 @@ public class UserServiceIntegrationTest {
     userRepository.deleteAll();
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString());
   }
 
   // region create user

@@ -55,7 +55,7 @@ public class TeamUserServiceTest {
     Mockito.when(teamUserRepository.save(Mockito.any())).thenReturn(testTeamUser);
 
     // when pusher call -> mock
-    Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString());
   }
 
   // region createTeamUser with teamId tests
@@ -75,9 +75,7 @@ public class TeamUserServiceTest {
 
     // then
     Mockito.verify(teamUserRepository, Mockito.times(1)).save(Mockito.any());
-
-    Mockito.verify(pusherService, Mockito.times(1))
-        .updateTeam(Mockito.anyString(), Mockito.anyString());
+    Mockito.verify(pusherService, Mockito.times(1)).updateTeam(Mockito.anyString());
 
     // check that team/user objects are expected
     assertEquals(testTeamUser.getUser(), createdTeamUser.getUser());
@@ -96,6 +94,9 @@ public class TeamUserServiceTest {
 
     assertThrows(ResponseStatusException.class,
         () -> teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId()));
+
+    Mockito.verify(teamUserRepository, Mockito.never()).save(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
 
   /**
@@ -112,6 +113,9 @@ public class TeamUserServiceTest {
 
     assertThrows(ResponseStatusException.class,
         () -> teamUserService.createTeamUser(testTeam.getTeamId(), testUser.getUserId()));
+
+    Mockito.verify(teamUserRepository, Mockito.never()).save(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
   // endregion
 
@@ -137,6 +141,8 @@ public class TeamUserServiceTest {
     assertEquals(createdTeamUser.getTeamUserId(), testTeamUser.getTeamUserId());
     assertEquals(createdTeamUser.getTeam(), testTeamUser.getTeam());
     assertEquals(createdTeamUser.getUser(), testTeamUser.getUser());
+
+    // because mocked other teamUser call, not possible to verify save/pusher
   }
 
   // endregion
@@ -160,6 +166,9 @@ public class TeamUserServiceTest {
 
     // assert found empty list
     assertEquals(0, foundTeams.size());
+
+    Mockito.verify(teamUserRepository, Mockito.never()).save(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
 
   /**
@@ -342,6 +351,7 @@ public class TeamUserServiceTest {
     assertEquals(testTeamUser.getTeam().getTeamId(), deletedTeamUser.getTeam().getTeamId());
     // then -> verify delete not called
     Mockito.verify(teamUserRepository, Mockito.times(1)).deleteById(Mockito.any());
+    Mockito.verify(pusherService, Mockito.times(1)).updateTeam(Mockito.anyString());
   }
 
   /* delete unsuccessful: team user does not exist (should be caught from controller) */
@@ -361,6 +371,7 @@ public class TeamUserServiceTest {
         () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
     // then -> verify delete not called
     Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
 
   /* delete unsuccessful: team does not exist */
@@ -380,6 +391,7 @@ public class TeamUserServiceTest {
         () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
     // then -> verify delete not called
     Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
 
   /* delete unsuccessful: user does not exist */
@@ -398,6 +410,7 @@ public class TeamUserServiceTest {
         () -> teamUserService.deleteUserOfTeam(testTeam.getTeamId(), testUser.getUserId()));
     // then -> verify delete not called
     Mockito.verify(teamUserRepository, Mockito.never()).deleteById(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never()).updateTeam(Mockito.anyString());
   }
   // endregion
 }
