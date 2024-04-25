@@ -307,6 +307,62 @@ public class CommentServiceIntegrationTest {
     assertTrue(comments.isEmpty());
   }
 
+  @Test
+  public void getCommentsByTaskId_orderedByCreationDate_success() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given two comments with different timestamps
+    Comment firstComment = new Comment();
+    firstComment.setText("This is the first comment");
+    firstComment.setUser(testUser);
+    firstComment.setTask(testTask);
+    commentRepository.saveAndFlush(firstComment);
+
+    // simulate delay between creation of two comments
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    Comment secondComment = new Comment();
+    secondComment.setText("This is the second comment");
+    secondComment.setUser(testUser);
+    secondComment.setTask(testTask);
+    commentRepository.saveAndFlush(secondComment);
+
+    // when
+    List<Comment> comments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // then
+    assertNotNull(comments);
+    assertEquals(2, comments.size());
+    assertEquals(secondComment.getText(), comments.get(0).getText());
+    assertEquals(firstComment.getText(), comments.get(1).getText());
+    assertTrue(comments.get(0).getCreationDate().isAfter(comments.get(1).getCreationDate()));
+  }
+
   // endregion
 
   // region delete comment
