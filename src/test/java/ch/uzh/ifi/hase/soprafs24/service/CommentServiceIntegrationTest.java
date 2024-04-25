@@ -11,6 +11,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -212,7 +213,6 @@ public class CommentServiceIntegrationTest {
     Comment testComment = new Comment();
     testComment.setText("This is a test comment");
     testComment.setUser(testUser);
-    testComment.setTask(testTask);
 
     // when & then
     assertThrows(ResponseStatusException.class,
@@ -253,6 +253,7 @@ public class CommentServiceIntegrationTest {
     testComment.setText("This is a test comment");
     testComment.setTask(testTask);
     testComment.setUser(testUser);
+    testComment.setCreationDate(LocalDateTime.now());
     commentRepository.saveAndFlush(testComment);
 
     // when
@@ -332,24 +333,20 @@ public class CommentServiceIntegrationTest {
     testUser.setToken("1");
     userRepository.saveAndFlush(testUser);
 
-    // given two comments with different timestamps
+    // given first comment (older)
     Comment firstComment = new Comment();
     firstComment.setText("This is the first comment");
     firstComment.setUser(testUser);
     firstComment.setTask(testTask);
+    firstComment.setCreationDate(LocalDateTime.now().minusHours(5));
     commentRepository.saveAndFlush(firstComment);
 
-    // simulate delay between creation of two comments
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-
+    // given second comment (more recent)
     Comment secondComment = new Comment();
     secondComment.setText("This is the second comment");
     secondComment.setUser(testUser);
     secondComment.setTask(testTask);
+    secondComment.setCreationDate(LocalDateTime.now());
     commentRepository.saveAndFlush(secondComment);
 
     // when
@@ -358,7 +355,7 @@ public class CommentServiceIntegrationTest {
     // then
     assertNotNull(comments);
     assertEquals(2, comments.size());
-    assertEquals(secondComment.getText(), comments.get(0).getText());
+    assertEquals(secondComment.getText(), comments.get(0).getText()); // more recent first
     assertEquals(firstComment.getText(), comments.get(1).getText());
     assertTrue(comments.get(0).getCreationDate().isAfter(comments.get(1).getCreationDate()));
   }
@@ -396,6 +393,7 @@ public class CommentServiceIntegrationTest {
     testComment.setText("This is a test comment");
     testComment.setTask(testTask);
     testComment.setUser(testUser);
+    testComment.setCreationDate(LocalDateTime.now());
     commentRepository.saveAndFlush(testComment);
 
     // when

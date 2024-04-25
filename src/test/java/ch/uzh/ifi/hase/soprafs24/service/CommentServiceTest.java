@@ -26,6 +26,7 @@ public class CommentServiceTest {
   @InjectMocks private CommentService commentService;
 
   private Comment testComment;
+  private LocalDateTime testCreationDate;
   private Task testTask;
   private User testUser;
   private List<Comment> comments;
@@ -34,11 +35,14 @@ public class CommentServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
 
+    // given time
+    testCreationDate = LocalDateTime.now();
+
     // given
     testComment = new Comment();
     testComment.setCommentId(1L);
     testComment.setText("This is a test comment");
-    testComment.setCreationDate(LocalDateTime.now());
+    testComment.setCreationDate(testCreationDate);
 
     testTask = new Task();
     testTask.setTaskId(1L);

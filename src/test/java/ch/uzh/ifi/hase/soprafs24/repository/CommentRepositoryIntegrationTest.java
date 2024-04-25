@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,6 +77,7 @@ public class CommentRepositoryIntegrationTest {
     comment.setText("This is a comment.");
     comment.setTask(task);
     comment.setUser(user);
+    comment.setCreationDate(LocalDateTime.now());
 
     // when
     commentRepository.save(comment);
@@ -94,6 +96,7 @@ public class CommentRepositoryIntegrationTest {
     comment.setText("This is a comment.");
     comment.setTask(task);
     comment.setUser(user);
+    comment.setCreationDate(LocalDateTime.now());
 
     entityManager.persist(comment);
     entityManager.flush();
@@ -116,6 +119,7 @@ public class CommentRepositoryIntegrationTest {
     comment.setText("This is a comment.");
     comment.setTask(task);
     comment.setUser(user);
+    comment.setCreationDate(LocalDateTime.now());
 
     entityManager.persist(comment);
     entityManager.flush();
@@ -138,6 +142,7 @@ public class CommentRepositoryIntegrationTest {
     comment.setText("This is a comment.");
     comment.setTask(task);
     comment.setUser(user);
+    comment.setCreationDate(LocalDateTime.now());
 
     entityManager.persist(comment);
     entityManager.flush();

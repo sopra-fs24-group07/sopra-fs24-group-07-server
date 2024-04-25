@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class CommentService {
 
     // check that the task exists and add to comment
     newComment.setTask(taskService.getTask(taskId));
+
+    // set creation time
+    newComment.setCreationDate(LocalDateTime.now());
 
     // save
     try {
