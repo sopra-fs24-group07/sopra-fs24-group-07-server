@@ -143,6 +143,8 @@ public class TeamServiceTest {
 
     // then -> attempt to create team with empty name -> check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> teamService.createTeam(invalidTeam));
+
+    Mockito.verify(teamRepository, Mockito.never()).save(Mockito.any());
   }
   // endregion
 
@@ -210,6 +212,7 @@ public class TeamServiceTest {
 
     // then -> attempt to update team with invalid id -> check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> tempTeamService.updateTeam(updatedTeam));
+    Mockito.verify(teamRepository, Mockito.never()).save(Mockito.any());
     Mockito.verify(pusherService, Mockito.never())
         .updateTeam(Mockito.anyString(), Mockito.anyString());
   }
