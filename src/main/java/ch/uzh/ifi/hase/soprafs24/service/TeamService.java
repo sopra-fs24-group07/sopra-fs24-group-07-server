@@ -106,7 +106,7 @@ public class TeamService {
     team.setDescription(updatedTeam.getDescription());
 
     // notify other users of team edit
-    pusherService.updateTeam(updatedTeam.getTeamId().toString(), "none");
+    pusherService.updateTeam(updatedTeam.getTeamId().toString());
 
     // save updated team
     teamRepository.save(team);

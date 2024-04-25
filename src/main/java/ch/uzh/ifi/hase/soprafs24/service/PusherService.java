@@ -42,8 +42,8 @@ public class PusherService {
     triggerEvent("team-" + teamId, "task-update", Collections.singletonMap("tasks", "updated"));
   }
 
-  public void updateTeam(String teamId, String userId) {
-    triggerEvent("team-" + teamId, "team-update", Collections.singletonMap("userId", userId));
+  public void updateTeam(String teamId) {
+    triggerEvent("team-" + teamId, "team-update", Collections.singletonMap("team", "updated"));
   }
 
   public void updateComments(String teamId) {

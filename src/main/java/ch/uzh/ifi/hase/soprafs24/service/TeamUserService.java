@@ -67,7 +67,7 @@ public class TeamUserService {
     teamUserRepository.flush();
 
     // notify
-    pusherService.updateTeam(team.getTeamId().toString(), userId.toString());
+    pusherService.updateTeam(team.getTeamId().toString());
 
     log.debug("Created Information for TeamUser: {}", teamUser);
 
@@ -160,7 +160,7 @@ public class TeamUserService {
     teamUserRepository.deleteById(teamUser.getTeamUserId());
 
     // sync with pusher
-    pusherService.updateTeam(team.getTeamId().toString(), userId.toString());
+    pusherService.updateTeam(team.getTeamId().toString());
 
     log.debug("Deleted teamUser {}: user '{}' from team '{}'", teamUser, user.getUsername(),
         team.getName()); // monitoring
