@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class TeamServiceTest {
   @Mock private TeamRepository teamRepository;
+  @Mock private PusherService pusherService;
 
   @InjectMocks private TeamService teamService;
 
@@ -56,6 +57,9 @@ public class TeamServiceTest {
     assertEquals(team.getName(), foundTeam.getName());
     assertEquals(team.getDescription(), foundTeam.getDescription());
     assertEquals(team.getTeamUUID(), foundTeam.getTeamUUID());
+
+    // when pusher call -> mock
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   @Test
@@ -165,6 +169,8 @@ public class TeamServiceTest {
     assertEquals(testTeam.getTeamId(), savedUpdatedTeam.getTeamId());
     assertEquals(updatedTeam.getName(), savedUpdatedTeam.getName());
     assertEquals(updatedTeam.getDescription(), savedUpdatedTeam.getDescription());
+    Mockito.verify(pusherService, Mockito.times(1))
+        .updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   @Test
@@ -182,6 +188,9 @@ public class TeamServiceTest {
 
     // then -> attempt to update team with empty name -> check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> tempTeamService.updateTeam(updatedTeam));
+    Mockito.verify(teamRepository, Mockito.never()).save(Mockito.any());
+    Mockito.verify(pusherService, Mockito.never())
+        .updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   @Test
@@ -201,6 +210,8 @@ public class TeamServiceTest {
 
     // then -> attempt to update team with invalid id -> check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> tempTeamService.updateTeam(updatedTeam));
+    Mockito.verify(pusherService, Mockito.never())
+        .updateTeam(Mockito.anyString(), Mockito.anyString());
   }
   // endregion
 }
