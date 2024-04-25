@@ -6,9 +6,11 @@ import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,6 +25,8 @@ public class TeamServiceIntegrationTest {
   @Qualifier("teamRepository") @Autowired private TeamRepository teamRepository;
 
   @Autowired private TeamService teamService;
+
+  @MockBean private PusherService pusherService;
 
   @BeforeEach
   public void setup() {
@@ -47,6 +51,9 @@ public class TeamServiceIntegrationTest {
     assertEquals(team.getTeamId(), foundTeam.getTeamId());
     assertEquals(team.getName(), foundTeam.getName());
     assertEquals(team.getDescription(), foundTeam.getDescription());
+
+    // mock pusher service
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
   }
 
   @Test

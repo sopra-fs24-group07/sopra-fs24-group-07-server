@@ -112,6 +112,9 @@ public class TeamService {
     teamRepository.save(team);
     teamRepository.flush();
 
+    // notify other users of team edit
+    pusherService.updateTeam(updatedTeam.getTeamId().toString(), "none");
+
     log.debug("Updated Information for Team: {} with id {}", team, team.getTeamId());
     return team;
   }
