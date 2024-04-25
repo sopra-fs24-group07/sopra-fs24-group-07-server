@@ -23,10 +23,12 @@ public class TeamService {
   private final Logger log = LoggerFactory.getLogger(TeamService.class);
 
   private final TeamRepository teamRepository;
+  private final PusherService pusherService;
 
   @Autowired
-  public TeamService(TeamRepository teamRepository) {
+  public TeamService(TeamRepository teamRepository, PusherService pusherService) {
     this.teamRepository = teamRepository;
+    this.pusherService = pusherService;
   }
 
   /**
@@ -102,6 +104,9 @@ public class TeamService {
     // update variables
     team.setName(updatedTeam.getName());
     team.setDescription(updatedTeam.getDescription());
+
+    // notify other users of team edit
+    pusherService.updateTeam(updatedTeam.getTeamId().toString(), "none");
 
     // save updated team
     teamRepository.save(team);
