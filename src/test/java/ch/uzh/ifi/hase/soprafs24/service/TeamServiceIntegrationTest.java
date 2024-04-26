@@ -53,7 +53,7 @@ public class TeamServiceIntegrationTest {
     assertEquals(team.getDescription(), foundTeam.getDescription());
 
     // mock pusher service
-    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString(), Mockito.anyString());
+    Mockito.doNothing().when(pusherService).updateTeam(Mockito.anyString());
   }
 
   @Test

@@ -110,7 +110,7 @@ public class TeamService {
     teamRepository.flush();
 
     // notify other users of team edit
-    pusherService.updateTeam(updatedTeam.getTeamId().toString(), "none");
+    pusherService.updateTeam(updatedTeam.getTeamId().toString());
 
     log.debug("Updated Information for Team: {} with id {}", team, team.getTeamId());
     return team;
