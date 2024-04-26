@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.*;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -291,6 +292,7 @@ public class UserServiceIntegrationTest {
     testComment.setText("testText");
     testComment.setTask(createdTask);
     testComment.setUser(createdUser);
+    testComment.setCreationDate(LocalDateTime.now());
     Comment createdComment = commentRepository.saveAndFlush(testComment);
 
     // execute delete action

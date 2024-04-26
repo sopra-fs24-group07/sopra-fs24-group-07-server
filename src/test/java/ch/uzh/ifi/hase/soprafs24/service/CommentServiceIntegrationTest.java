@@ -11,6 +11,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.CommentRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -212,7 +213,6 @@ public class CommentServiceIntegrationTest {
     Comment testComment = new Comment();
     testComment.setText("This is a test comment");
     testComment.setUser(testUser);
-    testComment.setTask(testTask);
 
     // when & then
     assertThrows(ResponseStatusException.class,
@@ -253,6 +253,7 @@ public class CommentServiceIntegrationTest {
     testComment.setText("This is a test comment");
     testComment.setTask(testTask);
     testComment.setUser(testUser);
+    testComment.setCreationDate(LocalDateTime.now());
     commentRepository.saveAndFlush(testComment);
 
     // when
@@ -307,6 +308,58 @@ public class CommentServiceIntegrationTest {
     assertTrue(comments.isEmpty());
   }
 
+  @Test
+  public void getCommentsByTaskId_orderedByCreationDate_success() {
+    // given a team
+    Team testTeam = new Team();
+    testTeam.setName("Test Team");
+    testTeam.setDescription("This is a test team");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given first comment (older)
+    Comment firstComment = new Comment();
+    firstComment.setText("This is the first comment");
+    firstComment.setUser(testUser);
+    firstComment.setTask(testTask);
+    firstComment.setCreationDate(LocalDateTime.now().minusHours(5));
+    commentRepository.saveAndFlush(firstComment);
+
+    // given second comment (more recent)
+    Comment secondComment = new Comment();
+    secondComment.setText("This is the second comment");
+    secondComment.setUser(testUser);
+    secondComment.setTask(testTask);
+    secondComment.setCreationDate(LocalDateTime.now());
+    commentRepository.saveAndFlush(secondComment);
+
+    // when
+    List<Comment> comments = commentService.getCommentsByTaskId(testTask.getTaskId());
+
+    // then
+    assertNotNull(comments);
+    assertEquals(2, comments.size());
+    assertEquals(secondComment.getText(), comments.get(0).getText()); // more recent first
+    assertEquals(firstComment.getText(), comments.get(1).getText());
+    assertTrue(comments.get(0).getCreationDate().isAfter(comments.get(1).getCreationDate()));
+  }
+
   // endregion
 
   // region delete comment
@@ -340,6 +393,7 @@ public class CommentServiceIntegrationTest {
     testComment.setText("This is a test comment");
     testComment.setTask(testTask);
     testComment.setUser(testUser);
+    testComment.setCreationDate(LocalDateTime.now());
     commentRepository.saveAndFlush(testComment);
 
     // when
