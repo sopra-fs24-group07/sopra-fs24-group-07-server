@@ -80,6 +80,9 @@ public class TeamUserServiceTest {
     // check that team/user objects are expected
     assertEquals(testTeamUser.getUser(), createdTeamUser.getUser());
     assertEquals(testTeamUser.getTeam(), createdTeamUser.getTeam());
+
+    // check if save is called
+    Mockito.verify(teamUserRepository, Mockito.times(1)).save(Mockito.any());
   }
 
   /**
