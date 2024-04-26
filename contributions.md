@@ -225,9 +225,14 @@ timeline
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/133
   Comments should be in descending order
-
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/135
   Comments pusher
-
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/157
   Integration tests for Comment descending order
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15:
+  Integration tests for Comment descending order
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  lots of div bugfixes
