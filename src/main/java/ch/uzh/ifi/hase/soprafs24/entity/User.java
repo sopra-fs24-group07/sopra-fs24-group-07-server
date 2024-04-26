@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -15,26 +15,31 @@ import javax.persistence.*;
  * the primary key
  */
 @Entity
-@Table(name = "USER")
+@Table(name = "users")
 public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @Id @GeneratedValue private Long id;
+  @Id @GeneratedValue @Column(name = "user_id") private Long userId;
 
-  @Column(nullable = false) private String name;
+  @Column(length = 100, nullable = false) private String name;
 
-  @Column(nullable = false, unique = true) private String username;
+  @Column(length = 100, nullable = false, unique = true) private String username;
+
+  // should be hash
+  @Column(nullable = false) private String password;
 
   @Column(nullable = false, unique = true) private String token;
 
-  @Column(nullable = false) private UserStatus status;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) private List<Comment> comments;
 
-  public Long getId() {
-    return id;
+  // TODO image
+
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public String getName() {
@@ -61,11 +66,11 @@ public class User implements Serializable {
     this.token = token;
   }
 
-  public UserStatus getStatus() {
-    return status;
+  public String getPassword() {
+    return password;
   }
 
-  public void setStatus(UserStatus status) {
-    this.status = status;
+  public void setPassword(String password) {
+    this.password = password;
   }
 }
