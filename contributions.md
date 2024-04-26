@@ -196,3 +196,43 @@ timeline
   Comments tests and docu
 
 ## 20.04.2024 - 26.04.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/130
+  delete task status
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/153
+  Comments delete service and endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/46
+  team edit service and endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/49
+  team edit tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  div bugfixes
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/10
+  Create comments on tasks
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/72
+  delete comments
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/14
+  Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/20
+  Breakout rooms
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/133
+  Comments should be in descending order
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/135
+  Comments pusher
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/157
+  Integration tests for Comment descending order
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15:
+  Integration tests for Comment descending order
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  lots of div bugfixes
