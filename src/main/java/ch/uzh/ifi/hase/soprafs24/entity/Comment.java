@@ -14,7 +14,7 @@ public class Comment implements Serializable {
 
   @Column(length = 500, nullable = false) private String text;
 
-  @CreationTimestamp private LocalDateTime creationDate;
+  @Column(nullable = false) private LocalDateTime creationDate;
 
   @ManyToOne @JoinColumn(name = "taskId", nullable = false) private Task task;
 
