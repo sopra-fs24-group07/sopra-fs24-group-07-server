@@ -210,8 +210,8 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
   div bugfixes
 
-
 ### Monti934
+
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/10
   Create comments on tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/72
@@ -220,3 +220,14 @@ timeline
   Voice Chat
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/20
   Breakout rooms
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/133
+  Comments should be in descending order
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/135
+  Comments pusher
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/157
+  Integration tests for Comment descending order
