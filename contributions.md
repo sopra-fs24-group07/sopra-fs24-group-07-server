@@ -209,3 +209,14 @@ timeline
   team edit tests and docu
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
   div bugfixes
+
+
+### Monti934
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/10
+  Create comments on tasks
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/72
+  delete comments
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/14
+  Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/20
+  Breakout rooms
