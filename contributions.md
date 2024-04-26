@@ -196,3 +196,16 @@ timeline
   Comments tests and docu
 
 ## 20.04.2024 - 26.04.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/130
+  delete task status
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/153
+  Comments delete service and endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/46
+  team edit service and endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/49
+  team edit tests and docu
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  div bugfixes
