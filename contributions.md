@@ -232,13 +232,11 @@ timeline
 
 ### B1s9l
 
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/15:
-  Integration tests for Comment descending order
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/15:
+  Dashboard container for the voice chat
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
   lots of div bugfixes: including for client issues #4, #23, #13 (with server #46)
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/135:
   Integrated the pusher api to send signal to fetch new comments
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/118:
-  Pusher endpoint for syncing all changes between clients in real time
