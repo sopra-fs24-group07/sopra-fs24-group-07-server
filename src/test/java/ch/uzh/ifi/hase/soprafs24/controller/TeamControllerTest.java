@@ -670,9 +670,7 @@ public class TeamControllerTest {
         get("/api/v1/teams/1/tasks").header("Authorization", "1234");
 
     // then
-    mockMvc.perform(getRequest)
-        .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(0))));
+    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
   }
 
   /**
