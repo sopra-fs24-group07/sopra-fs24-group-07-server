@@ -1,6 +1,9 @@
-package ch.uzh.ifi.hase.soprafs24.rest.dto;
+package ch.uzh.ifi.hase.soprafs24.entity;
 
-public class TeamInvitationPostDTO {
+import javax.persistence.Entity;
+
+@Entity
+public class TeamInvitation {
   private String teamUUID;
 
   private String receiverEmail;
