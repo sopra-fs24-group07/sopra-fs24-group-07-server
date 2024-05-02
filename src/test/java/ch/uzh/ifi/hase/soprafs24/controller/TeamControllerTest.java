@@ -634,7 +634,10 @@ public class TeamControllerTest {
     List<Task> tasks = new ArrayList<>();
     tasks.add(task);
 
-    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
     given(taskService.getTasksByTeamId(Mockito.anyLong())).willReturn(tasks);
 
     // when/then -> do the request + validate the result
@@ -644,6 +647,7 @@ public class TeamControllerTest {
     // then
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].taskId", is(task.getTaskId().intValue())))
         .andExpect(jsonPath("$[0].title", is(task.getTitle())))
         .andExpect(jsonPath("$[0].description", is(task.getDescription())));
@@ -653,11 +657,13 @@ public class TeamControllerTest {
    * Test for trying to fetch a Task, where there is no task in team
    */
   @Test
-  public void getTasks_noTasksInTeam_throwsError() throws Exception {
-    // given
-    given(taskService.getTasksByTeamId(Mockito.anyLong()))
-        .willThrow(
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id 1"));
+  public void getTaskes_noTasksInTeam_success() throws Exception {
+    // given no tasks
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(taskService.getTasksByTeamId(Mockito.anyLong())).willReturn(List.of());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
@@ -665,12 +671,8 @@ public class TeamControllerTest {
 
     // then
     mockMvc.perform(getRequest)
-        .andExpect(status().isNotFound())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-        .andExpect(result
-            -> assertTrue(result.getResolvedException().getMessage().contains(
-                "No tasks found for team with id 1")));
+        .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0))));
   }
 
   /**
@@ -682,7 +684,7 @@ public class TeamControllerTest {
     Mockito
         .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
         .when(authorizationService)
-        .isAuthorized(Mockito.any());
+        .isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.anyLong());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
@@ -696,6 +698,25 @@ public class TeamControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
+  /* test if team not found */
+  @Test
+  public void getTasks_somethingNotFound_throwsError() throws Exception {
+    // given
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(taskService.getTasksByTeamId(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isNotFound());
   }
 
   // endregion
