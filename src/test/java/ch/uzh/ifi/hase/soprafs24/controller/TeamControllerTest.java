@@ -698,6 +698,64 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  /*
+   * GET method which uses getTasksByTeamIdAndStatus method from TaskService to get tasks by status
+   */
+  @Test
+  public void getTasksByStatus_validInput_returnTasks() throws Exception {
+    // given
+    Task task = new Task();
+    task.setTaskId(1L);
+    task.setTitle("Test Task");
+    task.setDescription("This is a test task.");
+
+    List<Task> tasks = new ArrayList<>();
+    tasks.add(task);
+
+    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
+    given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
+        .willReturn(tasks);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/status?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].taskId", is(task.getTaskId().intValue())))
+        .andExpect(jsonPath("$[0].title", is(task.getTitle())))
+        .andExpect(jsonPath("$[0].description", is(task.getDescription())));
+  }
+
+  /*
+   * Test for trying to fetch a Task, where there is no task in team
+   */
+  @Test
+  public void getTasksByStatus_noTasksInTeam_throwsError() throws Exception {
+    // given
+    given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
+        .willThrow(
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id 1"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks/status?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isNotFound())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(result.getResolvedException().getMessage().contains(
+                "No tasks found for team with id 1")));
+  }
+
+  /*
+   * Test for trying to fetch a Task, where i'm not authorized to access
+   */
+
   // endregion
 
   // region TaskControllerTest for PUT
