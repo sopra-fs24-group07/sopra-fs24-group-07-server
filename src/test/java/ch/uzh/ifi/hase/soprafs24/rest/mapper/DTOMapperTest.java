@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Comment;
 import ch.uzh.ifi.hase.soprafs24.entity.Session;
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamInvitation;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
@@ -122,6 +123,36 @@ public class DTOMapperTest {
     assertEquals(team.getTeamUUID(), teamGetDTO.getTeamUUID());
     assertEquals(team.getName(), teamGetDTO.getName());
     assertEquals(team.getDescription(), teamGetDTO.getDescription());
+  }
+
+  /* team inviation */
+  @Test
+  public void testTeamInvitation_noMail_fromTeamInvitationPostDTO_toTeamInvitation_success() {
+    // create TeamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+
+    // map -> create TeamInvitation
+    TeamInvitation teamInvitation =
+        DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(teamInvitationPostDTO);
+
+    assertEquals(teamInvitationPostDTO.getTeamUUID(), teamInvitation.getTeamUUID());
+    assertEquals("", teamInvitation.getReceiverEmail());
+  }
+
+  @Test
+  public void testTeamInvitation_withMail_fromTeamInvitationPostDTO_toTeamInvitation_success() {
+    // create TeamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+    teamInvitationPostDTO.setReceiverEmail("receiver@productiviteam.co");
+
+    // map -> create TeamInvitation
+    TeamInvitation teamInvitation =
+        DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(teamInvitationPostDTO);
+
+    assertEquals(teamInvitationPostDTO.getTeamUUID(), teamInvitation.getTeamUUID());
+    assertEquals(teamInvitationPostDTO.getReceiverEmail(), teamInvitation.getReceiverEmail());
   }
   // endregion
 
