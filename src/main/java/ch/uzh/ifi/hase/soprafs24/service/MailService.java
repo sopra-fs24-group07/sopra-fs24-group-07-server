@@ -39,7 +39,6 @@ public class MailService {
   }
 
   /**
-   *
    * @param receiverEmail String of receiver
    * @param templateId int64
    * @param variables JSONObject with variables for the template
