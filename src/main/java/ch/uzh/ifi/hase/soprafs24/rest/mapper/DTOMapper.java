@@ -54,10 +54,10 @@ public interface DTOMapper {
   @Mapping(source = "description", target = "description")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
 
-  // team invitation
-  @Mapping(source = "teamUUID", target = "teamUUID")
-  @Mapping(source = "receiverEmail", target = "receiverEmail", defaultValue = "")
-  TeamInvitation convertTeamInvitationPostDTOtoEntity(TeamInvitationPostDTO teamInvitationPostDTO);
+  // @Mapping(source = "teamUUID", target = "teamUUID")
+  // @Mapping(source = "receiverEmail", target = "receiverEmail", defaultValue = "")
+  // TeamInvitation convertTeamInvitationPostDTOtoEntity(TeamInvitationPostDTO
+  // teamInvitationPostDTO);
 
   @Mapping(target = "title", source = "title")
   @Mapping(target = "description", source = "description", defaultValue = "")
