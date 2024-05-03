@@ -5,13 +5,15 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
-import com.mailjet.client.resource.Sender;
+import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class MailService {
@@ -19,14 +21,20 @@ public class MailService {
 
   private final MailjetClient mailjetClient;
 
+  // todo how to mock?
   @Value("${MAILJET_SENDER_EMAIL}") private String senderEmail;
   private Integer templateId = 5930543;
 
-  public MailService(MailjetClient mailjetClient, TeamService teamService) {
+  public MailService(MailjetClient mailjetClient) {
+    System.out.println("mailjet service");
     this.mailjetClient = mailjetClient;
   }
 
-  private void sendMail(String receiverEmail, Integer templateId, JSONObject variables)
+  public void setSenderEmail(String senderEmail) {
+    this.senderEmail = senderEmail;
+  }
+
+  public MailjetResponse sendMail(String receiverEmail, Integer templateId, JSONObject variables)
       throws MailjetException {
     MailjetRequest request;
     MailjetResponse response;
@@ -49,8 +57,16 @@ public class MailService {
                         .put(Emailv31.Message.VARIABLES, variables)
                         .put(Emailv31.Message.SUBJECT, "New ProductiviTeam Invitation!")));
 
-    response = mailjetClient.post(request);
-    log.info(response.getStatus() + " " + response.getData());
+    try {
+      response = mailjetClient.post(request);
+      log.info(response.getStatus() + " " + response.getData());
+    } catch (MailjetException ex) {
+      log.error("Mail API Error: ", ex);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Mail API Exception. Did not send mail. Please check if valid email. Otherwise contact Administrator.");
+    }
+
+    return response;
   }
 
   public void sendInvitationEmail(String receiverEmail, String invitationUrl) {
