@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public class MailServiceTest {
@@ -23,7 +24,8 @@ public class MailServiceTest {
   private String senderEmail;
   private String receiverEmail;
   private Integer templateId;
-
+  private JSONObject variables;
+  private String invitationUrl;
   @Captor ArgumentCaptor<MailjetRequest> requestCaptor;
 
   @BeforeEach
@@ -33,6 +35,8 @@ public class MailServiceTest {
     senderEmail = "sender@productiviteam.co";
     receiverEmail = "receiver@productiviteam.co";
     templateId = 1;
+    invitationUrl = "https://productiviteam.co";
+    variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
 
     mailService = new MailService(mailjetClient);
     mailService.setSenderEmail(senderEmail);
@@ -42,9 +46,6 @@ public class MailServiceTest {
 
   @Test
   public void sendMail_validInput_success() throws ResponseStatusException, MailjetException {
-    // given
-    JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
-
     // called with
     JSONObject mailjetRequestProperty =
         new JSONObject()
@@ -73,9 +74,6 @@ public class MailServiceTest {
   @Test
   public void sendMail_somethingWrong_ExpectsException()
       throws ResponseStatusException, MailjetException {
-    // given
-    JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
-
     // called with (irrelevant)
     JSONObject mailjetRequestProperty = new JSONObject();
 
@@ -92,9 +90,6 @@ public class MailServiceTest {
   @Test
   public void sendMail_invalidEmail_ExpectsException()
       throws ResponseStatusException, MailjetException {
-    // given
-    JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
-
     // called with (irrelevant)
     JSONObject mailjetRequestProperty = new JSONObject();
 
@@ -102,5 +97,36 @@ public class MailServiceTest {
     assertThrows(ResponseStatusException.class,
         () -> mailService.sendMail("1nv#lid-ma.l@mydomin.e", templateId, variables));
     Mockito.verify(mailjetClient, Mockito.never()).post(Mockito.any());
+  }
+
+  @Test
+  public void sendInvitationEmail_validInput_success()
+      throws ResponseStatusException, MailjetException {
+    // when other class method is called -> mock success
+    MailService spyMailService = Mockito.spy(mailService);
+    Mockito.doReturn(mailjetResponse)
+        .when(spyMailService)
+        .sendMail(Mockito.anyString(), Mockito.anyInt(), Mockito.any());
+
+    // when call -> ok
+    spyMailService.sendInvitationEmail(receiverEmail, invitationUrl);
+
+    // assert if called with expected params
+    Mockito.verify(spyMailService, Mockito.times(1))
+        .sendMail(Mockito.eq(receiverEmail), Mockito.anyInt(), Mockito.any());
+  }
+
+  @Test
+  public void sendInvitationEmail_sendMailException_ExpectsException()
+      throws ResponseStatusException, MailjetException {
+    // when other class method is called -> mock exception
+    MailService spyMailService = Mockito.spy(mailService);
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST))
+        .when(spyMailService)
+        .sendMail(Mockito.anyString(), Mockito.anyInt(), Mockito.any());
+
+    // assert if called with expected params
+    assertThrows(ResponseStatusException.class,
+        () -> spyMailService.sendInvitationEmail(receiverEmail, invitationUrl));
   }
 }
