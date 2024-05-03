@@ -41,7 +41,7 @@ public class MailServiceTest {
   }
 
   @Test
-  public void sendMail_validInput_success() throws MailjetException {
+  public void sendMail_validInput_success() throws ResponseStatusException, MailjetException {
     // given
     JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
 
@@ -71,7 +71,8 @@ public class MailServiceTest {
   /* test if mail client post request error is converted correctly. This might happen if some fields
    * are not set correctly (e.g. mail address not valid, or auth error).*/
   @Test
-  public void sendMail_somethingWrong_ExpectsException() throws MailjetException {
+  public void sendMail_somethingWrong_ExpectsException()
+      throws ResponseStatusException, MailjetException {
     // given
     JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
 
@@ -85,5 +86,21 @@ public class MailServiceTest {
     assertThrows(ResponseStatusException.class,
         () -> mailService.sendMail(receiverEmail, templateId, variables));
     Mockito.verify(mailjetClient, Mockito.times(1)).post(Mockito.any());
+  }
+
+  /* test if incorrect receiver email */
+  @Test
+  public void sendMail_invalidEmail_ExpectsException()
+      throws ResponseStatusException, MailjetException {
+    // given
+    JSONObject variables = new JSONObject().put("invitationUrl", "https://productiviteam.co");
+
+    // called with (irrelevant)
+    JSONObject mailjetRequestProperty = new JSONObject();
+
+    // Assert
+    assertThrows(ResponseStatusException.class,
+        () -> mailService.sendMail("1nv#lid-ma.l@mydomin.e", templateId, variables));
+    Mockito.verify(mailjetClient, Mockito.never()).post(Mockito.any());
   }
 }

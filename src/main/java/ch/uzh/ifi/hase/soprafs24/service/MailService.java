@@ -6,6 +6,7 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import java.io.IOException;
+import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -21,12 +22,15 @@ public class MailService {
 
   private final MailjetClient mailjetClient;
 
-  // todo how to mock?
-  @Value("${MAILJET_SENDER_EMAIL}") private String senderEmail;
+  // default NULL, so it can be overwritten in tests
+  @Value("${MAILJET_SENDER_EMAIL:{NULL}") private String senderEmail;
   private Integer templateId = 5930543;
 
+  /* OWASP pattern */
+  private String emailRegexPattern =
+      "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
   public MailService(MailjetClient mailjetClient) {
-    System.out.println("mailjet service");
     this.mailjetClient = mailjetClient;
   }
 
@@ -34,10 +38,23 @@ public class MailService {
     this.senderEmail = senderEmail;
   }
 
+  /**
+   *
+   * @param receiverEmail String of receiver
+   * @param templateId int64
+   * @param variables JSONObject with variables for the template
+   * @return MailjetResponse response object
+   * @throws ResponseStatusException if mail API or validate error
+   */
   public MailjetResponse sendMail(String receiverEmail, Integer templateId, JSONObject variables)
-      throws MailjetException {
+      throws ResponseStatusException {
     MailjetRequest request;
     MailjetResponse response;
+
+    // syntax validate email
+    if (!patternMatches(receiverEmail, emailRegexPattern)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email address.");
+    }
 
     request =
         new MailjetRequest(Emailv31.resource)
@@ -62,8 +79,8 @@ public class MailService {
       log.info(response.getStatus() + " " + response.getData());
     } catch (MailjetException ex) {
       log.error("Mail API Error: ", ex);
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Mail API Exception. Did not send mail. Please check if valid email. Otherwise contact Administrator.");
+      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+          "Mail API Exception. Did not send mail. Please check if correct email. Otherwise contact Administrator.");
     }
 
     return response;
@@ -72,10 +89,17 @@ public class MailService {
   public void sendInvitationEmail(String receiverEmail, String invitationUrl) {
     JSONObject variables = new JSONObject().put("invitationUrl", invitationUrl);
 
-    try {
-      sendMail(receiverEmail, templateId, variables);
-    } catch (MailjetException e) {
-      log.error("Failed to send invitation email; ", e);
-    }
+    sendMail(receiverEmail, templateId, variables);
+  }
+
+  /**
+   * @param emailAddress email address to validate
+   * @param regexPattern regex pattern to match
+   * @return boolean
+   * @see <a
+   *     href="https://www.baeldung.com/java-email-validation-regex">https://www.baeldung.com/java-email-validation-regex</a>
+   */
+  private static boolean patternMatches(String emailAddress, String regexPattern) {
+    return Pattern.compile(regexPattern).matcher(emailAddress).matches();
   }
 }
