@@ -54,8 +54,15 @@ public class SessionService {
     // check that no current session is active
     List<Session> existingSessions = getSessionsByTeamId(teamId);
     if (!existingSessions.isEmpty() && existingSessions.get(0).getEndDateTime() == null) {
-      throw new ResponseStatusException(
-          HttpStatus.CONFLICT, "There is already an active session for this team.");
+      // if the existing session is expired, end it
+      if (isSessionExpired(existingSessions.get(0))) {
+        endSession(teamId);
+      }
+      // else, throw an exception because an active session already exists
+      else {
+        throw new ResponseStatusException(
+            HttpStatus.CONFLICT, "There is already an active session for this team.");
+      }
     }
 
     // create session
@@ -108,7 +115,8 @@ public class SessionService {
     List<Session> sessions = getSessionsByTeamId(teamId);
 
     // check if the team has an active session
-    if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null) {
+    if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null
+        || isSessionExpired(sessions.get(0))) {
       log.error("Team with teamId '{}' has no active session", teamId);
       throw new ResponseStatusException(HttpStatus.GONE, "Team has no active session");
     }
@@ -124,5 +132,9 @@ public class SessionService {
     log.debug("Ended session: {}; started at {}; ended at {}", endedSession,
         endedSession.getStartDateTime(), endedSession.getEndDateTime());
     return endedSession;
+  }
+
+  public boolean isSessionExpired(Session session) {
+    return session.getStartDateTime().plusHours(24).isBefore(LocalDateTime.now());
   }
 }
