@@ -191,7 +191,6 @@ public class TaskServiceTest {
 
   // region getTasksByTeamIdAndStatus
 
-
   /**
    * Test for getting all tasks of a team by status if team exists and has tasks
    */
@@ -205,9 +204,11 @@ public class TaskServiceTest {
     // when -> try to find teamId in the teamService -> return dummy team
     Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
 
-    // when -> try to find tasks by team and status in the taskRepository -> return list with dummy task
+    // when -> try to find tasks by team and status in the taskRepository -> return list with dummy
+    // task
     Mockito
-        .when(taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
+        .when(
+            taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
         .thenReturn(tasks);
 
     // call the method under test
@@ -233,7 +234,8 @@ public class TaskServiceTest {
 
     // when -> try to find tasks by team and status in the taskRepository -> return empty list
     Mockito
-        .when(taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
+        .when(
+            taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
         .thenReturn(new ArrayList<>());
 
     // call the method under test
@@ -259,14 +261,11 @@ public class TaskServiceTest {
             HttpStatus.NOT_FOUND, "Team not found with id " + testTeam.getTeamId()));
 
     // call the method under test and assert an exception is thrown
-    assertThrows(
-        ResponseStatusException.class,
+    assertThrows(ResponseStatusException.class,
         () -> taskService.getTasksByTeamIdAndStatus(testTeam.getTeamId(), status));
   }
 
   // endregion
-
-
 
   // PUT
 
