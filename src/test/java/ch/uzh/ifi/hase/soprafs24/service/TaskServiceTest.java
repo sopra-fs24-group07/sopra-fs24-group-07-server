@@ -189,6 +189,85 @@ public class TaskServiceTest {
         ResponseStatusException.class, () -> taskService.getTasksByTeamId(testTeam.getTeamId()));
   }
 
+  // region getTasksByTeamIdAndStatus
+
+
+  /**
+   * Test for getting all tasks of a team by status if team exists and has tasks
+   */
+  @Test
+  public void getTasksByTeamIdAndStatus_validInputs_success() {
+    // given
+    List<TaskStatus> status = new ArrayList<>();
+    status.add(TaskStatus.TODO);
+    status.add(TaskStatus.IN_SESSION);
+
+    // when -> try to find teamId in the teamService -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> try to find tasks by team and status in the taskRepository -> return list with dummy task
+    Mockito
+        .when(taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
+        .thenReturn(tasks);
+
+    // call the method under test
+    List<Task> foundTasks = taskService.getTasksByTeamIdAndStatus(testTeam.getTeamId(), status);
+
+    // assert found list with one task
+    assertEquals(1, foundTasks.size());
+    assertEquals(testTask, foundTasks.get(0));
+  }
+
+  /*
+   * Test for getting all tasks of a team by status if team exists but has no tasks
+   */
+  @Test
+  public void getTasksByTeamIdAndStatus_validInputs_noTasks() {
+    // given
+    List<TaskStatus> status = new ArrayList<>();
+    status.add(TaskStatus.TODO);
+    status.add(TaskStatus.IN_SESSION);
+
+    // when -> try to find teamId in the teamService -> return dummy team
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any())).thenReturn(testTeam);
+
+    // when -> try to find tasks by team and status in the taskRepository -> return empty list
+    Mockito
+        .when(taskRepository.findByTeamAndStatusInOrderByTitleAsc(Mockito.any(), Mockito.eq(status)))
+        .thenReturn(new ArrayList<>());
+
+    // call the method under test
+    List<Task> foundTasks = taskService.getTasksByTeamIdAndStatus(testTeam.getTeamId(), status);
+
+    // assert found empty list
+    assertEquals(0, foundTasks.size());
+  }
+
+  /*
+   * Test for getting all tasks of a team by status if team does not exist
+   */
+  @Test
+  public void getTasksByTeamIdAndStatus_invalidInputs_teamDoesNotExist_throwsException() {
+    // given
+    List<TaskStatus> status = new ArrayList<>();
+    status.add(TaskStatus.TODO);
+    status.add(TaskStatus.IN_SESSION);
+
+    // when -> try to find teamId in the teamService -> return null
+    Mockito.when(teamService.getTeamByTeamId(Mockito.any()))
+        .thenThrow(new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Team not found with id " + testTeam.getTeamId()));
+
+    // call the method under test and assert an exception is thrown
+    assertThrows(
+        ResponseStatusException.class,
+        () -> taskService.getTasksByTeamIdAndStatus(testTeam.getTeamId(), status));
+  }
+
+  // endregion
+
+
+
   // PUT
 
   /**
