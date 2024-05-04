@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("!dev")
+@Profile({"!dev", "!devRun"})
 public class MailConfig {
   @Value("${MAILJET_KEY}") private String key;
   @Value("${MAILJET_SECRET}") private String secret;
