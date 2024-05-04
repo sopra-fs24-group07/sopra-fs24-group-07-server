@@ -51,8 +51,13 @@ public class UserService {
     checkIfUserExists(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
-    newUser = userRepository.save(newUser);
-    userRepository.flush();
+    try {
+      newUser = userRepository.save(newUser);
+      userRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not register user. Please check length constraints.");
+    }
 
     log.info("Created Information for User: {} with id {}", newUser, newUser.getUserId());
     return newUser;
