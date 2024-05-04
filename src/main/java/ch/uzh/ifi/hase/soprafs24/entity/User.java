@@ -21,12 +21,12 @@ public class User implements Serializable {
 
   @Id @GeneratedValue @Column(name = "user_id") private Long userId;
 
-  @Column(length = 100, nullable = false) private String name;
+  @Column(length = 50, nullable = false) private String name;
 
-  @Column(length = 100, nullable = false, unique = true) private String username;
+  @Column(length = 30, nullable = false, unique = true) private String username;
 
   // should be hash
-  @Column(nullable = false) private String password;
+  @Column(length = 50, nullable = false) private String password;
 
   @Column(nullable = false, unique = true) private String token;
 

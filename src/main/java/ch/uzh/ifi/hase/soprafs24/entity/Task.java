@@ -21,7 +21,7 @@ public class Task implements Serializable {
   @Column(length = 100, nullable = false) private String title;
 
   // varchar(500), not null
-  @Column(length = 500, nullable = false) private String description;
+  @Column(length = 1000, nullable = false) private String description;
 
   // timestamp, not null
   @CreationTimestamp private LocalDateTime creationDate;

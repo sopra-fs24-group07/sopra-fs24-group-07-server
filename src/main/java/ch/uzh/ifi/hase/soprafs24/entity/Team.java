@@ -16,7 +16,7 @@ public class Team implements Serializable {
   @Column(length = 100, nullable = false) private String name;
 
   // varchar(500), not null
-  @Column(length = 500, nullable = false) private String description;
+  @Column(length = 1000, nullable = false) private String description;
 
   @Column(nullable = false, unique = true) private String teamUUID;
 
