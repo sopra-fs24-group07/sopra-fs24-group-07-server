@@ -250,16 +250,16 @@ public class UserServiceIntegrationTest {
   void updateUser_testInputLength(String name, String username, String psw, boolean shouldThrow) {
     // given user in db to update
     User testUser = new User();
-    testUser.setName("somethong");
-    testUser.setUsername("somethong");
-    testUser.setPassword("somethong");
-    // testUser.setToken("token");
-    // testUser.setUserId(1L);
+    testUser.setName("something");
+    testUser.setUsername("something");
+    testUser.setPassword("something");
+    testUser.setToken("token");
 
-    User createdUser = userService.createUser(testUser);
+    User createdUser = userRepository.saveAndFlush(testUser);
     createdUser.setName(name);
     createdUser.setUsername(username);
     createdUser.setPassword(psw);
+    createdUser.setUserId(createdUser.getUserId());
 
     if (shouldThrow) {
       assertThrows(ResponseStatusException.class, () -> { userService.updateUser(createdUser); });
