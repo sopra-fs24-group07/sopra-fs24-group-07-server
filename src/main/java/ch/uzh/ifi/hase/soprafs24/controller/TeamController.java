@@ -2,13 +2,11 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamInvitation;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
-import ch.uzh.ifi.hase.soprafs24.service.TaskService;
-import ch.uzh.ifi.hase.soprafs24.service.TeamService;
-import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
+import ch.uzh.ifi.hase.soprafs24.service.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,13 +26,15 @@ public class TeamController {
   private final AuthorizationService authorizationService;
   private final TeamUserService teamUserService;
   private final TaskService taskService;
+  private final MailService mailService;
 
   TeamController(TeamService teamService, AuthorizationService authorizationService,
-      TeamUserService teamUserService, TaskService taskService) {
+      TeamUserService teamUserService, TaskService taskService, MailService mailService) {
     this.teamService = teamService;
     this.authorizationService = authorizationService;
     this.teamUserService = teamUserService;
     this.taskService = taskService;
+    this.mailService = mailService;
   }
 
   @PostMapping("/teams")
@@ -95,6 +95,31 @@ public class TeamController {
     }
 
     return userGetDTOs;
+  }
+
+  @PostMapping("/teams/{teamId}/invitations")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void sendInvitationToEmail(@PathVariable Long teamId,
+      @RequestBody TeamInvitationPostDTO invitationPostDTO,
+      @RequestHeader("Authorization") String token) {
+    // check if user is authorized (valid token) also throws 404 if teamId not found
+    User authorizedUser = authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
+
+    // convert invitation post dto to internal representation
+    TeamInvitation teamInvitation =
+        DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(invitationPostDTO);
+
+    // check if the team-uuid in the body is actually the one of the team (so that user cannot send
+    // invitation to other team-uuids)
+    if (!teamService.getTeamByTeamId(teamId).getTeamUUID().equals(teamInvitation.getTeamUUID())) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not in team");
+    }
+
+    // send invitation: https://productiviteam.co/invitation/team-uuid
+    String invitationUrl = "https://productiviteam.co/invitation/" + teamInvitation.getTeamUUID();
+    // throws 400 if email is not valid or api error
+    mailService.sendInvitationEmail(teamInvitation.getReceiverEmail(), invitationUrl);
   }
 
   @DeleteMapping("/teams/{teamId}/users/{userId}")
