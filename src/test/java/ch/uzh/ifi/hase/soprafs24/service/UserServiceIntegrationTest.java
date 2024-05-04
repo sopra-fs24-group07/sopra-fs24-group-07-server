@@ -7,14 +7,19 @@ import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -121,6 +126,38 @@ public class UserServiceIntegrationTest {
     assertNotNull(testUser2.getToken());
     // not same name
     assertNotEquals(testUser.getUsername(), testUser2.getUsername());
+  }
+
+  @ParameterizedTest
+  @MethodSource("lengthTests")
+  void createUser_testInputLength(String name, String username, String psw, boolean shouldThrow) {
+    User testUser = new User();
+    testUser.setName(name);
+    testUser.setUsername(username);
+    testUser.setPassword(psw);
+
+    if (shouldThrow) {
+      assertThrows(
+          DataIntegrityViolationException.class, () -> { userService.createUser(testUser); });
+    } else {
+      assertDoesNotThrow(() -> { userService.createUser(testUser); });
+    }
+  }
+
+  private static Stream<Arguments> lengthTests() {
+    return Stream.of(
+        // name tests
+        Arguments.of("some-short-name-123", "username", "password", false), // valid length
+        Arguments.of("HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd", "username", "password",
+            true), // exceeds length
+        // username tests
+        Arguments.of("name", "username", "password", false), // valid length
+        Arguments.of("name", "djTGUwYLtQvuQpdAquSvxKkPTBxdHbq", "password", true), // exceeds length
+        // psw tests
+        Arguments.of("name", "username", "password", false), // valid length
+        Arguments.of("name", "username", "HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd",
+            true) // exceeds length
+    );
   }
 
   // endregion
