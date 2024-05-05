@@ -251,8 +251,6 @@ timeline
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
   Bugfixes Finale M3
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/109
-  Get Tasks with Query Test and Documentation
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/108
   Get Tasks with Query
 
