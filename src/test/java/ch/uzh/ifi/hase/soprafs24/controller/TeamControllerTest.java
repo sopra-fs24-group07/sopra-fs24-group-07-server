@@ -774,24 +774,25 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
-    /* test if team not found */
-    @Test
-    public void getTasks_somethingNotFound_throwsError() throws Exception {
-      // given
-      Mockito
-          .when(authorizationService.isAuthorizedAndBelongsToTeam(
-              Mockito.anyString(), Mockito.anyLong()))
-          .thenReturn(testUser);
-      given(taskService.getTasksByTeamId(Mockito.anyLong()))
-          .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
-  
-      // when/then -> do the request + validate the result
-      MockHttpServletRequestBuilder getRequest =
-          get("/api/v1/teams/1/tasks").header("Authorization", "1234");
-  
-      // then
-      mockMvc.perform(getRequest).andExpect(status().isNotFound());
-      
+  /* test if team not found */
+  @Test
+  public void getTasks_somethingNotFound_throwsError() throws Exception {
+    // given
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(taskService.getTasksByTeamId(Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isNotFound());
+  }
+
   // endregion
 
   // region TaskControllerTest for PUT
