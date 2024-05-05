@@ -251,6 +251,11 @@ timeline
 
 ### Monti934
 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/75:
+  Indicate who is Talking in the VoiceChat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/42:
+  Drag and Drop for KanbanBoard
+
 ### Alihan26
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
