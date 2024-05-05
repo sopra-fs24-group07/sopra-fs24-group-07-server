@@ -148,20 +148,20 @@ public class TeamController {
   /*
    * GET method which uses getTasksByTeamIdAndStatus method from TaskService to get tasks by status
    */
-  @GetMapping("/teams/{ID}/tasks/status")
+  @GetMapping(value = "/teams/{ID}/tasks", params = { "status" })
   @ResponseBody
   public List<TaskGetDTO> getTasksByStatus(@PathVariable("ID") Long teamId,
       @RequestHeader("Authorization") String token, @RequestParam("status") List<String> status) {
     // auth user
     authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
-
+  
     // convert status to TaskStatus
     List<TaskStatus> taskStatusList =
         status.stream().map(TaskStatus::valueOf).collect(Collectors.toList());
-
+  
     // get tasks
     List<Task> tasks = taskService.getTasksByTeamIdAndStatus(teamId, taskStatusList);
-
+  
     // convert internal representation of tasks back to API
     return tasks.stream()
         .map(DTOMapper.INSTANCE::convertEntityToTaskGetDTO)
