@@ -245,6 +245,9 @@ timeline
 
 ### 5v3nn
 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/148: DB lengths redo and testing
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/143: Send Mail setup
+
 ### Monti934
 
 ### Alihan26
@@ -262,3 +265,5 @@ timeline
   Added a button on the dashboard to open the session history popup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/78:
   Implemented the session history popup with all session data
+
+## 05.05.2024 - 12.05.2024
