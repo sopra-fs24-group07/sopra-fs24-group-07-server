@@ -150,10 +150,8 @@ public class UserServiceIntegrationTest {
         Arguments.of("HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd", "username", "password",
             true), // exceeds length
         // username tests
-        Arguments.of("name", "username", "password", false), // valid length
         Arguments.of("name", "djTGUwYLtQvuQpdAquSvxKkPTBxdHbq", "password", true), // exceeds length
         // psw tests
-        Arguments.of("name", "username", "password", false), // valid length
         Arguments.of("name", "username", "HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd",
             true) // exceeds length
     );
@@ -275,10 +273,8 @@ public class UserServiceIntegrationTest {
         Arguments.of("HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd", "username", "password",
             true), // exceeds length
         // username tests
-        Arguments.of("name", "username", "password", false), // valid length
         Arguments.of("name", "djTGUwYLtQvuQpdAquSvxKkPTBxdHbq", "password", true), // exceeds length
         // psw tests
-        Arguments.of("name", "username", "password", false), // valid length
         Arguments.of("name", "username", "HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd",
             true) // exceeds length
     );
