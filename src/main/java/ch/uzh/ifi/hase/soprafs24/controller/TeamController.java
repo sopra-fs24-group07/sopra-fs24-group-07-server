@@ -162,6 +162,11 @@ public class TeamController {
     // get tasks
     List<Task> tasks = taskService.getTasksByTeamIdAndStatus(teamId, taskStatusList);
 
+    // if tasks list is empty, return empty list
+    if (tasks.isEmpty()) {
+      return new ArrayList<>();
+    }
+
     // convert internal representation of tasks back to API
     return tasks.stream()
         .map(DTOMapper.INSTANCE::convertEntityToTaskGetDTO)

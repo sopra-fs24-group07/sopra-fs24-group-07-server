@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -712,7 +713,10 @@ public class TeamControllerTest {
     List<Task> tasks = new ArrayList<>();
     tasks.add(task);
 
-    Mockito.when(authorizationService.isAuthorized(Mockito.anyString())).thenReturn(testUser);
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
     given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
         .willReturn(tasks);
 
@@ -729,24 +733,17 @@ public class TeamControllerTest {
   }
 
   @Test
-  public void getTasksByStatus_noTasksInTeam_throwsError() throws Exception {
+  public void getTasksByStatus_noTasksInTeam_emptyList() throws Exception {
     // given
     given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
-        .willThrow(
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "No tasks found for team with id 1"));
+        .willReturn(new ArrayList<>());
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
 
     // then
-    mockMvc.perform(getRequest)
-        .andExpect(status().isNotFound())
-        .andExpect(
-            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-        .andExpect(result
-            -> assertTrue(result.getResolvedException().getMessage().contains(
-                "No tasks found for team with id 1")));
+    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(content().json("[]"));
   }
 
   /*
