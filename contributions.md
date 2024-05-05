@@ -240,3 +240,19 @@ timeline
   Integrated the pusher api to send signal to fetch new comments
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
+
+## 27.04.2024 - 04.05.2024
+
+### 5v3nn
+
+### Monti934
+
+### Alihan26
+
+### B1s9l
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/76:
+  Created the files for the session history popup 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/77:
+  Added a button on the dashboard to open the session history popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/78:
+  Implemented the session history popup with all session data
