@@ -718,7 +718,7 @@ public class TeamControllerTest {
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
-        get("/api/v1/teams/1/tasks/status?status=TODO").header("Authorization", "1234");
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
 
     // then
     mockMvc.perform(getRequest)
@@ -728,9 +728,6 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$[0].description", is(task.getDescription())));
   }
 
-  /*
-   * Test for trying to fetch a Task, where there is no task in team
-   */
   @Test
   public void getTasksByStatus_noTasksInTeam_throwsError() throws Exception {
     // given
@@ -740,7 +737,7 @@ public class TeamControllerTest {
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
-        get("/api/v1/teams/1/tasks/status?status=TODO").header("Authorization", "1234");
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
 
     // then
     mockMvc.perform(getRequest)
@@ -755,6 +752,27 @@ public class TeamControllerTest {
   /*
    * Test for trying to fetch a Task, where i'm not authorized to access
    */
+  @Test
+  public void getTasksByStatus_unauthorizedAccess_throwsError() throws Exception {
+      // given
+      Mockito
+          .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+          .when(authorizationService)
+          .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+  
+      // when/then -> do the request + validate the result
+      MockHttpServletRequestBuilder getRequest =
+          get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
+  
+      // then
+      mockMvc.perform(getRequest)
+          .andExpect(status().isUnauthorized())
+          .andExpect(
+              result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+          .andExpect(result
+              -> assertTrue(
+                  result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
 
   // endregion
 
