@@ -754,24 +754,24 @@ public class TeamControllerTest {
    */
   @Test
   public void getTasksByStatus_unauthorizedAccess_throwsError() throws Exception {
-      // given
-      Mockito
-          .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
-          .when(authorizationService)
-          .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
-  
-      // when/then -> do the request + validate the result
-      MockHttpServletRequestBuilder getRequest =
-          get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
-  
-      // then
-      mockMvc.perform(getRequest)
-          .andExpect(status().isUnauthorized())
-          .andExpect(
-              result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-          .andExpect(result
-              -> assertTrue(
-                  result.getResolvedException().getMessage().contains("Not authorized to access.")));
+    // given
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
   // endregion
