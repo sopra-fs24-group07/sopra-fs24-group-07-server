@@ -23,7 +23,7 @@ public class MailService {
   private final MailjetClient mailjetClient;
 
   // default NULL, so it can be overwritten in tests
-  @Value("${MAILJET_SENDER_EMAIL:{NULL}") private String senderEmail;
+  @Value("${MAILJET_SENDER_EMAIL:#{null}}") private String senderEmail;
   private static final Integer templateId = 5930543;
 
   /* OWASP pattern */
