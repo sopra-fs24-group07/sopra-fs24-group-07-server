@@ -249,9 +249,17 @@ timeline
 
 ### Alihan26
 
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  Bugfixes Finale M3
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/109
+  Get Tasks with Query Test and Documentation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/108
+  Get Tasks with Query
+
 ### B1s9l
+
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/76:
-  Created the files for the session history popup 
+  Created the files for the session history popup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/77:
   Added a button on the dashboard to open the session history popup
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/78:
