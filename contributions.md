@@ -258,10 +258,10 @@ timeline
 
 ### Alihan26
 
-- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
-  Bugfixes Finale M3
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/183
+  Get Tasks with Query API Endpoints
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/108
-  Get Tasks with Query
+  Get Tasks with Query Services
 
 ### B1s9l
 
