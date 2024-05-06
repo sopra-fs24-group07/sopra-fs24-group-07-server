@@ -156,8 +156,12 @@ public class TeamController {
     authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
     // convert status to TaskStatus
-    List<TaskStatus> taskStatusList =
-        status.stream().map(TaskStatus::valueOf).collect(Collectors.toList());
+    List<TaskStatus> taskStatusList;
+    try {
+      taskStatusList = status.stream().map(TaskStatus::valueOf).collect(Collectors.toList());
+    } catch (IllegalArgumentException ex) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task status.", ex);
+    }
 
     // get tasks
     List<Task> tasks = taskService.getTasksByTeamIdAndStatus(teamId, taskStatusList);

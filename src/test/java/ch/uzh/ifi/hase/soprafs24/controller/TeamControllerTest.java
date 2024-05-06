@@ -771,6 +771,34 @@ public class TeamControllerTest {
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
   }
 
+  /*
+   * Test for trying to fetch a Task with invalid status
+   */
+  @Test
+  public void getTasksByStatus_invalidStatus_throwsError() throws Exception {
+    // given
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Invalid task status."))
+        .when(taskService)
+        .getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=ABC").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isConflict())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Invalid task status.")));
+  }
+
   /* test if team not found */
   @Test
   public void getTasks_somethingNotFound_throwsError() throws Exception {
