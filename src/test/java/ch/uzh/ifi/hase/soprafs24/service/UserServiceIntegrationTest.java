@@ -166,10 +166,8 @@ public class UserServiceIntegrationTest {
     testUser.setToken("token");
 
     // it does not work to directly get user here (timestamps somehow do not work)
-    userRepository.saveAndFlush(testUser);
-
-    // retrieve user
-    User createdUser = userRepository.findById(testUser.getUserId()).get();
+    User savedUser = userRepository.saveAndFlush(testUser);
+    User createdUser = userRepository.findById(savedUser.getUserId()).get();
 
     // update user
     createdUser.setName("updatedName");
@@ -178,7 +176,7 @@ public class UserServiceIntegrationTest {
 
     // update service call
     userService.updateUser(createdUser);
-    User updatedUser = userRepository.findById(testUser.getUserId()).get();
+    User updatedUser = userRepository.findById(createdUser.getUserId()).get();
 
     // check if user is updated
     assertEquals(createdUser.getUserId(), updatedUser.getUserId());
