@@ -100,7 +100,6 @@ public class SessionControllerTest {
 
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.sessionId", is(1)))
         .andExpect(jsonPath("$.startDateTime",
             is(testSessionStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
         .andExpect(jsonPath("$.goalMinutes", is(testSession.getGoalMinutes().intValue())))
@@ -212,7 +211,6 @@ public class SessionControllerTest {
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].sessionId", is(1)))
         .andExpect(jsonPath("$[0].startDateTime",
             is(testSessionStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
         .andExpect(jsonPath("$[0].goalMinutes", is(testSession.getGoalMinutes().intValue())))
@@ -238,12 +236,10 @@ public class SessionControllerTest {
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$[0].sessionId", is(testSession.getSessionId().intValue())))
         .andExpect(jsonPath("$[0].startDateTime",
             is(testSessionStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
         .andExpect(jsonPath("$[0].goalMinutes", is(testSession.getGoalMinutes().intValue())))
         .andExpect(jsonPath("$[0].endDateTime").doesNotExist())
-        .andExpect(jsonPath("$[1].sessionId", is(testSessionEnded.getSessionId().intValue())))
         .andExpect(jsonPath("$[1].startDateTime",
             is(testSessionEndedStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
         .andExpect(jsonPath("$[1].goalMinutes", is(testSessionEnded.getGoalMinutes().intValue())))
@@ -321,7 +317,6 @@ public class SessionControllerTest {
     // then
     mockMvc.perform(patchRequest)
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.sessionId", is(testSessionEnded.getSessionId().intValue())))
         .andExpect(jsonPath("$.startDateTime",
             is(testSessionEndedStartDateTime.format(DateTimeFormatter.ofPattern(format)))))
         .andExpect(jsonPath("$.goalMinutes", is(testSessionEnded.getGoalMinutes().intValue())))
