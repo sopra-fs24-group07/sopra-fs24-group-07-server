@@ -240,3 +240,36 @@ timeline
   Integrated the pusher api to send signal to fetch new comments
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
+
+## 27.04.2024 - 04.05.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/148: DB lengths redo and testing
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/143: Send Mail setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/174: Remove session id from get dto
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/75:
+  Indicate who is Talking in the VoiceChat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/42:
+  Drag and Drop for KanbanBoard
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/150
+  Bugfixes Finale M3
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/108
+  Get Tasks with Query
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/76:
+  Created the files for the session history popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/77:
+  Added a button on the dashboard to open the session history popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/78:
+  Implemented the session history popup with all session data
+
+## 05.05.2024 - 12.05.2024
