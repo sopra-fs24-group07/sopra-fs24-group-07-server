@@ -71,9 +71,7 @@ jobs:
         run: |
           echo "  MAILJET_KEY: '${{ secrets.MAILJET_KEY }}'" >> app.yaml
           echo "  MAILJET_SECRET: '${{ secrets.MAILJET_SECRET }}'" >> app.yaml
-          echo "  MAILJET_SENDER_EMAIL: '${{ env.$MAILJET_SENDER_EMAIL }}'" >> app.yaml
-          cat app.yaml
-#          todo remove
+          echo "  MAILJET_SENDER_EMAIL: '${{ secrets.MAILJET_SENDER_EMAIL }}'" >> app.yaml
 
       - name: Deploy to App Engine
         id: deploy
