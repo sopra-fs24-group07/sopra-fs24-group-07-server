@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import java.util.UUID;
@@ -78,10 +79,15 @@ public class TeamService {
 
     newTeam.setTeamUUID(UUID.randomUUID().toString());
 
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
-    newTeam = teamRepository.save(newTeam);
-    teamRepository.flush();
+    try {
+      // saves the given entity but data is only persisted in the database once
+      // flush() is called
+      newTeam = teamRepository.save(newTeam);
+      teamRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not create the team. Please check length constraints.");
+    }
 
     log.debug("Created Information for Team: {} with id {}", newTeam, newTeam.getTeamId());
     return newTeam;
@@ -105,9 +111,14 @@ public class TeamService {
     team.setName(updatedTeam.getName());
     team.setDescription(updatedTeam.getDescription());
 
-    // save updated team
-    teamRepository.save(team);
-    teamRepository.flush();
+    try {
+      // save updated team
+      teamRepository.save(team);
+      teamRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not update the team. Please check length constraints.");
+    }
 
     // notify other users of team edit
     pusherService.updateTeam(updatedTeam.getTeamId().toString());

@@ -12,7 +12,7 @@ public class Comment implements Serializable {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long commentId;
 
-  @Column(length = 500, nullable = false) private String text;
+  @Column(length = 1000, nullable = false) private String text;
 
   @Column(nullable = false) private LocalDateTime creationDate;
 
