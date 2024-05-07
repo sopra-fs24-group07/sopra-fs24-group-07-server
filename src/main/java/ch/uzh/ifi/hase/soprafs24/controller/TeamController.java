@@ -158,7 +158,7 @@ public class TeamController {
   public List<TaskGetDTO> getTasks(
       @PathVariable("ID") Long teamId, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
-    authorizationService.isAuthorized(token);
+    authorizationService.isAuthorizedAndBelongsToTeam(token, teamId);
 
     // get tasks
     List<Task> tasks = taskService.getTasksByTeamId(teamId);
