@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "  MAILJET_KEY: '${{ secrets.MAILJET_KEY }}'" >> app.yaml
           echo "  MAILJET_SECRET: '${{ secrets.MAILJET_SECRET }}'" >> app.yaml
-          echo "  MAILJET_SENDER_EMAIL: '$MAILJET_SENDER_EMAIL'" >> app.yaml
+          echo "  MAILJET_SENDER_EMAIL: '${{ env.$MAILJET_SENDER_EMAIL }}'" >> app.yaml
           cat app.yaml
 #          todo remove
 
