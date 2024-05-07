@@ -1,8 +1,11 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Internal User Representation
@@ -31,6 +34,10 @@ public class User implements Serializable {
   @Column(nullable = false, unique = true) private String token;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) private List<Comment> comments;
+
+  @CreationTimestamp private LocalDateTime createdDate;
+
+  @UpdateTimestamp private LocalDateTime modifiedDate;
 
   // TODO image
 
@@ -72,5 +79,13 @@ public class User implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public LocalDateTime getCreatedDate() {
+    return createdDate;
+  }
+
+  public LocalDateTime getModifiedDate() {
+    return modifiedDate;
   }
 }
