@@ -248,7 +248,7 @@ timeline
     title Production Milestone 4
     to 05.05.2024: DB update: Refactor: VoiceChat Finish: Kanban Drag&Drop: Get Task Query: Session History
     to 12.05.2024: Mail Invitations: Agora Token: Task Query Client: Icon Buttons: Client Refactoring
-    to 19.05.2024: Agora Token Client: Session Stats: Styling: Bugfixes: Session
+    to 19.05.2024: Agora Token Client: Description Generating: Styling: Bugfixes:
     to 24.05.2024: Bugfixes: Abgabe
 ```
 
