@@ -137,7 +137,8 @@ public class SessionService {
     log.debug("Checking for expired sessions...");
     List<Session> sessions = sessionRepository.findAll();
     for (Session session : sessions) {
-      if (isSessionExpired(session)) {
+      if (isSessionExpired(session)
+          && session.getEndDateTime() == null) { // Check if the session is active
         endSession(session.getTeam().getTeamId());
       }
     }

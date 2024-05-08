@@ -288,5 +288,31 @@ public class SessionServiceTest {
     assertNull(testSession.getEndDateTime());
   }
 
+  @Test
+  public void endExpiredSessions_expiredSession_endsSession() {
+    // given two sessions, one that expired and one that did not
+    Session expiredSession = new Session();
+    expiredSession.setSessionId(1L);
+    expiredSession.setStartDateTime(LocalDateTime.now().minusDays(1));
+    expiredSession.setTeam(testTeam);
+
+    Session activeSession = new Session();
+    activeSession.setSessionId(2L);
+    activeSession.setStartDateTime(LocalDateTime.now());
+    activeSession.setTeam(testTeam);
+
+    // when sessionRepository.findAll() is called, return the list of sessions
+    Mockito.when(sessionRepository.findAll()).thenReturn(List.of(expiredSession, activeSession));
+
+    // Spy on sessionService and stub the endSession method to return null
+    SessionService spySessionService = Mockito.spy(sessionService);
+    Mockito.doReturn(null).when(spySessionService).endSession(Mockito.anyLong());
+
+    // call the method to test
+    spySessionService.endExpiredSessions();
+
+    // verify that endSession was called once (for the expired session)
+    Mockito.verify(spySessionService, Mockito.times(1)).endSession(Mockito.anyLong());
+  }
   // endregion
 }
