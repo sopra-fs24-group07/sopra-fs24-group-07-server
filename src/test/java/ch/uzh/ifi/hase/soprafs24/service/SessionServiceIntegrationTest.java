@@ -347,5 +347,65 @@ public class SessionServiceIntegrationTest {
     // when (have something stored, but not that team)
     assertThrows(ResponseStatusException.class, () -> sessionService.endSession(99L));
   }
+
+  /*
+   * Test if the session is expired, that the 410 error is thrown
+   */
+  @Test
+  public void endSession_expiredSession_expectsError() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given expired session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now().minusDays(1));
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    assertThrows(
+        ResponseStatusException.class, () -> sessionService.endSession(testTeam.getTeamId()));
+  }
+
+  @Test
+  public void endExpiredSessions_expiredSession_endsSession() {
+    // given session that started more than 24 hours ago
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now().minusHours(25));
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    sessionService.endExpiredSessions();
+
+    // then
+    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
+    assertEquals(1, sessions.size());
+    assertNotNull(sessions.get(0).getEndDateTime());
+  }
+
+  @Test
+  public void endExpiredSessions_activeSession_doesNotEndSession() {
+    // given session that started less than 24 hours ago
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now().minusHours(23));
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    sessionService.endExpiredSessions();
+
+    // then
+    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
+    assertEquals(1, sessions.size());
+    assertNull(sessions.get(0).getEndDateTime());
+  }
   // endregion
 }
