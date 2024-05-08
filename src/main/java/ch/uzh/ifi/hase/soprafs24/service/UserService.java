@@ -7,6 +7,8 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +53,13 @@ public class UserService {
     checkIfUserExists(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
-    newUser = userRepository.save(newUser);
-    userRepository.flush();
+    try {
+      newUser = userRepository.save(newUser);
+      userRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not register user. Please check length constraints.");
+    }
 
     log.info("Created Information for User: {} with id {}", newUser, newUser.getUserId());
     return newUser;
@@ -73,13 +80,27 @@ public class UserService {
     updatedUser.setPassword(userToUpdate.getPassword());
 
     try {
-      // execute update
       userRepository.save(updatedUser);
       userRepository.flush();
     } catch (DataIntegrityViolationException e) {
-      // ERROR: duplicate key value violates unique constraint "uk_r43af9ap4edm43mmtq01oddj6"
-      //   Detail: Key (username)=(UNIQUE_USERNAME) already exists.
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
+      Throwable cause = e.getCause();
+      // unique
+      if (cause instanceof ConstraintViolationException) {
+        ConstraintViolationException cvCause = (ConstraintViolationException) cause;
+        String constraintName = cvCause.getConstraintName().toLowerCase();
+        if (constraintName.contains("uk_")) {
+          throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists.");
+        }
+      }
+      // length
+      else if (cause instanceof DataException) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Could not update user. Please check length constraints.");
+      }
+      // others
+      else {
+        throw e; // rethrow the original exception if it's not one we can handle
+      }
     }
 
     log.debug("Updated Information for User: {}", updatedUser);

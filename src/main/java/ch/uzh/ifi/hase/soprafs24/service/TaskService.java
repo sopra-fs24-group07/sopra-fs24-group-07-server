@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,13 @@ public class TaskService {
     // Set the status of the new task to to-do
     newTask.setStatus(TaskStatus.TODO);
 
-    newTask = taskRepository.save(newTask);
-    taskRepository.flush();
+    try {
+      newTask = taskRepository.save(newTask);
+      taskRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not create task. Please check length constraints.");
+    }
 
     log.debug("Created Information for Task: {}", newTask);
 
@@ -101,8 +107,14 @@ public class TaskService {
     existingTask.setDescription(task.getDescription());
     existingTask.setStatus(task.getStatus());
 
-    Task updatedTask = taskRepository.save(existingTask);
-    taskRepository.flush();
+    Task updatedTask;
+    try {
+      updatedTask = taskRepository.save(existingTask);
+      taskRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Could not update task. Please check length constraints.");
+    }
 
     // Send pusher event
     pusherService.taskModification(updatedTask.getTeam().getTeamId().toString());

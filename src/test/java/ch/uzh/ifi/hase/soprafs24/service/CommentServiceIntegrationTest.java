@@ -13,9 +13,13 @@ import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,7 +53,7 @@ public class CommentServiceIntegrationTest {
     userRepository.deleteAll();
   }
 
-  // region Comment Service Integration
+  // region create comment
 
   @Test
   public void createComment_validInputs_success() {
@@ -217,6 +221,52 @@ public class CommentServiceIntegrationTest {
     // when & then
     assertThrows(ResponseStatusException.class,
         () -> commentService.createComment(testComment, testTask.getTaskId()));
+  }
+
+  @ParameterizedTest
+  @MethodSource("createCommentLengthTest")
+  void createComment_testInputLength(String text, boolean shouldThrow) {
+    // given
+    Team testTeam1 = new Team();
+    testTeam1.setName("team");
+    testTeam1.setDescription("We are a productive team!");
+    testTeam1.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam1);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle("Test Task");
+    testTask.setDescription("This is a task for testing");
+    testTask.setStatus(TaskStatus.TODO);
+    testTask.setTeam(testTeam1);
+    taskRepository.saveAndFlush(testTask);
+
+    // given a user
+    User testUser = new User();
+    testUser.setUsername("testUser");
+    testUser.setName("Test User");
+    testUser.setPassword("password123");
+    testUser.setToken("1");
+    userRepository.saveAndFlush(testUser);
+
+    // given a comment
+    Comment testComment = new Comment();
+    testComment.setText(text);
+    testComment.setUser(testUser);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class,
+          () -> { commentService.createComment(testComment, testTask.getTaskId()); });
+    } else {
+      assertDoesNotThrow(
+          () -> { commentService.createComment(testComment, testTask.getTaskId()); });
+    }
+  }
+
+  private static Stream<Arguments> createCommentLengthTest() {
+    return Stream.of(Arguments.of("comment", false), // valid length
+        Arguments.of("c".repeat(1001), true) // too long text
+    );
   }
 
   // endregion
