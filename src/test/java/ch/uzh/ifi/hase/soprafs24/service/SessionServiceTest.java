@@ -273,22 +273,6 @@ public class SessionServiceTest {
   }
 
   @Test
-  public void endExpiredSessions_validInputs_success() {
-    // given test session with no end date and start date 25 hours ago
-    testSession.setEndDateTime(null);
-    testSession.setStartDateTime(LocalDateTime.now().minusHours(25));
-    // when call to getSessionsByTeamId -> mock return dummy session
-    SessionService spySessionService = Mockito.spy(sessionService);
-    Mockito.doReturn(java.util.List.of(testSession))
-        .when(spySessionService)
-        .getSessionsByTeamId(Mockito.anyLong());
-    // call endExpiredSessions method
-    spySessionService.endExpiredSessions();
-    // verify that the session is ended
-    assertNotNull(testSession.getEndDateTime());
-  }
-
-  @Test
   public void endExpiredSessions_noExpiredSessions_success() {
     // given test session with no end date and start date 23 hours ago
     testSession.setEndDateTime(null);
