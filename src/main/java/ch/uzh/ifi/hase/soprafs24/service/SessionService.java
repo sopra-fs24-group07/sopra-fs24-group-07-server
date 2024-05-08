@@ -55,15 +55,8 @@ public class SessionService {
     // check that no current session is active
     List<Session> existingSessions = getSessionsByTeamId(teamId);
     if (!existingSessions.isEmpty() && existingSessions.get(0).getEndDateTime() == null) {
-      // if the existing session is expired, end it
-      if (isSessionExpired(existingSessions.get(0))) {
-        endSession(teamId);
-      }
-      // else, throw an exception because an active session already exists
-      else {
-        throw new ResponseStatusException(
-            HttpStatus.CONFLICT, "There is already an active session for this team.");
-      }
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "There is already an active session for this team.");
     }
 
     // create session
