@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -134,7 +135,18 @@ public class SessionService {
     return endedSession;
   }
 
-  public boolean isSessionExpired(Session session) {
+  private boolean isSessionExpired(Session session) {
     return session.getStartDateTime().plusHours(24).isBefore(LocalDateTime.now());
+  }
+
+  @Scheduled(fixedRate = 60000) // runs every minute
+  public void endExpiredSessions() {
+    log.debug("Checking for expired sessions...");
+    List<Session> sessions = sessionRepository.findAll();
+    for (Session session : sessions) {
+      if (isSessionExpired(session)) {
+        endSession(session.getTeam().getTeamId());
+      }
+    }
   }
 }
