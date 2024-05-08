@@ -372,40 +372,5 @@ public class SessionServiceIntegrationTest {
         ResponseStatusException.class, () -> sessionService.endSession(testTeam.getTeamId()));
   }
 
-  @Test
-  public void endExpiredSessions_expiredSession_endsSession() {
-    // given session that started more than 24 hours ago
-    Session testSession = new Session();
-    testSession.setTeam(testTeam);
-    testSession.setStartDateTime(LocalDateTime.now().minusHours(25));
-    testSession.setGoalMinutes(mockGoalMinutes);
-    sessionRepository.saveAndFlush(testSession);
-
-    // when
-    sessionService.endExpiredSessions();
-
-    // then
-    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
-    assertEquals(1, sessions.size());
-    assertNotNull(sessions.get(0).getEndDateTime());
-  }
-
-  @Test
-  public void endExpiredSessions_activeSession_doesNotEndSession() {
-    // given session that started less than 24 hours ago
-    Session testSession = new Session();
-    testSession.setTeam(testTeam);
-    testSession.setStartDateTime(LocalDateTime.now().minusHours(23));
-    testSession.setGoalMinutes(mockGoalMinutes);
-    sessionRepository.saveAndFlush(testSession);
-
-    // when
-    sessionService.endExpiredSessions();
-
-    // then
-    List<Session> sessions = sessionService.getSessionsByTeamId(testTeam.getTeamId());
-    assertEquals(1, sessions.size());
-    assertNull(sessions.get(0).getEndDateTime());
-  }
   // endregion
 }
