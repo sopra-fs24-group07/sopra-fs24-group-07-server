@@ -30,16 +30,16 @@ public class AccessToken2 {
     }
   }
 
-  public enum PrivilegeFpa {
-    PRIVILEGE_LOGIN(1),
-    ;
-
-    public short intValue;
-
-    PrivilegeFpa(int value) {
-      intValue = (short) value;
-    }
-  }
+  // public enum PrivilegeFpa {
+  //   PRIVILEGE_LOGIN(1),
+  //   ;
+  //
+  //   public short intValue;
+  //
+  //   PrivilegeFpa(int value) {
+  //     intValue = (short) value;
+  //   }
+  // }
 
   public enum PrivilegeChat {
     PRIVILEGE_CHAT_USER(1),
@@ -53,18 +53,18 @@ public class AccessToken2 {
     }
   }
 
-  public enum PrivilegeEducation {
-    PRIVILEGE_ROOM_USER(1),
-    PRIVILEGE_USER(2),
-    PRIVILEGE_APP(3),
-    ;
-
-    public short intValue;
-
-    PrivilegeEducation(int value) {
-      intValue = (short) value;
-    }
-  }
+  // public enum PrivilegeEducation {
+  //   PRIVILEGE_ROOM_USER(1),
+  //   PRIVILEGE_USER(2),
+  //   PRIVILEGE_APP(3),
+  //   ;
+  //
+  //   public short intValue;
+  //
+  //   PrivilegeEducation(int value) {
+  //     intValue = (short) value;
+  //   }
+  // }
 
   private static final String VERSION = "007";
   public static final short SERVICE_TYPE_RTC = 1;
@@ -127,15 +127,15 @@ public class AccessToken2 {
     if (serviceType == SERVICE_TYPE_RTM) {
       return new ServiceRtm();
     }
-    if (serviceType == SERVICE_TYPE_FPA) {
-      return new ServiceFpa();
-    }
-    if (serviceType == SERVICE_TYPE_CHAT) {
-      return new ServiceChat();
-    }
-    if (serviceType == SERVICE_TYPE_EDUCATION) {
-      return new ServiceEducation();
-    }
+    // if (serviceType == SERVICE_TYPE_FPA) {
+    //   return new ServiceFpa();
+    // }
+    // if (serviceType == SERVICE_TYPE_CHAT) {
+    //   return new ServiceChat();
+    // }
+    // if (serviceType == SERVICE_TYPE_EDUCATION) {
+    //   return new ServiceEducation();
+    // }
     throw new IllegalArgumentException(String.format("unknown service type: `%d`", serviceType));
   }
 
@@ -205,17 +205,17 @@ public class AccessToken2 {
       this.privileges.put(privilege.intValue, expire);
     }
 
-    public void addPrivilegeFpa(PrivilegeFpa privilege, int expire) {
-      this.privileges.put(privilege.intValue, expire);
-    }
+    // public void addPrivilegeFpa(PrivilegeFpa privilege, int expire) {
+    //   this.privileges.put(privilege.intValue, expire);
+    // }
 
-    public void addPrivilegeChat(PrivilegeChat privilege, int expire) {
-      this.privileges.put(privilege.intValue, expire);
-    }
+    // public void addPrivilegeChat(PrivilegeChat privilege, int expire) {
+    //   this.privileges.put(privilege.intValue, expire);
+    // }
 
-    public void addPrivilegeEducation(PrivilegeEducation privilege, int expire) {
-      this.privileges.put(privilege.intValue, expire);
-    }
+    // public void addPrivilegeEducation(PrivilegeEducation privilege, int expire) {
+    //   this.privileges.put(privilege.intValue, expire);
+    // }
 
     public TreeMap<Short, Integer> getPrivileges() {
       return this.privileges;
@@ -293,94 +293,94 @@ public class AccessToken2 {
     }
   }
 
-  public static class ServiceFpa extends Service {
-    public ServiceFpa() {
-      this.type = SERVICE_TYPE_FPA;
-    }
+  // public static class ServiceFpa extends Service {
+  //   public ServiceFpa() {
+  //     this.type = SERVICE_TYPE_FPA;
+  //   }
+  //
+  //   public ByteBuf pack(ByteBuf buf) {
+  //     return super.pack(buf);
+  //   }
+  //
+  //   public void unpack(ByteBuf byteBuf) {
+  //     super.unpack(byteBuf);
+  //   }
+  // }
 
-    public ByteBuf pack(ByteBuf buf) {
-      return super.pack(buf);
-    }
+  // public static class ServiceChat extends Service {
+  //   public String userId;
+  //
+  //   public ServiceChat() {
+  //     this.type = SERVICE_TYPE_CHAT;
+  //     this.userId = "";
+  //   }
+  //
+  //   public ServiceChat(String userId) {
+  //     this.type = SERVICE_TYPE_CHAT;
+  //     this.userId = userId;
+  //   }
+  //
+  //   public String getUserId() {
+  //     return this.userId;
+  //   }
+  //
+  //   public ByteBuf pack(ByteBuf buf) {
+  //     return super.pack(buf).put(this.userId);
+  //   }
+  //
+  //   public void unpack(ByteBuf byteBuf) {
+  //     super.unpack(byteBuf);
+  //     this.userId = byteBuf.readString();
+  //   }
+  // }
 
-    public void unpack(ByteBuf byteBuf) {
-      super.unpack(byteBuf);
-    }
-  }
-
-  public static class ServiceChat extends Service {
-    public String userId;
-
-    public ServiceChat() {
-      this.type = SERVICE_TYPE_CHAT;
-      this.userId = "";
-    }
-
-    public ServiceChat(String userId) {
-      this.type = SERVICE_TYPE_CHAT;
-      this.userId = userId;
-    }
-
-    public String getUserId() {
-      return this.userId;
-    }
-
-    public ByteBuf pack(ByteBuf buf) {
-      return super.pack(buf).put(this.userId);
-    }
-
-    public void unpack(ByteBuf byteBuf) {
-      super.unpack(byteBuf);
-      this.userId = byteBuf.readString();
-    }
-  }
-
-  public static class ServiceEducation extends Service {
-    public String roomUuid;
-    public String userUuid;
-    public Short role;
-
-    public ServiceEducation() {
-      this.type = SERVICE_TYPE_EDUCATION;
-      this.roomUuid = "";
-      this.userUuid = "";
-      this.role = -1;
-    }
-
-    public ServiceEducation(String roomUuid, String userUuid, Short role) {
-      this.type = SERVICE_TYPE_EDUCATION;
-      this.roomUuid = roomUuid;
-      this.userUuid = userUuid;
-      this.role = role;
-    }
-
-    public ServiceEducation(String userUuid) {
-      this.type = SERVICE_TYPE_EDUCATION;
-      this.roomUuid = "";
-      this.userUuid = userUuid;
-      this.role = -1;
-    }
-
-    public String getRoomUuid() {
-      return this.roomUuid;
-    }
-
-    public String getUserUuid() {
-      return this.userUuid;
-    }
-
-    public Short getRole() {
-      return this.role;
-    }
-
-    public ByteBuf pack(ByteBuf buf) {
-      return super.pack(buf).put(this.roomUuid).put(this.userUuid).put(this.role);
-    }
-
-    public void unpack(ByteBuf byteBuf) {
-      super.unpack(byteBuf);
-      this.roomUuid = byteBuf.readString();
-      this.userUuid = byteBuf.readString();
-      this.role = byteBuf.readShort();
-    }
-  }
+  // public static class ServiceEducation extends Service {
+  //   public String roomUuid;
+  //   public String userUuid;
+  //   public Short role;
+  //
+  //   public ServiceEducation() {
+  //     this.type = SERVICE_TYPE_EDUCATION;
+  //     this.roomUuid = "";
+  //     this.userUuid = "";
+  //     this.role = -1;
+  //   }
+  //
+  //   public ServiceEducation(String roomUuid, String userUuid, Short role) {
+  //     this.type = SERVICE_TYPE_EDUCATION;
+  //     this.roomUuid = roomUuid;
+  //     this.userUuid = userUuid;
+  //     this.role = role;
+  //   }
+  //
+  //   public ServiceEducation(String userUuid) {
+  //     this.type = SERVICE_TYPE_EDUCATION;
+  //     this.roomUuid = "";
+  //     this.userUuid = userUuid;
+  //     this.role = -1;
+  //   }
+  //
+  //   public String getRoomUuid() {
+  //     return this.roomUuid;
+  //   }
+  //
+  //   public String getUserUuid() {
+  //     return this.userUuid;
+  //   }
+  //
+  //   public Short getRole() {
+  //     return this.role;
+  //   }
+  //
+  //   public ByteBuf pack(ByteBuf buf) {
+  //     return super.pack(buf).put(this.roomUuid).put(this.userUuid).put(this.role);
+  //   }
+  //
+  //   public void unpack(ByteBuf byteBuf) {
+  //     super.unpack(byteBuf);
+  //     this.roomUuid = byteBuf.readString();
+  //     this.userUuid = byteBuf.readString();
+  //     this.role = byteBuf.readShort();
+  //   }
+  // }
 }

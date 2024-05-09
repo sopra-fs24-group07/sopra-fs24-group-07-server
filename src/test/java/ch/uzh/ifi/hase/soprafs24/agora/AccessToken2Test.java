@@ -106,68 +106,68 @@ public class AccessToken2Test {
     assertEquals(expected, accessToken.build());
   }
 
-  @Test
-  public void build_ServiceChat_userToken() throws Exception {
-    AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
-    accessToken.issueTs = issueTs;
-    accessToken.salt = salt;
-
-    AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat(uid);
-    serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER, expire);
-
-    accessToken.addService(serviceChat);
-    String expected =
-        "007eJxTYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrEDMCOZzMRhZWBgZmxgamRsDAB+lHrg=";
-
-    assertEquals(expected, accessToken.build());
-  }
-
-  @Test
-  public void build_ServiceChat_appToken() throws Exception {
-    AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
-    accessToken.issueTs = issueTs;
-    accessToken.salt = salt;
-
-    AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat();
-    serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_APP, expire);
-
-    accessToken.addService(serviceChat);
-    String expected =
-        "007eJxTYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZgZgJzGdgAACt8hhr";
-
-    assertEquals(expected, accessToken.build());
-  }
-
-  @Test
-  public void build_multi_service() throws Exception {
-    AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
-    accessToken.issueTs = issueTs;
-    accessToken.salt = salt;
-
-    AccessToken2.ServiceRtc serviceRtc = new AccessToken2.ServiceRtc(channelName, uid);
-    serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_JOIN_CHANNEL, expire);
-    serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_AUDIO_STREAM, expire);
-    serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_VIDEO_STREAM, expire);
-    serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_DATA_STREAM, expire);
-    accessToken.addService(serviceRtc);
-
-    AccessToken2.ServiceRtm serviceRtm = new AccessToken2.ServiceRtm(userId);
-    serviceRtm.addPrivilegeRtm(AccessToken2.PrivilegeRtm.PRIVILEGE_LOGIN, expire);
-    accessToken.addService(serviceRtm);
-
-    AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat(uid);
-    serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER, expire);
-    accessToken.addService(serviceChat);
-
-    assertEquals(channelName, serviceRtc.channelName);
-    assertEquals(uid, serviceRtc.uid);
-    assertEquals(userId, serviceRtm.userId);
-
-    String expected =
-        "007eJxTYPg19dsX8xO2Nys/bpSeoH/0j9CvSs1JWib9291PKC53l85UYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyMDAwAwkWYAYxGcCk8xgkgVMKjCYp5gbGZuZpiZZWhibWJgaW5qnGqcap1mmmJgZJKWkJHIxGFlYGBmbGBqZGzMBzYGYxMlQklpcEl9anFrEChdEVgoAw6ct/Q==";
-    String token = accessToken.build();
-    assertEquals(expected, token);
-  }
+  // @Test
+  // public void build_ServiceChat_userToken() throws Exception {
+  //   AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
+  //   accessToken.issueTs = issueTs;
+  //   accessToken.salt = salt;
+  //
+  //   AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat(uid);
+  //   serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER, expire);
+  //
+  //   accessToken.addService(serviceChat);
+  //   String expected =
+  //       "007eJxTYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrEDMCOZzMRhZWBgZmxgamRsDAB+lHrg=";
+  //
+  //   assertEquals(expected, accessToken.build());
+  // }
+  //
+  // @Test
+  // public void build_ServiceChat_appToken() throws Exception {
+  //   AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
+  //   accessToken.issueTs = issueTs;
+  //   accessToken.salt = salt;
+  //
+  //   AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat();
+  //   serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_APP, expire);
+  //
+  //   accessToken.addService(serviceChat);
+  //   String expected =
+  //       "007eJxTYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZgZgJzGdgAACt8hhr";
+  //
+  //   assertEquals(expected, accessToken.build());
+  // }
+  //
+  // @Test
+  // public void build_multi_service() throws Exception {
+  //   AccessToken2 accessToken = new AccessToken2(appId, appCertificate, expire);
+  //   accessToken.issueTs = issueTs;
+  //   accessToken.salt = salt;
+  //
+  //   AccessToken2.ServiceRtc serviceRtc = new AccessToken2.ServiceRtc(channelName, uid);
+  //   serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_JOIN_CHANNEL, expire);
+  //   serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_AUDIO_STREAM, expire);
+  //   serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_VIDEO_STREAM, expire);
+  //   serviceRtc.addPrivilegeRtc(AccessToken2.PrivilegeRtc.PRIVILEGE_PUBLISH_DATA_STREAM, expire);
+  //   accessToken.addService(serviceRtc);
+  //
+  //   AccessToken2.ServiceRtm serviceRtm = new AccessToken2.ServiceRtm(userId);
+  //   serviceRtm.addPrivilegeRtm(AccessToken2.PrivilegeRtm.PRIVILEGE_LOGIN, expire);
+  //   accessToken.addService(serviceRtm);
+  //
+  //   AccessToken2.ServiceChat serviceChat = new AccessToken2.ServiceChat(uid);
+  //   serviceChat.addPrivilegeChat(AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER, expire);
+  //   accessToken.addService(serviceChat);
+  //
+  //   assertEquals(channelName, serviceRtc.channelName);
+  //   assertEquals(uid, serviceRtc.uid);
+  //   assertEquals(userId, serviceRtm.userId);
+  //
+  //   String expected =
+  //       "007eJxTYPg19dsX8xO2Nys/bpSeoH/0j9CvSs1JWib9291PKC53l85UYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyMDAwAwkWYAYxGcCk8xgkgVMKjCYp5gbGZuZpiZZWhibWJgaW5qnGqcap1mmmJgZJKWkJHIxGFlYGBmbGBqZGzMBzYGYxMlQklpcEl9anFrEChdEVgoAw6ct/Q==";
+  //   String token = accessToken.build();
+  //   assertEquals(expected, token);
+  // }
 
   @Test
   public void parse_TokenRtc() {
@@ -263,43 +263,43 @@ public class AccessToken2Test {
             .get(AccessToken2.PrivilegeRtm.PRIVILEGE_LOGIN.intValue));
   }
 
-  @Test
-  public void parse_TokenChatUser() {
-    AccessToken2 accessToken = new AccessToken2();
-    boolean res = accessToken.parse(
-        "007eJxTYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrEDMCOZzMRhZWBgZmxgamRsDAB+lHrg=");
-    assertTrue(res);
-    assertEquals(appId, accessToken.appId);
-    assertEquals(expire, accessToken.expire);
-    assertEquals(issueTs, accessToken.issueTs);
-    assertEquals(salt, accessToken.salt);
-    assertEquals(1, accessToken.services.size());
-    AccessToken2.ServiceChat serviceChat =
-        (AccessToken2.ServiceChat) accessToken.services.get(AccessToken2.SERVICE_TYPE_CHAT);
-    assertEquals(uid, serviceChat.getUserId());
-    assertEquals(expire,
-        (int) serviceChat.getPrivileges().get(
-            AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER.intValue));
-  }
-
-  @Test
-  public void parse_TokenChatApp() {
-    AccessToken2 accessToken = new AccessToken2();
-    boolean res = accessToken.parse(
-        "007eJxTYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZgZgJzGdgAACt8hhr");
-    assertTrue(res);
-    assertEquals(appId, accessToken.appId);
-    assertEquals(expire, accessToken.expire);
-    assertEquals(issueTs, accessToken.issueTs);
-    assertEquals(salt, accessToken.salt);
-    assertEquals(1, accessToken.services.size());
-    AccessToken2.ServiceChat serviceChat =
-        (AccessToken2.ServiceChat) accessToken.services.get(AccessToken2.SERVICE_TYPE_CHAT);
-    assertEquals("", serviceChat.getUserId());
-    assertEquals(expire,
-        (int) serviceChat.getPrivileges().get(
-            AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_APP.intValue));
-  }
+  // @Test
+  // public void parse_TokenChatUser() {
+  //   AccessToken2 accessToken = new AccessToken2();
+  //   boolean res = accessToken.parse(
+  //       "007eJxTYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrEDMCOZzMRhZWBgZmxgamRsDAB+lHrg=");
+  //   assertTrue(res);
+  //   assertEquals(appId, accessToken.appId);
+  //   assertEquals(expire, accessToken.expire);
+  //   assertEquals(issueTs, accessToken.issueTs);
+  //   assertEquals(salt, accessToken.salt);
+  //   assertEquals(1, accessToken.services.size());
+  //   AccessToken2.ServiceChat serviceChat =
+  //       (AccessToken2.ServiceChat) accessToken.services.get(AccessToken2.SERVICE_TYPE_CHAT);
+  //   assertEquals(uid, serviceChat.getUserId());
+  //   assertEquals(expire,
+  //       (int) serviceChat.getPrivileges().get(
+  //           AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_USER.intValue));
+  // }
+  //
+  // @Test
+  // public void parse_TokenChatApp() {
+  //   AccessToken2 accessToken = new AccessToken2();
+  //   boolean res = accessToken.parse(
+  //       "007eJxTYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZgZgJzGdgAACt8hhr");
+  //   assertTrue(res);
+  //   assertEquals(appId, accessToken.appId);
+  //   assertEquals(expire, accessToken.expire);
+  //   assertEquals(issueTs, accessToken.issueTs);
+  //   assertEquals(salt, accessToken.salt);
+  //   assertEquals(1, accessToken.services.size());
+  //   AccessToken2.ServiceChat serviceChat =
+  //       (AccessToken2.ServiceChat) accessToken.services.get(AccessToken2.SERVICE_TYPE_CHAT);
+  //   assertEquals("", serviceChat.getUserId());
+  //   assertEquals(expire,
+  //       (int) serviceChat.getPrivileges().get(
+  //           AccessToken2.PrivilegeChat.PRIVILEGE_CHAT_APP.intValue));
+  // }
 
   @Test
   public void getUidStr() {

@@ -19,24 +19,24 @@ public class Utils {
   public static final int VERSION_LENGTH = 3;
   public static final int APP_ID_LENGTH = 32;
 
-  public static byte[] hmacSign(String keyString, byte[] msg)
-      throws InvalidKeyException, NoSuchAlgorithmException {
-    SecretKeySpec keySpec = new SecretKeySpec(keyString.getBytes(), "HmacSHA256");
-    Mac mac = Mac.getInstance("HmacSHA256");
-    mac.init(keySpec);
-    return mac.doFinal(msg);
-  }
+  // public static byte[] hmacSign(String keyString, byte[] msg)
+  //     throws InvalidKeyException, NoSuchAlgorithmException {
+  //   SecretKeySpec keySpec = new SecretKeySpec(keyString.getBytes(), "HmacSHA256");
+  //   Mac mac = Mac.getInstance("HmacSHA256");
+  //   mac.init(keySpec);
+  //   return mac.doFinal(msg);
+  // }
 
-  public static byte[] pack(PackableEx packableEx) {
-    ByteBuf buffer = new ByteBuf();
-    packableEx.marshal(buffer);
-    return buffer.asBytes();
-  }
+  // public static byte[] pack(PackableEx packableEx) {
+  //   ByteBuf buffer = new ByteBuf();
+  //   packableEx.marshal(buffer);
+  //   return buffer.asBytes();
+  // }
 
-  public static void unpack(byte[] data, PackableEx packableEx) {
-    ByteBuf buffer = new ByteBuf(data);
-    packableEx.unmarshal(buffer);
-  }
+  // public static void unpack(byte[] data, PackableEx packableEx) {
+  //   ByteBuf buffer = new ByteBuf(data);
+  //   packableEx.unmarshal(buffer);
+  // }
 
   public static String base64Encode(byte[] data) {
     byte[] encodedBytes = Base64.encodeBase64(data);
@@ -47,17 +47,17 @@ public class Utils {
     return Base64.decodeBase64(data.getBytes());
   }
 
-  public static int crc32(String data) {
-    // get bytes from string
-    byte[] bytes = data.getBytes();
-    return crc32(bytes);
-  }
+  // public static int crc32(String data) {
+  //   // get bytes from string
+  //   byte[] bytes = data.getBytes();
+  //   return crc32(bytes);
+  // }
 
-  public static int crc32(byte[] bytes) {
-    CRC32 checksum = new CRC32();
-    checksum.update(bytes);
-    return (int) checksum.getValue();
-  }
+  // public static int crc32(byte[] bytes) {
+  //   CRC32 checksum = new CRC32();
+  //   checksum.update(bytes);
+  //   return (int) checksum.getValue();
+  // }
 
   public static int getTimestamp() {
     return (int) ((new Date().getTime()) / 1000);
@@ -122,17 +122,17 @@ public class Utils {
     return bos.toByteArray();
   }
 
-  public static String md5(String plainText) {
-    byte[] secretBytes = null;
-    try {
-      secretBytes = MessageDigest.getInstance("md5").digest(plainText.getBytes());
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("No md5 digest！");
-    }
-    String md5code = new BigInteger(1, secretBytes).toString(16);
-    for (int i = 0; i < 32 - md5code.length(); i++) {
-      md5code = "0" + md5code;
-    }
-    return md5code;
-  }
+  // public static String md5(String plainText) {
+  //   byte[] secretBytes = null;
+  //   try {
+  //     secretBytes = MessageDigest.getInstance("md5").digest(plainText.getBytes());
+  //   } catch (NoSuchAlgorithmException e) {
+  //     throw new RuntimeException("No md5 digest！");
+  //   }
+  //   String md5code = new BigInteger(1, secretBytes).toString(16);
+  //   for (int i = 0; i < 32 - md5code.length(); i++) {
+  //     md5code = "0" + md5code;
+  //   }
+  //   return md5code;
+  // }
 }
