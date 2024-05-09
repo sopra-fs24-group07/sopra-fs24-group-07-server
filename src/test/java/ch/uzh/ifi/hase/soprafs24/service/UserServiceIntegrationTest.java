@@ -7,9 +7,13 @@ import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,6 +78,8 @@ public class UserServiceIntegrationTest {
     assertEquals(testUser.getName(), createdUser.getName());
     assertEquals(testUser.getUsername(), createdUser.getUsername());
     assertNotNull(createdUser.getToken());
+    assertNotNull(createdUser.getCreatedDate());
+    assertNotNull(createdUser.getModifiedDate());
   }
 
   @Test
@@ -123,6 +129,36 @@ public class UserServiceIntegrationTest {
     assertNotEquals(testUser.getUsername(), testUser2.getUsername());
   }
 
+  @ParameterizedTest
+  @MethodSource("lengthTests")
+  void createUser_testInputLength(String name, String username, String psw, boolean shouldThrow) {
+    User testUser = new User();
+    testUser.setName(name);
+    testUser.setUsername(username);
+    testUser.setPassword(psw);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class, () -> { userService.createUser(testUser); });
+      assertNull(userRepository.findByUsername(username));
+    } else {
+      assertDoesNotThrow(() -> { userService.createUser(testUser); });
+    }
+  }
+
+  private static Stream<Arguments> lengthTests() {
+    return Stream.of(
+        // name tests
+        Arguments.of("some-short-name-123", "username", "password", false), // valid length
+        Arguments.of("HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd", "username", "password",
+            true), // exceeds length
+        // username tests
+        Arguments.of("name", "djTGUwYLtQvuQpdAquSvxKkPTBxdHbq", "password", true), // exceeds length
+        // psw tests
+        Arguments.of("name", "username", "HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd",
+            true) // exceeds length
+    );
+  }
+
   // endregion
 
   // region update user
@@ -135,7 +171,43 @@ public class UserServiceIntegrationTest {
     testUser.setName("testName");
     testUser.setUsername("testUsername");
     testUser.setPassword("1234");
-    User createdUser = userService.createUser(testUser);
+    testUser.setToken("token");
+    testUser.setUserId(1L);
+    // User createdUser = userService.createUser(testUser);
+    User createdUser = userRepository.saveAndFlush(testUser);
+
+    // update user
+    User testUpdateUser = new User();
+    testUpdateUser.setName("updatedName");
+    testUpdateUser.setUsername("updatedUsername");
+    testUpdateUser.setPassword("updatedPassword");
+    testUpdateUser.setToken("token");
+    testUpdateUser.setUserId(createdUser.getUserId());
+
+    // update service call
+    User updatedUser = userService.updateUser(testUpdateUser);
+
+    // check if user is updated
+    assertEquals(testUpdateUser.getUserId(), updatedUser.getUserId());
+    assertEquals(testUpdateUser.getName(), updatedUser.getName());
+    assertEquals(testUpdateUser.getUsername(), updatedUser.getUsername());
+  }
+
+  /* test for different update timestamp */
+  @Test
+  public void updateUser_validInputs_differentUpdateTimestamp() {
+    // given user in db to update
+    LocalDateTime created = LocalDateTime.now().minusHours(1);
+    User testUser = new User();
+    testUser.setUserId(1L);
+    testUser.setName("testName");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("1234");
+    testUser.setToken("token");
+
+    // it does not work to directly get user here (timestamps somehow do not work)
+    User savedUser = userRepository.saveAndFlush(testUser);
+    User createdUser = userRepository.findById(savedUser.getUserId()).get();
 
     // update user
     createdUser.setName("updatedName");
@@ -143,12 +215,16 @@ public class UserServiceIntegrationTest {
     createdUser.setPassword("updatedPassword");
 
     // update service call
-    User updatedUser = userService.updateUser(createdUser);
+    userService.updateUser(createdUser);
+    User updatedUser = userRepository.findById(createdUser.getUserId()).get();
 
     // check if user is updated
     assertEquals(createdUser.getUserId(), updatedUser.getUserId());
     assertEquals(createdUser.getName(), updatedUser.getName());
     assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+    assertNotEquals(createdUser.getModifiedDate(), updatedUser.getModifiedDate());
+    assertEquals(createdUser.getCreatedDate(), updatedUser.getCreatedDate());
+    assertNotEquals(createdUser.getModifiedDate(), updatedUser.getCreatedDate());
   }
 
   /**
@@ -201,6 +277,43 @@ public class UserServiceIntegrationTest {
     assertTrue(userRepository.findById(99L).isEmpty());
 
     assertThrows(ResponseStatusException.class, () -> userService.updateUser(nonExistingUser));
+  }
+
+  @ParameterizedTest
+  @MethodSource("updateLengthTests")
+  void updateUser_testInputLength(String name, String username, String psw, boolean shouldThrow) {
+    // given user in db to update
+    User testUser = new User();
+    testUser.setName("something");
+    testUser.setUsername("something");
+    testUser.setPassword("something");
+    testUser.setToken("token");
+
+    User createdUser = userRepository.saveAndFlush(testUser);
+    createdUser.setName(name);
+    createdUser.setUsername(username);
+    createdUser.setPassword(psw);
+    createdUser.setUserId(createdUser.getUserId());
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class, () -> { userService.updateUser(createdUser); });
+    } else {
+      assertDoesNotThrow(() -> { userService.updateUser(testUser); });
+    }
+  }
+
+  private static Stream<Arguments> updateLengthTests() {
+    return Stream.of(
+        // name tests
+        Arguments.of("some-short-name-123", "username", "password", false), // valid length
+        Arguments.of("HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd", "username", "password",
+            true), // exceeds length
+        // username tests
+        Arguments.of("name", "djTGUwYLtQvuQpdAquSvxKkPTBxdHbq", "password", true), // exceeds length
+        // psw tests
+        Arguments.of("name", "username", "HSahjMpTGRhgpDnKdkpUKgjjgyKGMYMGzMBpyazeeCkGYhqnGzd",
+            true) // exceeds length
+    );
   }
 
   // endregion

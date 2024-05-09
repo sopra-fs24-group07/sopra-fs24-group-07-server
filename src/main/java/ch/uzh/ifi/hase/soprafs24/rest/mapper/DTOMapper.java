@@ -87,7 +87,6 @@ public interface DTOMapper {
   @Mapping(source = "goalMinutes", target = "goalMinutes")
   Session convertSessionPostDTOtoEntity(SessionPostDTO sessionPostDTO);
 
-  @Mapping(source = "sessionId", target = "sessionId")
   @Mapping(
       source = "startDateTime", target = "startDateTime", qualifiedByName = "formatLocalDateTime")
   @Mapping(source = "endDateTime", target = "endDateTime", qualifiedByName = "formatLocalDateTime")

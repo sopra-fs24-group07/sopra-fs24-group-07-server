@@ -216,7 +216,6 @@ public class DTOMapperTest {
     System.out.println(sessionGetDTO.getStartDateTime()); // to verify in output
 
     // check content
-    assertEquals(session.getSessionId(), sessionGetDTO.getSessionId());
     assertEquals(
         session.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         sessionGetDTO.getStartDateTime());
