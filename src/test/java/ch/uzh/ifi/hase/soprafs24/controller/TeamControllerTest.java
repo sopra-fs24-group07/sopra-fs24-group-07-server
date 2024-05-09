@@ -782,7 +782,7 @@ public class TeamControllerTest {
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
             Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(testUser);
-    Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Invalid task status."))
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task status."))
         .when(taskService)
         .getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList());
 
