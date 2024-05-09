@@ -709,21 +709,21 @@ public class TeamControllerTest {
     task.setTaskId(1L);
     task.setTitle("Test Task");
     task.setDescription("This is a test task.");
-  
+
     List<Task> tasks = new ArrayList<>();
     tasks.add(task);
-  
+
     Mockito
         .when(authorizationService.isAuthorizedAndBelongsToTeam(
             Mockito.anyString(), Mockito.anyLong()))
         .thenReturn(testUser);
     given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
         .willReturn(tasks);
-  
+
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder getRequest =
         get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
-  
+
     // then
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
