@@ -363,7 +363,7 @@ public class SessionServiceIntegrationTest {
     // given expired session
     Session testSession = new Session();
     testSession.setTeam(testTeam);
-    testSession.setStartDateTime(LocalDateTime.now().minusDays(1));
+    testSession.setStartDateTime(LocalDateTime.now().minusDays(1).minusHours(2));
     testSession.setGoalMinutes(mockGoalMinutes);
     sessionRepository.saveAndFlush(testSession);
 

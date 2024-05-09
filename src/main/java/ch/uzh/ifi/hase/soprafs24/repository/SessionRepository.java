@@ -12,4 +12,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
   /* just for verifying ascending order in tests */
   List<Session> findByTeamOrderByStartDateTimeAsc(Team team);
+
+  /* New method to find all sessions with null end date */
+  List<Session> findByEndDateTimeIsNull();
 }

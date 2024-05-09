@@ -132,13 +132,12 @@ public class SessionService {
     return session.getStartDateTime().plusHours(24).isBefore(LocalDateTime.now());
   }
 
-  @Scheduled(fixedRate = 60000) // runs every minute
+  @Scheduled(fixedRate = 3600000) // runs every hour
   public void endExpiredSessions() {
     log.debug("Checking for expired sessions...");
-    List<Session> sessions = sessionRepository.findAll();
+    List<Session> sessions = sessionRepository.findByEndDateTimeIsNull();
     for (Session session : sessions) {
-      if (isSessionExpired(session)
-          && session.getEndDateTime() == null) { // Check if the session is active
+      if (isSessionExpired(session)) {
         endSession(session.getTeam().getTeamId());
       }
     }

@@ -293,7 +293,8 @@ public class SessionServiceTest {
     // given two sessions, one that expired and one that did not
     Session expiredSession = new Session();
     expiredSession.setSessionId(1L);
-    expiredSession.setStartDateTime(LocalDateTime.now().minusDays(1));
+    expiredSession.setStartDateTime(
+        LocalDateTime.now().minusDays(1).minusHours(1)); // add an extra hour to ensure it's expired
     expiredSession.setTeam(testTeam);
 
     Session activeSession = new Session();
@@ -301,18 +302,27 @@ public class SessionServiceTest {
     activeSession.setStartDateTime(LocalDateTime.now());
     activeSession.setTeam(testTeam);
 
-    // when sessionRepository.findAll() is called, return the list of sessions
-    Mockito.when(sessionRepository.findAll()).thenReturn(List.of(expiredSession, activeSession));
+    // when sessionRepository.findByEndDateTimeIsNull() is called, return the list of sessions
+    Mockito.when(sessionRepository.findByEndDateTimeIsNull())
+        .thenReturn(List.of(expiredSession, activeSession));
 
-    // Spy on sessionService and stub the endSession method to return null
+    // create a spy of sessionService
     SessionService spySessionService = Mockito.spy(sessionService);
-    Mockito.doReturn(null).when(spySessionService).endSession(Mockito.anyLong());
 
-    // call the method to test
+    // when getSessionsByTeamId is called on the spy, return the appropriate session for the team
+    Mockito.doReturn(List.of(expiredSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(expiredSession.getTeam().getTeamId());
+    Mockito.doReturn(List.of(activeSession))
+        .when(spySessionService)
+        .getSessionsByTeamId(activeSession.getTeam().getTeamId());
+
+    // call the method to test on the spy
     spySessionService.endExpiredSessions();
 
-    // verify that endSession was called once (for the expired session)
-    Mockito.verify(spySessionService, Mockito.times(1)).endSession(Mockito.anyLong());
+    // verify that endSession was called once (for the expired session) on the spy
+    Mockito.verify(spySessionService, Mockito.times(1))
+        .endSession(expiredSession.getTeam().getTeamId());
   }
   // endregion
 }
