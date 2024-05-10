@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -696,6 +697,107 @@ public class TeamControllerTest {
         .andExpect(result
             -> assertTrue(
                 result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
+  /*
+   * GET method which uses getTasksByTeamIdAndStatus method from TaskService to get tasks by status
+   */
+  @Test
+  public void getTasksByStatus_validInput_returnTasks() throws Exception {
+    // given
+    Task task = new Task();
+    task.setTaskId(1L);
+    task.setTitle("Test Task");
+    task.setDescription("This is a test task.");
+
+    List<Task> tasks = new ArrayList<>();
+    tasks.add(task);
+
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
+        .willReturn(tasks);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1))) // Check if the returned list has one element
+        .andExpect(jsonPath("$[0].taskId", is(task.getTaskId().intValue())))
+        .andExpect(jsonPath("$[0].title", is(task.getTitle())))
+        .andExpect(jsonPath("$[0].description", is(task.getDescription())));
+  }
+
+  @Test
+  public void getTasksByStatus_noTasksInTeam_emptyList() throws Exception {
+    // given
+    given(taskService.getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList()))
+        .willReturn(new ArrayList<>());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(content().json("[]"));
+  }
+
+  /*
+   * Test for trying to fetch a Task, where i'm not authorized to access
+   */
+  @Test
+  public void getTasksByStatus_unauthorizedAccess_throwsError() throws Exception {
+    // given
+    Mockito
+        .doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized to access."))
+        .when(authorizationService)
+        .isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=TODO").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Not authorized to access.")));
+  }
+
+  /*
+   * Test for trying to fetch a Task with invalid status
+   */
+  @Test
+  public void getTasksByStatus_invalidStatus_throwsError() throws Exception {
+    // given
+    Mockito
+        .when(authorizationService.isAuthorizedAndBelongsToTeam(
+            Mockito.anyString(), Mockito.anyLong()))
+        .thenReturn(testUser);
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task status."))
+        .when(taskService)
+        .getTasksByTeamIdAndStatus(Mockito.anyLong(), Mockito.anyList());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/teams/1/tasks?status=ABC").header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(getRequest)
+        .andExpect(status().isConflict())
+        .andExpect(
+            result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+        .andExpect(result
+            -> assertTrue(
+                result.getResolvedException().getMessage().contains("Invalid task status.")));
   }
 
   /* test if team not found */

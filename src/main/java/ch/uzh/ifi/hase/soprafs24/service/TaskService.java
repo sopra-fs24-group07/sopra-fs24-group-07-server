@@ -86,6 +86,20 @@ public class TaskService {
   }
 
   /**
+   * Get tasks by status method.
+   *
+   * @param teamId for tasks to be taken from
+   * @param status of tasks to be taken
+   * @return List of tasks
+   */
+  public List<Task> getTasksByTeamIdAndStatus(Long teamId, List<TaskStatus> status) {
+    // check that the team exists
+    Team team = teamService.getTeamByTeamId(teamId);
+    List<Task> tasks = taskRepository.findByTeamAndStatusInOrderByTitleAsc(team, status);
+    return tasks;
+  }
+
+  /**
    * Update task method.
    *
    * @param task to be updated
