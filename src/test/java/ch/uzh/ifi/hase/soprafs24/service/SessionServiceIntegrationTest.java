@@ -347,5 +347,30 @@ public class SessionServiceIntegrationTest {
     // when (have something stored, but not that team)
     assertThrows(ResponseStatusException.class, () -> sessionService.endSession(99L));
   }
+
+  /*
+   * Test if the session is expired, that the 410 error is thrown
+   */
+  @Test
+  public void endSession_expiredSession_expectsError() {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // given expired session
+    Session testSession = new Session();
+    testSession.setTeam(testTeam);
+    testSession.setStartDateTime(LocalDateTime.now().minusDays(1).minusHours(2));
+    testSession.setGoalMinutes(mockGoalMinutes);
+    sessionRepository.saveAndFlush(testSession);
+
+    // when
+    assertThrows(
+        ResponseStatusException.class, () -> sessionService.endSession(testTeam.getTeamId()));
+  }
+
   // endregion
 }
