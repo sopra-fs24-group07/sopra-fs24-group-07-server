@@ -42,6 +42,9 @@ public class AgoraService {
 
     // generate token or throw 503 error if external service not available
     try {
+      log.info("Generating Agora token for user with id {} and channelName {}", existingUserId,
+          channelName);
+
       return rtcTokenBuilder2.buildTokenWithUserAccount(agoraCredentials.getAppId(),
           agoraCredentials.getAppCertificate(), channelName, String.valueOf(existingUserId),
           RtcTokenBuilder2.Role.ROLE_PUBLISHER, tokenExpirationTs, privilegeExpiredTs);
