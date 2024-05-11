@@ -4,12 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.Comment;
-import ch.uzh.ifi.hase.soprafs24.entity.Session;
-import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.TeamInvitation;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -294,6 +289,37 @@ public class DTOMapperTest {
     assertEquals(comment.getCreationDate(), commentGetDTO.getCreationDate());
     assertEquals(comment.getUser().getUserId(), commentGetDTO.getAuthorId());
     assertEquals(comment.getUser().getUsername(), commentGetDTO.getAuthorName());
+  }
+  // endregion
+
+  // region agora mappings
+  @Test
+  public void testCAgoraAuthPostDTO_toAgoraAuth_success() {
+    // create AgoraAuthPostDTO
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(1L);
+    agoraAuthPostDTO.setTeamId(42L);
+    agoraAuthPostDTO.setChannelName("channelName");
+
+    // MAP -> Create AgoraAuth
+    AgoraAuth agoraAuth = DTOMapper.INSTANCE.convertAgoraAuthPostDTOtoEntity(agoraAuthPostDTO);
+
+    // check content
+    assertEquals(agoraAuthPostDTO.getUserId(), agoraAuth.getUserId());
+    assertEquals(agoraAuthPostDTO.getTeamId(), agoraAuth.getTeamId());
+    assertEquals(agoraAuthPostDTO.getChannelName(), agoraAuth.getChannelName());
+  }
+
+  @Test
+  public void tokenString_toAgoraAuthGetDTO_success() {
+    // create token string
+    String token = "token";
+
+    // MAP -> Create AgoraAuthGetDTO
+    AgoraAuthGetDTO agoraAuthGetDTO = DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(token);
+
+    // check content
+    assertEquals(token, agoraAuthGetDTO.getToken());
   }
   // endregion
 }

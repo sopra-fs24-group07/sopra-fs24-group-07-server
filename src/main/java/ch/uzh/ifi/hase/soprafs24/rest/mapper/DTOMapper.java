@@ -94,6 +94,14 @@ public interface DTOMapper {
   SessionGetDTO
   convertEntityToSessionGetDTO(Session session);
 
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "channelName", target = "channelName")
+  AgoraAuth convertAgoraAuthPostDTOtoEntity(AgoraAuthPostDTO agoraAuthPostDTO);
+
+  @Mapping(source = "token", target = "token")
+  AgoraAuthGetDTO convertEntityToAgoraAuthGetDTO(String token);
+
   default String formatLocalDateTime(LocalDateTime localDateTime) {
     return localDateTime == null
         ? null
