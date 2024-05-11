@@ -6,21 +6,15 @@ import org.springframework.context.annotation.Primary;
 
 public class AgoraCredentials {
   private String appId;
-  private String appKey;
   private String appCertificate;
 
-  public AgoraCredentials(String appId, String appKey, String appCertificate) {
+  public AgoraCredentials(String appId, String appCertificate) {
     this.appId = appId;
-    this.appKey = appKey;
     this.appCertificate = appCertificate;
   }
 
   public String getAppId() {
     return appId;
-  }
-
-  public String getAppKey() {
-    return appKey;
   }
 
   public String getAppCertificate() {

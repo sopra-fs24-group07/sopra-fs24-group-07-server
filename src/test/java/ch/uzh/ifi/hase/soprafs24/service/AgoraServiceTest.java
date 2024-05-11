@@ -33,7 +33,6 @@ public class AgoraServiceTest {
 
     // mock agoraConfig return values
     Mockito.when(agoraCredentials.getAppId()).thenReturn("1234");
-    Mockito.when(agoraCredentials.getAppKey()).thenReturn("appKey");
     Mockito.when(agoraCredentials.getAppCertificate()).thenReturn("appCertificate");
   }
 

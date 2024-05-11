@@ -40,7 +40,6 @@ public class AgoraService {
 
     // check if the credentials are set (500 error if not)
     checkCredentialVariable(agoraCredentials.getAppId(), "AGORA_APP_ID");
-    checkCredentialVariable(agoraCredentials.getAppKey(), "AGORA_APP_KEY");
     checkCredentialVariable(agoraCredentials.getAppCertificate(), "AGORA_APP_CERTIFICATE");
 
     // generate token or throw 503 error if external service not available
