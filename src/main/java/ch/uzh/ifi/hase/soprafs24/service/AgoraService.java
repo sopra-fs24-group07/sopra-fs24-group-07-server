@@ -32,9 +32,12 @@ public class AgoraService {
    * @param channelName name of the channel
    * @return RTC token for the user for this channel
    * @throws ResponseStatusException if the token cannot be generated (500 if env vars not set, 503
-   *     if external service not available)
+   *     if external service not available), 400 if channel name is empty
    */
   public String getToken(Long existingUserId, String channelName) {
+    // check if the channel name is not emtpy
+    ServiceHelpers.checkValidString(channelName, "channelName");
+
     // check if the credentials are set (500 error if not)
     checkCredentialVariable(agoraCredentials.getAppId(), "AGORA_APP_ID");
     checkCredentialVariable(agoraCredentials.getAppKey(), "AGORA_APP_KEY");

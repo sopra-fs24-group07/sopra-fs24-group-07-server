@@ -78,4 +78,16 @@ public class AgoraServiceTest {
         ResponseStatusException.class, () -> agoraService.getToken(userId, channelName));
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
   }
+
+  /* check if channelName is bad format */
+  @Test
+  public void testGetToken_badChannelName() {
+    // given
+    channelName = " ";
+
+    // then check if the correct exception is thrown and if https status return is correct
+    ResponseStatusException exception = assertThrows(
+        ResponseStatusException.class, () -> agoraService.getToken(userId, channelName));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+  }
 }
