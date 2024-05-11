@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
+import ch.uzh.ifi.hase.soprafs24.entity.TeamInvitation;
 import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamGetDTO;
@@ -126,9 +127,8 @@ public class UserController {
     User user = authorizationService.isExistingAndAuthorized(token, userId);
 
     // convert team invitation uuid to team instance with only team uuid
-    // String teamUUID =
-    // DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoString(teamInvitationPostDTO);
-    String teamUUID = teamInvitationPostDTO.getTeamUUID();
+    String teamUUID = DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(teamInvitationPostDTO)
+                          .getTeamUUID();
 
     // add user to existing team
     TeamUser createdTeamUser = teamUserService.createTeamUser(teamUUID, user.getUserId());
