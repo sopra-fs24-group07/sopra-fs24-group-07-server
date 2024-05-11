@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Profile;
  * @see <a
  *     href="https://github.com/AgoraIO/Tools/tree/master/DynamicKey/AgoraDynamicKey/java">...</a>
  */
-@Configuration
-@Profile("!dev")
 public class RtcTokenBuilder2 {
   public enum Role {
     ROLE_PUBLISHER(1),
