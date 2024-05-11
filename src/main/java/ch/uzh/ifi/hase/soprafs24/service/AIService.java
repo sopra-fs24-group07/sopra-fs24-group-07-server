@@ -2,11 +2,14 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -23,11 +26,10 @@ public class AIService {
 
   public String generateDescription(String prompt) {
     try {
-      String descriptionPrompt = String.format("%s", prompt);
       String requestBody = String.format(
           "{\"model\": \"gpt-3.5-turbo-instruct\", \"prompt\":\" %s\", \"max_tokens\": 50}",
-          descriptionPrompt);
-      System.out.println("AI API request body" + requestBody);
+          prompt);
+
       Mono<String> response =
           webClient.post()
               .uri("/completions")
@@ -37,15 +39,15 @@ public class AIService {
               .retrieve()
               .bodyToMono(String.class);
 
-      System.out.println("AI API response:" + response);
       String responseBody = response.block();
-      System.out.println("AI API response.block():" + response.block());
       JsonNode rootNode = objectMapper.readTree(responseBody);
       JsonNode textNode = rootNode.path("choices").get(0).path("text");
       return textNode.asText().trim();
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      System.out.println("Mail API Error: " + e);
+      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+          "GPT API Exception. Did not make successful call to the external AI. Please contact "
+              + "Administrator.");
     }
   }
 }
