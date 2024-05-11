@@ -284,3 +284,12 @@ timeline
   Implemented the session history popup with all session data
 
 ## 05.05.2024 - 12.05.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/141:
+  send mail service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/142:
+  send mail endpoint & ci/cd
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/175:
+  timestamp user created/modified
