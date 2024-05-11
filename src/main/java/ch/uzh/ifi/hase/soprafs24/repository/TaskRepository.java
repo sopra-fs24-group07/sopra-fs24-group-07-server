@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
   /** Select * from TASK where team = team and status <> status */
   List<Task> findByTeamAndStatusNot(Team team, TaskStatus status);
+
+  List<Task> findByTeamAndStatusInOrderByTitleAsc(Team team, List<TaskStatus> status);
 }
