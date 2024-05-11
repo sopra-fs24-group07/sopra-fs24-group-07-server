@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 @Profile("!dev")
 public class AgoraConfig {
   @Value("${AGORA_APP_ID}") private String appId;
-  @Value("${AGORA_APP_key}") private String appKey;
   @Value("${AGORA_APP_CERTIFICATE}") private String appCertificate;
 
   @Bean
