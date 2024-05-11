@@ -44,14 +44,18 @@ jobs:
           DB_URL: jdbc:postgresql://localhost:5432/test_db
           DB_UNM: test_user
           DB_PSW: test_password
-          DB_DDL_AUTO: create
+          DB_DDL_AUTO: create-drop
 
-
-      - name: Test with Gradle
+      - name: Test with Gradle and devRun profile
         run: ./gradlew test
         env:
-          SPRING_PROFILES_ACTIVE: dev
+          SPRING_PROFILES_ACTIVE: devRun
           DB_URL: jdbc:postgresql://localhost:5432/test_db
           DB_UNM: test_user
           DB_PSW: test_password
-          DB_DDL_AUTO: create
+          DB_DDL_AUTO: create-drop
+          PUSHER_APP_ID: 1787826
+          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
+          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
+          AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
+          AGORA_APP_CERTIFICATE: ${{ secrets.AGORA_APP_CERTIFICATE }}
