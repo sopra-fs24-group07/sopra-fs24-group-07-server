@@ -8,15 +8,20 @@ echo "---"
 echo ""
 
 # ----------------- ENVIRONMENT VARIABLES -----------------
-export DB_PSW=
-export DB_UNM=
-export DB_URL=
+export DB_PSW=Welcome
+export DB_UNM=postgres
+export DB_URL=jdbc:postgresql://localhost:5433/productiviteam
 export DB_DDL_AUTO=create-drop
-export PUSHER_APP_ID=
-export PUSHER_KEY=
-export PUSHER_SECRET=
+export PUSHER_APP_ID=1787826
+export PUSHER_KEY=98eb073ecf324dc1bf65
+export PUSHER_SECRET=8f7fed92f02890d41525
+export MAILJET_KEY=
+export MAILJET_SECRET=
+export MAILJET_SENDER_EMAIL=
+export AGORA_APP_ID=
+export AGORA_APP_KEY=
+export AGORA_APP_CERTIFICATE=
 # ---------------------------------------------------------
-
 
 # ask the developer which profile to use and read the input
 echo "Which profile do you want to use?"
@@ -37,6 +42,12 @@ echo "DB_DDL_AUTO=$DB_DDL_AUTO"
 echo "PUSHER_APP_ID=$PUSHER_APP_ID"
 echo "PUSHER_KEY=$PUSHER_KEY"
 echo "PUSHER_SECRET=$PUSHER_SECRET"
+echo "MAILJET_KEY=$MAILJET_KEY"
+echo "MAILJET_SECRET=$MAILJET_SECRET"
+echo "MAILJET_SENDER_EMAIL=$MAILJET_SENDER_EMAIL"
+echo "AGORA_APP_ID=$AGORA_APP_ID"
+echo "AGORA_APP_KEY=$AGORA_APP_KEY"
+echo "AGORA_APP_CERTIFICATE=$AGORA_APP_CERTIFICATE"
 
 echo "---"
 echo "You can now run the application using the following command:"
