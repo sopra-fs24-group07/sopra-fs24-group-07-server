@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.AgoraAuthPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.LoginPostDTO;
+import ch.uzh.ifi.hase.soprafs24.service.AgoraService;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ public class AuthorizationControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private AuthorizationService authorizationService;
+  @MockBean private AgoraService agoraService;
   @MockBean private UserRepository userRepository;
 
   /**
@@ -83,4 +86,140 @@ public class AuthorizationControllerTest {
     // then expect error on call
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
   }
+
+  // region Agora authentication
+  @Test
+  public void testGetToken_success() throws Exception {
+    // given
+    Long userId = 1L;
+    Long teamId = 1L;
+    String channelName = "channelName";
+
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(userId);
+    agoraAuthPostDTO.setTeamId(teamId);
+    agoraAuthPostDTO.setChannelName(channelName);
+
+    // when -> authorized and part of team -> success
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> get token -> return testToken
+    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString())).willReturn("testToken");
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(agoraAuthPostDTO))
+                                                    .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").value("testToken"));
+
+    // verify service was called
+    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+  }
+
+  @Test
+  public void testGetToken_rtcTokenBuilderException() throws Exception {
+    // given
+    Long userId = 1L;
+    Long teamId = 1L;
+    String channelName = "channelName";
+
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(userId);
+    agoraAuthPostDTO.setTeamId(teamId);
+    agoraAuthPostDTO.setChannelName(channelName);
+
+    // when -> authorized and part of team -> success
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> get token -> throw exception
+    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.SERVICE_UNAVAILABLE, "Error while generating Agora token: Test exception"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(agoraAuthPostDTO))
+                                                    .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isServiceUnavailable());
+    // verify service was called\
+    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+  }
+
+  @Test
+  public void testGetToken_unauthorized() throws Exception {
+    // given
+    Long userId = 1L;
+    Long teamId = 1L;
+    String channelName = "channelName";
+
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(userId);
+    agoraAuthPostDTO.setTeamId(teamId);
+    agoraAuthPostDTO.setChannelName(channelName);
+
+    // when -> authorized and part of team -> throw exception
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.UNAUTHORIZED, "User is not authorized to access this resource"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(agoraAuthPostDTO))
+                                                    .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    // verify service was called
+    Mockito.verify(agoraService, Mockito.never()).getToken(Mockito.anyLong(), Mockito.anyString());
+  }
+
+  @Test
+  public void testGetToken_invalidFormat() throws Exception {
+    // given
+    Long userId = 1L;
+    Long teamId = 1L;
+    String channelName = "   ";
+
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(userId);
+    agoraAuthPostDTO.setTeamId(teamId);
+    agoraAuthPostDTO.setChannelName(channelName);
+
+    // when -> authorized and part of team -> success
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> get token -> return testToken
+    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "channelName cannot be empty or only whitespace!"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(agoraAuthPostDTO))
+                                                    .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+    // verify service was called
+    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+  }
+
+  // endregion
 }
