@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.agora.RtcTokenBuilder2;
-import ch.uzh.ifi.hase.soprafs24.config.AgoraConfig;
+import ch.uzh.ifi.hase.soprafs24.config.AgoraCredentials;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class AgoraServiceTest {
   @Mock private RtcTokenBuilder2 rtcTokenBuilder2;
-  @Mock private AgoraConfig agoraConfig;
+  @Mock private AgoraCredentials agoraCredentials;
 
   @InjectMocks AgoraService agoraService;
 
@@ -32,9 +32,9 @@ public class AgoraServiceTest {
     channelName = "channelName";
 
     // mock agoraConfig return values
-    Mockito.when(agoraConfig.getAppId()).thenReturn("1234");
-    Mockito.when(agoraConfig.getAppKey()).thenReturn("appKey");
-    Mockito.when(agoraConfig.getAppCertificate()).thenReturn("appCertificate");
+    Mockito.when(agoraCredentials.getAppId()).thenReturn("1234");
+    Mockito.when(agoraCredentials.getAppKey()).thenReturn("appKey");
+    Mockito.when(agoraCredentials.getAppCertificate()).thenReturn("appCertificate");
   }
 
   @Test
@@ -71,7 +71,7 @@ public class AgoraServiceTest {
   @Test
   public void testGetToken_missingAppId() {
     // given
-    Mockito.when(agoraConfig.getAppId()).thenReturn(null);
+    Mockito.when(agoraCredentials.getAppId()).thenReturn(null);
 
     // then check if the correct exception is thrown and if https status return is correct
     ResponseStatusException exception = assertThrows(
