@@ -307,6 +307,17 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/126:
   implemented app-wide popup notifications
 
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/109:
+  Get Tasks with Query Test and Documentation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/182:
+  Session ends after max 24h (users might forget to end session and close window, it never ends)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/196:
+  Implement AI controller -> Worked on it this weekend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/198:
+  Write tests for AI controller -> Worked on it this weekend
+
 ### Monti934
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/68:
@@ -315,3 +326,4 @@ timeline
   Implement Query Calls to get Tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
   Fix Drag and Drop Issue
+
