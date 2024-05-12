@@ -25,21 +25,28 @@ public class AIController {
       @RequestBody String requestBody, @RequestHeader("Authorization") String token) {
     // check if user is authorized (valid token)
     User authorizedUser = authorizationService.isAuthorized(token);
-
+  
     if (authorizedUser == null) {
       return new ResponseEntity<>("User is not authorized", HttpStatus.UNAUTHORIZED);
     }
-
-    String cleanRequestBody = requestBody.replace("\"", "");
-    String prompt = "Please write a very short poem about a team named" + cleanRequestBody;
-
-    // Call the AI service to generate a description
-    Optional<String> description = aiService.generateDescription(prompt);
-    if (!description.isPresent()) {
-      return new ResponseEntity<>("Unable to generate description", HttpStatus.BAD_REQUEST);
+  
+    try {
+      String cleanRequestBody = requestBody.replace("\"", "");
+      String prompt = "Please write a very short poem about a team named" + cleanRequestBody;
+  
+      // Call the AI service to generate a description
+      Optional<String> description = aiService.generateDescription(prompt);
+      if (!description.isPresent()) {
+        return new ResponseEntity<>("Unable to generate description", HttpStatus.BAD_REQUEST);
+      }
+  
+      System.out.println("The description has been set to: " + description.get());
+      return new ResponseEntity<>(description.get(), HttpStatus.OK);
+    } 
+    catch (RuntimeException e) {
+      // Log the error message and return a 400 Bad Request response
+      System.err.println(e.getMessage());
+      return new ResponseEntity<>("Unable to call AI service", HttpStatus.BAD_REQUEST);
     }
-
-    System.out.println("The description has been set to: " + description.get());
-    return new ResponseEntity<>(description.get(), HttpStatus.OK);
   }
 }
