@@ -293,3 +293,17 @@ timeline
   send mail endpoint & ci/cd
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/175:
   timestamp user created/modified
+
+### B1s9l
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/65:
+  implemented mail in frontend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/110:
+  Adjusted the input length validation according to backend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/113:
+  Fixed the bug where the session goal would sometimes not load properly
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/114:
+  Implemented the AI button for the team description
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/126:
+  implemented app-wide popup notifications
+
+  
