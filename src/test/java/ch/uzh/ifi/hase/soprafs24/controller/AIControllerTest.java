@@ -38,20 +38,20 @@ public class AIControllerTest {
     User user = new User();
     user.setUserId(1L);
     user.setToken("token");
-  
+
     // And a valid request body
     String requestBody = "The Warriors";
-  
+
     // When the user is authorized and the AI Service returns a description
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
     given(aiService.generateDescription(anyString())).willReturn(Optional.of("Some description"));
-  
+
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
-                                                  .header("Authorization", "Bearer token")
-                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                  .content(asJsonString(requestBody));
-  
+                                                    .header("Authorization", "Bearer token")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(requestBody));
+
     // Then the request should be successful and the response should not be null or empty
     mockMvc.perform(postRequest)
         .andExpect(status().isOk())
@@ -91,20 +91,21 @@ public class AIControllerTest {
     User user = new User();
     user.setUserId(1L);
     user.setToken("token");
-  
+
     // And a valid request body
     String requestBody = "The Warriors";
-  
+
     // When the user is authorized but the AI Service fails
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
-    given(aiService.generateDescription(anyString())).willThrow(new RuntimeException("AI Service failed"));
-  
+    given(aiService.generateDescription(anyString()))
+        .willThrow(new RuntimeException("AI Service failed"));
+
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
                                                     .header("Authorization", "Bearer token")
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(asJsonString(requestBody));
-  
+
     // Then the request should return Bad Request status
     mockMvc.perform(postRequest)
         .andExpect(status().isBadRequest())
@@ -121,20 +122,21 @@ public class AIControllerTest {
     User user = new User();
     user.setUserId(1L);
     user.setToken("token");
-  
+
     // And an invalid request body
     String requestBody = "The Warriors";
-  
+
     // When the user is authorized but the request body is invalid
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
-    given(aiService.generateDescription(anyString())).willThrow(new IllegalArgumentException("Invalid input"));
-  
+    given(aiService.generateDescription(anyString()))
+        .willThrow(new IllegalArgumentException("Invalid input"));
+
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
-                                                .header("Authorization", "Bearer token")
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .content(asJsonString(requestBody));
-  
+                                                    .header("Authorization", "Bearer token")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(requestBody));
+
     // Then the request should return Bad Request status
     mockMvc.perform(postRequest).andExpect(status().isBadRequest());
   }
