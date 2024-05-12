@@ -326,4 +326,3 @@ timeline
   Implement Query Calls to get Tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
   Fix Drag and Drop Issue
-
