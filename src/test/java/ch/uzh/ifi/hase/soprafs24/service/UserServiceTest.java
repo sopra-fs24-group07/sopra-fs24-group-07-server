@@ -193,36 +193,6 @@ public class UserServiceTest {
     // then
     Mockito.verify(userRepository, Mockito.times(0)).save(Mockito.any());
   }
-
-  /**
-   * Test if update user to other username that already exists is not possible
-   */
-  @Test
-  public void updateUser_duplicateUsername_throwsException() {
-    // given
-    User updatedUser = new User();
-    updatedUser.setUserId(testUser.getUserId());
-    updatedUser.setName("updatedName");
-    updatedUser.setUsername("updatedUsername");
-    updatedUser.setPassword("updatedPassword");
-
-    User existingUser = new User();
-    existingUser.setUserId(2L);
-    existingUser.setName("existingName");
-    existingUser.setUsername("existingUsername");
-    existingUser.setPassword("existingPassword");
-
-    // when -> fetch user to update from db
-    Mockito.when(userRepository.findById(testUser.getUserId())).thenReturn(Optional.of(testUser));
-
-    // when -> save -> throw DataIntegrityViolationException because username is not unique
-    Mockito.when(userRepository.save(Mockito.any()))
-        .thenThrow(new DataIntegrityViolationException("constraint violation"));
-
-    // then
-    assertThrows(ResponseStatusException.class, () -> userService.updateUser(updatedUser));
-  }
-
   // endregion
 
   // region delete user

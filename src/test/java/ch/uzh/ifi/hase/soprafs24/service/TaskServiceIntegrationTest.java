@@ -7,9 +7,14 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,8 +47,7 @@ public class TaskServiceIntegrationTest {
     Mockito.doNothing().when(pusherService).taskModification(Mockito.anyString());
   }
 
-  // POST
-
+  // region create task
   /**
    * Test for creating a new task with valid inputs
    */
@@ -160,6 +164,37 @@ public class TaskServiceIntegrationTest {
     assertThrows(ResponseStatusException.class, () -> taskService.createTask(testTask));
   }
 
+  @ParameterizedTest
+  @MethodSource("createTaskLengthTests")
+  void createTask_testInputLength(String title, String description, boolean shouldThrow) {
+    // given user in db to update
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid");
+    team = teamRepository.saveAndFlush(team);
+
+    // given a task
+    Task testTask = new Task();
+    testTask.setTitle(title);
+    testTask.setDescription(description);
+    testTask.setTeam(team);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class, () -> { taskService.createTask(testTask); });
+    } else {
+      assertDoesNotThrow(() -> { taskService.createTask(testTask); });
+    }
+  }
+
+  private static Stream<Arguments> createTaskLengthTests() {
+    return Stream.of(Arguments.of("task title 123", "description", false), // all ok
+        Arguments.of("t".repeat(101), "username", true), // too long title
+        Arguments.of("task title 123", "d".repeat(1001), true) // too long desc
+    );
+  }
+  // endregion
+
   // GET
   @Test
   public void getTasksByTeamId_validInputs_success() {
@@ -248,8 +283,70 @@ public class TaskServiceIntegrationTest {
     assertTrue(exception.getReason().contains("Team not found")); // adjusted assertion
   }
 
+  /**
+   * Test for getting tasks by team id and status with valid inputs
+   */
+  @Test
+  public void getTasksByTeamIdAndStatus_validInputs_success() {
+    // given a team with tasks
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid"); // set teamUUID
+    team = teamRepository.saveAndFlush(team);
+
+    Task testTask1 = new Task();
+    testTask1.setTitle("Task A");
+    testTask1.setDescription("This is task A");
+    testTask1.setTeam(team);
+    testTask1.setStatus(TaskStatus.TODO);
+    taskRepository.saveAndFlush(testTask1);
+
+    Task testTask2 = new Task();
+    testTask2.setTitle("Task B");
+    testTask2.setDescription("This is task B");
+    testTask2.setTeam(team);
+    testTask2.setStatus(TaskStatus.IN_SESSION);
+    taskRepository.saveAndFlush(testTask2);
+
+    List<TaskStatus> statusList = new ArrayList<>();
+    statusList.add(TaskStatus.TODO);
+
+    // when
+    List<Task> tasks = taskService.getTasksByTeamIdAndStatus(team.getTeamId(), statusList);
+
+    // then
+    assertEquals(1, tasks.size());
+    assertEquals(testTask1.getTaskId(), tasks.get(0).getTaskId());
+  }
+
+  /**
+   * Test for getting tasks by team id and status with invalid team id
+   */
+  @Test
+  public void getTasksByTeamIdAndStatus_invalidTeamId_throwsException() {
+    // given a valid team id
+    Team validTeam = new Team();
+    validTeam.setName("Valid Team");
+    validTeam.setDescription("Valid Team Description");
+    validTeam.setTeamUUID("valid-team-uuid");
+    validTeam = teamRepository.saveAndFlush(validTeam);
+
+    // given an invalid team id
+    Long invalidTeamId = validTeam.getTeamId() + 1;
+    List<TaskStatus> statusList = new ArrayList<>();
+    statusList.add(TaskStatus.TODO);
+
+    // when & then
+    ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+        () -> taskService.getTasksByTeamIdAndStatus(invalidTeamId, statusList));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertTrue(exception.getReason().contains("Team not found")); // adjusted assertion
+  }
+
   // PUT
 
+  // region update task
   /**
    * Test for updating an existing task with valid inputs
    */
@@ -336,4 +433,43 @@ public class TaskServiceIntegrationTest {
     assertThrows(ResponseStatusException.class,
         () -> taskService.updateTask(nonExistingTask, savedTeam.getTeamId()));
   }
+
+  @ParameterizedTest
+  @MethodSource("updateTaskLengthTests")
+  void updateTask_testInputLength(String title, String description, boolean shouldThrow) {
+    // given a team
+    Team team = new Team();
+    team.setName("Team A");
+    team.setDescription("Lorem");
+    team.setTeamUUID("team-uuid");
+    Team savedTeam = teamRepository.saveAndFlush(team);
+
+    // given an existing task
+    Task existingTask = new Task();
+    existingTask.setTitle("Task A");
+    existingTask.setDescription("This is task A");
+    existingTask.setTeam(savedTeam);
+    existingTask.setStatus(TaskStatus.TODO);
+    Task savedTask = taskRepository.saveAndFlush(existingTask);
+
+    // update task
+    savedTask.setTitle(title);
+    savedTask.setDescription(description);
+    savedTask.setStatus(TaskStatus.IN_SESSION);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class,
+          () -> { taskService.updateTask(savedTask, team.getTeamId()); });
+    } else {
+      assertDoesNotThrow(() -> { taskService.updateTask(savedTask, team.getTeamId()); });
+    }
+  }
+
+  private static Stream<Arguments> updateTaskLengthTests() {
+    return Stream.of(Arguments.of("task title 123", "description", false), // all ok
+        Arguments.of("t".repeat(101), "username", true), // too long title
+        Arguments.of("task title 123", "d".repeat(1001), true) // too long desc
+    );
+  }
+  // endregion
 }

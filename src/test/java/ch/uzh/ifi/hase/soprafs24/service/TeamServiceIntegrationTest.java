@@ -4,8 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.repository.TeamRepository;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -165,6 +169,29 @@ public class TeamServiceIntegrationTest {
     // two teams should exist
     assertEquals(2, teamRepository.findAll().size());
   }
+
+  @ParameterizedTest
+  @MethodSource("createTeamLengthTests")
+  void createTeam_testInputLength(String name, String description, boolean shouldThrow) {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName(name);
+    testTeam.setDescription(description);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class, () -> { teamService.createTeam(testTeam); });
+    } else {
+      assertDoesNotThrow(() -> { teamService.createTeam(testTeam); });
+    }
+  }
+
+  private static Stream<Arguments> createTeamLengthTests() {
+    return Stream.of(Arguments.of("productiviteam", "description", false), // valid length
+        Arguments.of("t".repeat(101), "description", true), // too long title
+        Arguments.of("productiviteam", "d".repeat(1001), true) // too long description
+    );
+  }
+
   // endregion
 
   // region updateTeam tests
@@ -271,6 +298,35 @@ public class TeamServiceIntegrationTest {
 
     // then
     assertThrows(ResponseStatusException.class, () -> teamService.updateTeam(teamToUpdate));
+  }
+  @ParameterizedTest
+  @MethodSource("updateTeamLengthTests")
+  void updateTeam_testInputLength(String name, String description, boolean shouldThrow) {
+    // given
+    Team testTeam = new Team();
+    testTeam.setName("productiviTeam");
+    testTeam.setDescription("We are a productive team!");
+    testTeam.setTeamUUID("team-uuid");
+    teamRepository.saveAndFlush(testTeam);
+
+    // update team
+    Team teamToUpdate = new Team();
+    teamToUpdate.setTeamId(testTeam.getTeamId());
+    teamToUpdate.setName(name);
+    teamToUpdate.setDescription(description);
+
+    if (shouldThrow) {
+      assertThrows(ResponseStatusException.class, () -> { teamService.updateTeam(teamToUpdate); });
+    } else {
+      assertDoesNotThrow(() -> { teamService.updateTeam(teamToUpdate); });
+    }
+  }
+
+  private static Stream<Arguments> updateTeamLengthTests() {
+    return Stream.of(Arguments.of("productiviteam", "description", false), // valid length
+        Arguments.of("t".repeat(101), "description", true), // too long title
+        Arguments.of("productiviteam", "d".repeat(1001), true) // too long description
+    );
   }
 
   // endregion

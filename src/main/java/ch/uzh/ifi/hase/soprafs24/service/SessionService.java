@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -108,7 +109,8 @@ public class SessionService {
     List<Session> sessions = getSessionsByTeamId(teamId);
 
     // check if the team has an active session
-    if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null) {
+    if (sessions.isEmpty() || sessions.get(0).getEndDateTime() != null
+        || isSessionExpired(sessions.get(0))) {
       log.error("Team with teamId '{}' has no active session", teamId);
       throw new ResponseStatusException(HttpStatus.GONE, "Team has no active session");
     }
@@ -124,5 +126,20 @@ public class SessionService {
     log.debug("Ended session: {}; started at {}; ended at {}", endedSession,
         endedSession.getStartDateTime(), endedSession.getEndDateTime());
     return endedSession;
+  }
+
+  private boolean isSessionExpired(Session session) {
+    return session.getStartDateTime().plusHours(24).isBefore(LocalDateTime.now());
+  }
+
+  @Scheduled(fixedRate = 3600000) // runs every hour
+  public void endExpiredSessions() {
+    log.debug("Checking for expired sessions...");
+    List<Session> sessions = sessionRepository.findByEndDateTimeIsNull();
+    for (Session session : sessions) {
+      if (isSessionExpired(session)) {
+        endSession(session.getTeam().getTeamId());
+      }
+    }
   }
 }

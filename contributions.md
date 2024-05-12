@@ -326,3 +326,11 @@ timeline
   Implement Query Calls to get Tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
   Fix Drag and Drop Issue
+=======
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/175:
+  Created/Modified timestamps on user
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/141:
+  mail service and tests
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/142:
+  mail controller and tests
+  
