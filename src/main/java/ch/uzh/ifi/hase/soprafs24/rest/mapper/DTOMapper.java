@@ -1,10 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Comment;
-import ch.uzh.ifi.hase.soprafs24.entity.Session;
-import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +53,10 @@ public interface DTOMapper {
   @Mapping(source = "name", target = "name")
   @Mapping(source = "description", target = "description")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
+
+  @Mapping(source = "teamUUID", target = "teamUUID")
+  @Mapping(source = "receiverEmail", target = "receiverEmail", defaultValue = "")
+  TeamInvitation convertTeamInvitationPostDTOtoEntity(TeamInvitationPostDTO teamInvitationPostDTO);
 
   @Mapping(target = "title", source = "title")
   @Mapping(target = "description", source = "description", defaultValue = "")

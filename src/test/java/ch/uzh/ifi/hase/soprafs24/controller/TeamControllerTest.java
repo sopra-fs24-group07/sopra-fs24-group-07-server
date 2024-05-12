@@ -13,14 +13,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import ch.uzh.ifi.hase.soprafs24.entity.TeamUser;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TaskPutDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.TeamPutDTO;
-import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
-import ch.uzh.ifi.hase.soprafs24.service.TaskService;
-import ch.uzh.ifi.hase.soprafs24.service.TeamService;
-import ch.uzh.ifi.hase.soprafs24.service.TeamUserService;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
+import ch.uzh.ifi.hase.soprafs24.service.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +42,7 @@ public class TeamControllerTest {
   @MockBean private AuthorizationService authorizationService;
   @MockBean private TeamUserService teamUserService;
   @MockBean private TaskService taskService;
+  @MockBean private MailService mailService;
 
   private User testUser;
 
@@ -258,6 +253,145 @@ public class TeamControllerTest {
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].userId", is(testUser.getUserId().intValue())))
         .andExpect(jsonPath("$[0].username", is(testUser.getUsername())));
+  }
+
+  // endregion
+
+  // region send invitation mail tests
+
+  @Test
+  public void sendInvitationToEmail_validInput_success() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setTeamUUID("team-uuid");
+
+    // given teamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+    teamInvitationPostDTO.setReceiverEmail("receiver@productiviteam.co");
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+
+    // when -> get team uuid -> success
+    given(teamService.getTeamByTeamId(Mockito.anyLong())).willReturn(testTeam);
+
+    // when -> send invitation mail -> success
+    Mockito.doNothing()
+        .when(mailService)
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        post("/api/v1/teams/" + testTeam.getTeamId().toString() + "/invitations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO))
+            .header("Authorization", "valid-token");
+    mockMvc.perform(getRequest).andExpect(status().isOk());
+
+    // verify that mailService.sendInvitationEmail() is called
+    Mockito.verify(mailService, Mockito.times(1))
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
+  }
+
+  @Test
+  public void sendInvitationToEmail_invalidToken_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setTeamUUID("team-uuid");
+
+    // given teamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+    teamInvitationPostDTO.setReceiverEmail("receiver@productiviteam.co");
+
+    // when -> is auth check -> is invalid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.any(), Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder postRequest =
+        post("/api/v1/teams/" + testTeam.getTeamId().toString() + "/invitations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO))
+            .header("Authorization", "invalid-token");
+    mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+
+    // verify that mailService.sendInvitationEmail() is never called
+    Mockito.verify(mailService, Mockito.never())
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
+  }
+
+  @Test
+  public void sendInvitationToEmail_invalidTeamUUID_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setTeamUUID("team-uuid");
+
+    // given teamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("SOME-OTHER-UUID");
+    teamInvitationPostDTO.setReceiverEmail("receiver@productiviteam.co");
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+
+    // when -> get team uuid -> got team but has different uuid
+    given(teamService.getTeamByTeamId(Mockito.anyLong())).willReturn(testTeam);
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        post("/api/v1/teams/" + testTeam.getTeamId().toString() + "/invitations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO))
+            .header("Authorization", "valid-token");
+    mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+
+    // verify that mailService.sendInvitationEmail() is never called
+    Mockito.verify(mailService, Mockito.never())
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
+  }
+
+  @Test
+  public void sendInvitationToEmail_invalidEmail_throwsError() throws Exception {
+    // given test team
+    Team testTeam = new Team();
+    testTeam.setTeamId(1L);
+    testTeam.setTeamUUID("team-uuid");
+
+    // given teamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+    teamInvitationPostDTO.setReceiverEmail("invalid-email");
+
+    // when -> is auth check -> is valid
+    given(authorizationService.isAuthorizedAndBelongsToTeam(Mockito.anyString(), Mockito.anyLong()))
+        .willReturn(testUser);
+
+    // when -> get team uuid -> success
+    given(teamService.getTeamByTeamId(Mockito.anyLong())).willReturn(testTeam);
+
+    // when -> send invitation mail -> 400 invalid email
+    Mockito.doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST))
+        .when(mailService)
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
+
+    // when -> perform get request
+    MockHttpServletRequestBuilder getRequest =
+        post("/api/v1/teams/" + testTeam.getTeamId().toString() + "/invitations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ControllerTestHelper.asJsonString(teamInvitationPostDTO))
+            .header("Authorization", "valid-token");
+    mockMvc.perform(getRequest).andExpect(status().isBadRequest());
+
+    // verify that mailService.sendInvitationEmail() is called but throws error
+    Mockito.verify(mailService, Mockito.times(1))
+        .sendInvitationEmail(Mockito.anyString(), Mockito.anyString());
   }
 
   // endregion

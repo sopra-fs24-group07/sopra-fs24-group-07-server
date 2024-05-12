@@ -67,6 +67,12 @@ jobs:
           echo "  PUSHER_KEY: '${{ secrets.PUSHER_KEY }}'" >> app.yaml
           echo "  PUSHER_SECRET: '${{ secrets.PUSHER_SECRET }}'" >> app.yaml
 
+      - name: Add Mailjet credentials
+        run: |
+          echo "  MAILJET_KEY: '${{ secrets.MAILJET_KEY }}'" >> app.yaml
+          echo "  MAILJET_SECRET: '${{ secrets.MAILJET_SECRET }}'" >> app.yaml
+          echo "  MAILJET_SENDER_EMAIL: '${{ secrets.MAILJET_SENDER_EMAIL }}'" >> app.yaml
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
