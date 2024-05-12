@@ -109,4 +109,31 @@ public class AIControllerTest {
         .andExpect(status().isBadRequest())
         .andExpect(content().string("Unable to generate description"));
   }
+
+  /**
+   * Test for callGpt35Instruct method with invalid input.
+   * Ensures that the method returns Bad Request status.
+   */
+  @Test
+  public void callGpt35Instruct_invalidInput_badRequest() throws Exception {
+    // Given a user with a valid token
+    User user = new User();
+    user.setUserId(1L);
+    user.setToken("token");
+
+    // And an invalid request body
+    String requestBody = "The Warriors";
+
+    // When the user is authorized but the request body is invalid
+    given(authorizationService.isAuthorized(anyString())).willReturn(user);
+
+    // Construct the POST request
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
+                                                    .header("Authorization", "Bearer token")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(requestBody));
+
+    // Then the request should return Bad Request status
+    mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+  }
 }
