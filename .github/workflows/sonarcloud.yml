@@ -45,16 +45,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-#      - name: Test and analyze with sonarcloud
-#        run: ./gradlew test sonar --info
-#        env:
-#          SPRING_PROFILES_ACTIVE: dev
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          DB_URL: jdbc:postgresql://localhost:5432/test_db
-#          DB_UNM: test_user
-#          DB_PSW: test_password
-#          DB_DDL_AUTO: create-drop
+      - name: Test and analyze with sonarcloud
+        run: ./gradlew test sonar --info
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DB_URL: jdbc:postgresql://localhost:5432/test_db
+          DB_UNM: test_user
+          DB_PSW: test_password
+          DB_DDL_AUTO: create-drop
 
       - name: Test report and analyze with sonarcloud
         run: ./gradlew jacocoTestReport sonar --info
