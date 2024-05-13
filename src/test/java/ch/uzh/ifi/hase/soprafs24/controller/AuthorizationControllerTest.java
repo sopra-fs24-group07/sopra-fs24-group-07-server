@@ -12,8 +12,6 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.AgoraAuthPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.LoginPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AgoraService;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +104,8 @@ public class AuthorizationControllerTest {
         .willReturn(new User());
 
     // when -> get token -> return testToken
-    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString())).willReturn("testToken");
+    given(agoraService.getRtcToken(Mockito.anyLong(), Mockito.anyString())).willReturn("rtcToken");
+    given(agoraService.getRtmToken(Mockito.anyLong())).willReturn("rtmToken");
 
     // when/then -> do the request + validate the result
     MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
@@ -117,10 +116,13 @@ public class AuthorizationControllerTest {
     // then
     mockMvc.perform(postRequest)
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.token").value("testToken"));
+        .andExpect(jsonPath("$.rtcToken").value("rtcToken"))
+        .andExpect(jsonPath("$.rtmToken").value("rtmToken"));
 
     // verify service was called
-    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.times(1))
+        .getRtcToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.times(1)).getRtmToken(Mockito.anyLong());
   }
 
   @Test
@@ -141,7 +143,46 @@ public class AuthorizationControllerTest {
         .willReturn(new User());
 
     // when -> get token -> throw exception
-    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString()))
+    given(agoraService.getRtcToken(Mockito.anyLong(), Mockito.anyString()))
+        .willThrow(new ResponseStatusException(
+            HttpStatus.SERVICE_UNAVAILABLE, "Error while generating Agora token: Test exception"));
+    given(agoraService.getRtmToken(Mockito.anyLong())).willReturn("rtmToken");
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/api/v1/agora/getToken")
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .content(asJsonString(agoraAuthPostDTO))
+                                                    .header("Authorization", "1234");
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isServiceUnavailable());
+    // verify service was called\
+    Mockito.verify(agoraService, Mockito.times(1))
+        .getRtcToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.never())
+        .getRtmToken(Mockito.anyLong()); // rtc gets called first
+  }
+
+  @Test
+  public void testGetToken_rtmTokenBuilderException() throws Exception {
+    // given
+    Long userId = 1L;
+    Long teamId = 1L;
+    String channelName = "channelName";
+
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(userId);
+    agoraAuthPostDTO.setTeamId(teamId);
+    agoraAuthPostDTO.setChannelName(channelName);
+
+    // when -> authorized and part of team -> success
+    given(authorizationService.isAuthorizedAndBelongsToTeam(
+              Mockito.anyString(), Mockito.anyLong(), Mockito.anyLong()))
+        .willReturn(new User());
+
+    // when -> get token -> throw exception
+    given(agoraService.getRtcToken(Mockito.anyLong(), Mockito.anyString())).willReturn("rtcToken");
+    given(agoraService.getRtmToken(Mockito.anyLong()))
         .willThrow(new ResponseStatusException(
             HttpStatus.SERVICE_UNAVAILABLE, "Error while generating Agora token: Test exception"));
 
@@ -154,7 +195,9 @@ public class AuthorizationControllerTest {
     // then
     mockMvc.perform(postRequest).andExpect(status().isServiceUnavailable());
     // verify service was called\
-    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.times(1))
+        .getRtcToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.times(1)).getRtmToken(Mockito.anyLong());
   }
 
   @Test
@@ -184,7 +227,9 @@ public class AuthorizationControllerTest {
     // then
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
     // verify service was called
-    Mockito.verify(agoraService, Mockito.never()).getToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.never())
+        .getRtcToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.never()).getRtmToken(Mockito.anyLong());
   }
 
   @Test
@@ -205,7 +250,7 @@ public class AuthorizationControllerTest {
         .willReturn(new User());
 
     // when -> get token -> return testToken
-    given(agoraService.getToken(Mockito.anyLong(), Mockito.anyString()))
+    given(agoraService.getRtcToken(Mockito.anyLong(), Mockito.anyString()))
         .willThrow(new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "channelName cannot be empty or only whitespace!"));
 
@@ -218,7 +263,8 @@ public class AuthorizationControllerTest {
     // then
     mockMvc.perform(postRequest).andExpect(status().isBadRequest());
     // verify service was called
-    Mockito.verify(agoraService, Mockito.times(1)).getToken(Mockito.anyLong(), Mockito.anyString());
+    Mockito.verify(agoraService, Mockito.times(1))
+        .getRtcToken(Mockito.anyLong(), Mockito.anyString());
   }
 
   // endregion

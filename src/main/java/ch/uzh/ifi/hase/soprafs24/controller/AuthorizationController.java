@@ -57,7 +57,7 @@ public class AuthorizationController {
   @PostMapping("/agora/getToken")
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
-  AgoraAuthGetDTO getToken(@RequestBody AgoraAuthPostDTO agoraAuthPostDTO,
+  AgoraAuthGetDTO getAgoraToken(@RequestBody AgoraAuthPostDTO agoraAuthPostDTO,
       @RequestHeader("Authorization") String userToken) {
     AgoraAuth agoraAuth = DTOMapper.INSTANCE.convertAgoraAuthPostDTOtoEntity(agoraAuthPostDTO);
 
@@ -66,8 +66,9 @@ public class AuthorizationController {
         userToken, agoraAuth.getUserId(), agoraAuth.getTeamId());
 
     // get token from AgoraService
-    String token = agoraService.getToken(agoraAuth.getUserId(), agoraAuth.getChannelName());
+    String rtcToken = agoraService.getRtcToken(agoraAuth.getUserId(), agoraAuth.getChannelName());
+    String rtmToken = agoraService.getRtmToken(agoraAuth.getUserId());
 
-    return DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(token);
+    return DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(rtcToken, rtmToken);
   }
 }

@@ -313,13 +313,16 @@ public class DTOMapperTest {
   @Test
   public void tokenString_toAgoraAuthGetDTO_success() {
     // create token string
-    String token = "token";
+    String rtcToken = "rtc";
+    String rtmToken = "rtm";
 
     // MAP -> Create AgoraAuthGetDTO
-    AgoraAuthGetDTO agoraAuthGetDTO = DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(token);
+    AgoraAuthGetDTO agoraAuthGetDTO =
+        DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(rtcToken, rtmToken);
 
     // check content
-    assertEquals(token, agoraAuthGetDTO.getToken());
+    assertEquals(rtcToken, agoraAuthGetDTO.getRtcToken());
+    assertEquals(rtmToken, agoraAuthGetDTO.getRtmToken());
   }
   // endregion
 }

@@ -99,8 +99,9 @@ public interface DTOMapper {
   @Mapping(source = "channelName", target = "channelName")
   AgoraAuth convertAgoraAuthPostDTOtoEntity(AgoraAuthPostDTO agoraAuthPostDTO);
 
-  @Mapping(source = "token", target = "token")
-  AgoraAuthGetDTO convertEntityToAgoraAuthGetDTO(String token);
+  @Mapping(source = "rtcToken", target = "rtcToken")
+  @Mapping(source = "rtmToken", target = "rtmToken")
+  AgoraAuthGetDTO convertEntityToAgoraAuthGetDTO(String rtcToken, String rtmToken);
 
   default String formatLocalDateTime(LocalDateTime localDateTime) {
     return localDateTime == null

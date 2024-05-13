@@ -1,13 +1,22 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 public class AgoraAuthGetDTO {
-  private String token;
+  private String rtcToken;
+  private String rtmToken;
 
-  public String getToken() {
-    return token;
+  public String getRtcToken() {
+    return rtcToken;
   }
 
-  public void setToken(String token) {
-    this.token = token;
+  public void setRtcToken(String rtcToken) {
+    this.rtcToken = rtcToken;
+  }
+
+  public String getRtmToken() {
+    return rtmToken;
+  }
+
+  public void setRtmToken(String rtmToken) {
+    this.rtmToken = rtmToken;
   }
 }
