@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.config;
 
 import ch.uzh.ifi.hase.soprafs24.agora.RtcTokenBuilder2;
+import ch.uzh.ifi.hase.soprafs24.agora.RtmTokenBuilder2;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +21,11 @@ public class AgoraConfigDev {
   @Primary
   public RtcTokenBuilder2 rtcTokenBuilder2() {
     return Mockito.mock(RtcTokenBuilder2.class);
+  }
+
+  @Bean
+  @Primary
+  public RtmTokenBuilder2 rtmTokenBuilder2() {
+    return Mockito.mock(RtmTokenBuilder2.class);
   }
 }

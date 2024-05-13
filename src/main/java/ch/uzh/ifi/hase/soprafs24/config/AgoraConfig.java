@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.config;
 
 import ch.uzh.ifi.hase.soprafs24.agora.RtcTokenBuilder2;
+import ch.uzh.ifi.hase.soprafs24.agora.RtmTokenBuilder2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,5 +24,11 @@ public class AgoraConfig {
   @Primary
   public RtcTokenBuilder2 rtcTokenBuilder2() {
     return new RtcTokenBuilder2();
+  }
+
+  @Bean
+  @Primary
+  public RtmTokenBuilder2 rtmTokenBuilder2() {
+    return new RtmTokenBuilder2();
   }
 }
