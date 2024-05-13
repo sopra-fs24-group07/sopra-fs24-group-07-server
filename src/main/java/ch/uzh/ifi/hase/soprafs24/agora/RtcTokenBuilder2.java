@@ -1,14 +1,16 @@
 package ch.uzh.ifi.hase.soprafs24.agora;
 
-import ch.uzh.ifi.hase.soprafs24.agora.AccessToken2;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @see <a
  *     href="https://github.com/AgoraIO/Tools/tree/master/DynamicKey/AgoraDynamicKey/java">...</a>
  */
 public class RtcTokenBuilder2 {
+  private final Logger log = LoggerFactory.getLogger(UserService.class);
+
   public enum Role {
     ROLE_PUBLISHER(1),
     ROLE_SUBSCRIBER(2),
@@ -93,7 +95,8 @@ public class RtcTokenBuilder2 {
     try {
       return accessToken.build();
     } catch (Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      log.error("Error while generating Agora RTC token: " + e.getMessage());
       return "";
     }
   }

@@ -1,6 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.agora;
 
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RtmTokenBuilder2 {
+  private final Logger log = LoggerFactory.getLogger(UserService.class);
+
   /**
    * Build the RTM token.
    *
@@ -25,7 +31,8 @@ public class RtmTokenBuilder2 {
     try {
       return accessToken.build();
     } catch (Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      log.error("Error while generating Agora RTM token: " + e.getMessage());
       return "";
     }
   }

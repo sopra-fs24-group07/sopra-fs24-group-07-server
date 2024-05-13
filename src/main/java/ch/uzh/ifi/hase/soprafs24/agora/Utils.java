@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.agora;
 
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -13,8 +14,12 @@ import java.util.zip.Inflater;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Utils {
+  private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
   public static final long HMAC_SHA256_LENGTH = 32;
   public static final int VERSION_LENGTH = 3;
   public static final int APP_ID_LENGTH = 32;
@@ -93,7 +98,8 @@ public class Utils {
       output = bos.toByteArray();
     } catch (Exception e) {
       output = data;
-      e.printStackTrace();
+      log.error("Error while compressing data: " + e.getMessage());
+      // e.printStackTrace();
     } finally {
       deflater.end();
     }
@@ -114,7 +120,8 @@ public class Utils {
         bos.write(buf, 0, len);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      log.error("Error while decompressing data: " + e.getMessage());
     } finally {
       inflater.end();
     }

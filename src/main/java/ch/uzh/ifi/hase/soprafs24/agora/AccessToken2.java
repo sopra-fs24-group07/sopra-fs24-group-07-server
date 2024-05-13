@@ -1,10 +1,15 @@
 package ch.uzh.ifi.hase.soprafs24.agora;
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AccessToken2 {
+  private final Logger log = LoggerFactory.getLogger(UserService.class);
+
   public enum PrivilegeRtc {
     PRIVILEGE_JOIN_CHANNEL(1),
     PRIVILEGE_PUBLISH_AUDIO_STREAM(2),
@@ -180,7 +185,8 @@ public class AccessToken2 {
         this.services.put(serviceType, service);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
+      log.error("Error while parsing Agora token: " + e.getMessage());
       return false;
     }
 
