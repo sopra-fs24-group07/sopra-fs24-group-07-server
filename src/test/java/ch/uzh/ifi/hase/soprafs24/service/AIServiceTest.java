@@ -16,81 +16,81 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 public class AIServiceTest {
-    @Mock private WebClient webClient;
-    @Mock private WebClient.Builder webClientBuilder;
-    @Mock private WebClient.RequestHeadersSpec requestHeadersSpec;
-    @Mock private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
-    @Mock private WebClient.RequestBodySpec requestBodySpec;
-    @Mock private WebClient.RequestBodyUriSpec requestBodyUriSpec;
-    @Mock private WebClient.ResponseSpec responseSpec;
+  @Mock private WebClient webClient;
+  @Mock private WebClient.Builder webClientBuilder;
+  @Mock private WebClient.RequestHeadersSpec requestHeadersSpec;
+  @Mock private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
+  @Mock private WebClient.RequestBodySpec requestBodySpec;
+  @Mock private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+  @Mock private WebClient.ResponseSpec responseSpec;
 
-    private AIService aiService;
-    private ObjectMapper objectMapper;
-    private String openAiApiKey = "test_key";
+  private AIService aiService;
+  private ObjectMapper objectMapper;
+  private String openAiApiKey = "test_key";
 
-    @BeforeEach
-    private void setup() {
-        MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
-        when(webClientBuilder.build()).thenReturn(webClient);
-        aiService = new AIService(webClientBuilder, objectMapper); // manually initializing AIService
-    }
+  @BeforeEach
+  private void setup() {
+    MockitoAnnotations.openMocks(this);
+    objectMapper = new ObjectMapper();
+    when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+    when(webClientBuilder.build()).thenReturn(webClient);
+    aiService = new AIService(webClientBuilder, objectMapper); // manually initializing AIService
+  }
 
-    @Test
-    public void generateDescription_validInput_success() {
-        String prompt = "test prompt";
-        String aiResponse = "{\"choices\": [{\"text\": \"test description\"}]}";
-        String expectedDescription = "test description";
-        
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(aiResponse));
-        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+  @Test
+  public void generateDescription_validInput_success() {
+    String prompt = "test prompt";
+    String aiResponse = "{\"choices\": [{\"text\": \"test description\"}]}";
+    String expectedDescription = "test description";
 
-        Optional<String> description = aiService.generateDescription(prompt);
+    when(webClient.post()).thenReturn(requestBodyUriSpec);
+    when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(aiResponse));
+    when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
 
-        verify(webClient, times(1)).post();
-        verify(requestBodyUriSpec, times(1)).uri(anyString());
-        verify(requestBodySpec, times(2)).header(anyString(), anyString());
-        verify(requestBodySpec, times(1)).body(any());
-        verify(requestHeadersSpec, times(1)).retrieve();
-        verify(responseSpec, times(1)).bodyToMono(String.class);
+    Optional<String> description = aiService.generateDescription(prompt);
 
-        assertTrue(description.isPresent());
-        assertEquals(expectedDescription, description.get());
-    }
+    verify(webClient, times(1)).post();
+    verify(requestBodyUriSpec, times(1)).uri(anyString());
+    verify(requestBodySpec, times(2)).header(anyString(), anyString());
+    verify(requestBodySpec, times(1)).body(any());
+    verify(requestHeadersSpec, times(1)).retrieve();
+    verify(responseSpec, times(1)).bodyToMono(String.class);
 
-    @Test
-    public void generateDescription_apiException_throwsException() {
-        String prompt = "test prompt";
-        
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class))
-            .thenReturn(Mono.error(new Exception("AI Service failed")));
+    assertTrue(description.isPresent());
+    assertEquals(expectedDescription, description.get());
+  }
 
-        assertThrows(ResponseStatusException.class, () -> aiService.generateDescription(prompt));
-    }
+  @Test
+  public void generateDescription_apiException_throwsException() {
+    String prompt = "test prompt";
 
-    @Test
-    public void generateDescription_invalidResponse_throwsException() {
-        String prompt = "test prompt";
-        String aiResponse = "{\"choices\": [{\"invalid\": \"test description\"}]}";
-        
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(aiResponse));
+    when(webClient.post()).thenReturn(requestBodyUriSpec);
+    when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    when(responseSpec.bodyToMono(String.class))
+        .thenReturn(Mono.error(new Exception("AI Service failed")));
 
-        assertThrows(ResponseStatusException.class, () -> aiService.generateDescription(prompt));
-    }
+    assertThrows(ResponseStatusException.class, () -> aiService.generateDescription(prompt));
+  }
+
+  @Test
+  public void generateDescription_invalidResponse_throwsException() {
+    String prompt = "test prompt";
+    String aiResponse = "{\"choices\": [{\"invalid\": \"test description\"}]}";
+
+    when(webClient.post()).thenReturn(requestBodyUriSpec);
+    when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.header(anyString(), anyString())).thenReturn(requestBodySpec);
+    when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
+    when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(aiResponse));
+
+    assertThrows(ResponseStatusException.class, () -> aiService.generateDescription(prompt));
+  }
 }
