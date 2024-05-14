@@ -94,6 +94,13 @@ public interface DTOMapper {
   SessionGetDTO
   convertEntityToSessionGetDTO(Session session);
 
+  @Mapping(source = "promptParameter", target = "prompt")
+  AIPrompt convertAIPromptTeamDescriptionPostDTOtoEntity(
+      AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO);
+
+  @Mapping(source = "answer", target = "answer")
+  AIPromptGetDTO convertEntityToAIPromptGetDTO(AIPrompt aiPrompt);
+
   default String formatLocalDateTime(LocalDateTime localDateTime) {
     return localDateTime == null
         ? null

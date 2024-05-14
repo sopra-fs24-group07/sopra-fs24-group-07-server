@@ -3,12 +3,13 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import static ch.uzh.ifi.hase.soprafs24.controller.ControllerTestHelper.asJsonString;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.AIPromptGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.AIPromptTeamDescriptionPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.AIService;
 import ch.uzh.ifi.hase.soprafs24.service.AuthorizationService;
 import java.util.Optional;
@@ -17,14 +18,15 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(AIController.class)
 public class AIControllerTest {
   @Autowired private MockMvc mockMvc;
-
   @MockBean private AIService aiService;
   @MockBean private AuthorizationService authorizationService;
 
@@ -40,7 +42,12 @@ public class AIControllerTest {
     user.setToken("token");
 
     // And a valid request body
-    String requestBody = "The Warriors";
+    AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
+    requestBody.setPromptParameter("The Warriors");
+
+    // And a valid response
+    AIPromptGetDTO response = new AIPromptGetDTO();
+    response.setAnswer("Some description");
 
     // When the user is authorized and the AI Service returns a description
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
@@ -55,8 +62,7 @@ public class AIControllerTest {
     // Then the request should be successful and the response should not be null or empty
     mockMvc.perform(postRequest)
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.notNullValue()))
-        .andExpect(content().string(org.hamcrest.Matchers.not("")));
+        .andExpect(content().json(asJsonString(response)));
   }
 
   /**
@@ -66,10 +72,12 @@ public class AIControllerTest {
   @Test
   public void callGpt35Instruct_invalidToken_unauthorized() throws Exception {
     // Given a request body
-    String requestBody = "The Warriors";
+    AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
+    requestBody.setPromptParameter("The Warriors");
 
     // When the user is not authorized
-    given(authorizationService.isAuthorized(anyString())).willReturn(null);
+    given(authorizationService.isAuthorized(anyString()))
+        .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
@@ -93,7 +101,8 @@ public class AIControllerTest {
     user.setToken("token");
 
     // And a valid request body
-    String requestBody = "The Warriors";
+    AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
+    requestBody.setPromptParameter("The Warriors");
 
     // When the user is authorized but the AI Service fails
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
@@ -106,15 +115,13 @@ public class AIControllerTest {
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(asJsonString(requestBody));
 
-    // Then the request should return Bad Request status
-    mockMvc.perform(postRequest)
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string("Unable to call AI service"));
+    // Then the request should return Bad Gateway status
+    mockMvc.perform(postRequest).andExpect(status().isBadGateway());
   }
 
   /**
    * Test for callGpt35Instruct method with invalid input.
-   * Ensures that the method returns Bad Request status.
+   * Ensures that the method returns Bad Gateway status.
    */
   @Test
   public void callGpt35Instruct_invalidInput_badRequest() throws Exception {
@@ -124,7 +131,8 @@ public class AIControllerTest {
     user.setToken("token");
 
     // And an invalid request body
-    String requestBody = "The Warriors";
+    AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
+    requestBody.setPromptParameter("The Warriors");
 
     // When the user is authorized but the request body is invalid
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
@@ -137,7 +145,7 @@ public class AIControllerTest {
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(asJsonString(requestBody));
 
-    // Then the request should return Bad Request status
-    mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+    // Then the request should return Bad Gateway status
+    mockMvc.perform(postRequest).andExpect(status().isBadGateway());
   }
 }

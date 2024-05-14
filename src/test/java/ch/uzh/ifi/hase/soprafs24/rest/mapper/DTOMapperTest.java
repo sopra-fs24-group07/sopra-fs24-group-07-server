@@ -4,12 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.Comment;
-import ch.uzh.ifi.hase.soprafs24.entity.Session;
-import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.TeamInvitation;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -296,4 +291,31 @@ public class DTOMapperTest {
     assertEquals(comment.getUser().getUsername(), commentGetDTO.getAuthorName());
   }
   // endregion
+
+  // region ai prompt mappings
+  @Test
+  public void testCreateAIPrompt_fromAIPromptTeamDescriptionPostDTO_toAIPrompt_success() {
+    // create AIPromptTeamDescriptionPostDTO
+    AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO =
+        new AIPromptTeamDescriptionPostDTO();
+    aiPromptTeamDescriptionPostDTO.setPromptParameter("team title");
+
+    // MAP -> Create AIPrompt
+    AIPrompt aiPrompt = DTOMapper.INSTANCE.convertAIPromptTeamDescriptionPostDTOtoEntity(
+        aiPromptTeamDescriptionPostDTO);
+
+    assertEquals(aiPromptTeamDescriptionPostDTO.getPromptParameter(), aiPrompt.getPrompt());
+  }
+
+  @Test
+  public void testGetAIPrompt_fromAIPrompt_toAIPromptGetDTO_success() {
+    // create AIPrompt
+    AIPrompt aiPrompt = new AIPrompt();
+    aiPrompt.setAnswer("answer");
+
+    // MAP -> Create AIPromptGetDTO
+    AIPromptGetDTO aiPromptGetDTO = DTOMapper.INSTANCE.convertEntityToAIPromptGetDTO(aiPrompt);
+
+    assertEquals(aiPrompt.getAnswer(), aiPromptGetDTO.getAnswer());
+  }
 }
