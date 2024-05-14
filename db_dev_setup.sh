@@ -8,13 +8,13 @@ echo "---"
 echo ""
 
 # ----------------- ENVIRONMENT VARIABLES -----------------
-export DB_PSW=Welcome
-export DB_UNM=postgres
-export DB_URL=jdbc:postgresql://localhost:5433/productiviteam
-export DB_DDL_AUTO=create-drop
-export PUSHER_APP_ID=1787826
-export PUSHER_KEY=98eb073ecf324dc1bf65
-export PUSHER_SECRET=8f7fed92f02890d41525
+export DB_PSW=
+export DB_UNM=
+export DB_URL=
+export DB_DDL_AUTO=
+export PUSHER_APP_ID=
+export PUSHER_KEY=
+export PUSHER_SECRET=
 export MAILJET_KEY=
 export MAILJET_SECRET=
 export MAILJET_SENDER_EMAIL=
