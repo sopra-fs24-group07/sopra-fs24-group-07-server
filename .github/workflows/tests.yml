@@ -37,9 +37,6 @@ jobs:
       - name: Set up Spring Boot Database URL
         run: echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/test_db" >> $GITHUB_ENV
 
-      - name: Set up OpenAI API key
-        run: echo "OPENAI_API_KEY=sk-proj-Fm3G1LwU41VejIQxUHJvT3BlbkFJowbqcDAZcEekAwXL2BUg" >> $GITHUB_ENV
-
       - name: Build with Gradle
         run: ./gradlew build
         env:
