@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Task;
 import ch.uzh.ifi.hase.soprafs24.entity.Team;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository("taskRepository")
@@ -19,5 +21,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
   /** Select * from TASK where team = team and status <> status */
   List<Task> findByTeamAndStatusNot(Team team, TaskStatus status);
 
-  List<Task> findByTeamAndStatusInOrderByTitleAsc(Team team, List<TaskStatus> status);
+  @Query(
+      "SELECT t FROM Task t WHERE t.team = :team AND t.status IN :statuses ORDER BY LOWER(t.title) ASC")
+  List<Task>
+  findByTeamAndStatusInOrderByTitleAsc(
+      @Param("team") Team team, @Param("statuses") List<TaskStatus> statuses);
 }
