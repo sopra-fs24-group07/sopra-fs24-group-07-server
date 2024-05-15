@@ -28,8 +28,8 @@ public class AccessToken2Test {
     assertEquals(salt, accessToken.salt);
 
     String token = accessToken.build();
-    assertEquals(
-        "007eJxTYEiJ9+zw7Gb1viNuGtMfy3JriuZNp+1h1iLu/rOePHlS91WBwdLcwNnR2DQl1cwg2cTEzMQ0KSkx1SLRyNDUwMwwydjY/YsAQwQTAwMjAwgAAKtnGK8=",
+    assertEquals("007eJxTYEiJ9+zw7Gb1viNuGtMfy3JriuZNp+1h1iLu/"
+            + "rOePHlS91WBwdLcwNnR2DQl1cwg2cTEzMQ0KSkx1SLRyNDUwMwwydjY/YsAQwQTAwMjAwgAAKtnGK8=",
         token);
   }
 
@@ -47,8 +47,10 @@ public class AccessToken2Test {
     assertEquals(uid, serviceRtc.uid);
 
     String token = accessToken.build();
-    assertEquals(
-        "007eJxTYBBbsMMnKq7p9Hf/HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj",
+    assertEquals("007eJxTYBBbsMMnKq7p9Hf/"
+            + "HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQw"
+            + "MTAw"
+            + "MoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj",
         token);
   }
 
@@ -66,8 +68,9 @@ public class AccessToken2Test {
     assertEquals("", serviceRtc.uid);
 
     String token = accessToken.build();
-    assertEquals(
-        "007eJxTYLhzZP08Lxa1Pg57+TcXb/3cZ3wi4V6kbpbOog0G2dOYk20UGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiQwMADacImo=",
+    assertEquals("007eJxTYLhzZP08Lxa1Pg57+TcXb/"
+            + "3cZ3wi4V6kbpbOog0G2dOYk20UGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwM"
+            + "TAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiQwMADacImo=",
         token);
   }
 
@@ -85,8 +88,10 @@ public class AccessToken2Test {
     assertEquals(uid, serviceRtc.uid);
 
     String token = accessToken.build();
-    assertEquals(
-        "007eJxTYBBbsMMnKq7p9Hf/HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj",
+    assertEquals("007eJxTYBBbsMMnKq7p9Hf/"
+            + "HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQw"
+            + "MTAw"
+            + "MoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj",
         token);
   }
 
@@ -100,8 +105,9 @@ public class AccessToken2Test {
     serviceRtm.addPrivilegeRtm(AccessToken2.PrivilegeRtm.PRIVILEGE_LOGIN, expire);
 
     accessToken.addService(serviceRtm);
-    String expected =
-        "007eJxTYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhkbu38RYIhgYmBgZABhJiBmBPM5GUpSi0viS4tTiwBZVh6A";
+    String expected = "007eJxTYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/"
+        + "xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhkbu38RYIhgYmBgZ"
+        + "ABhJiBmBPM5GUpSi0viS4tTiwBZVh6A";
 
     assertEquals(expected, accessToken.build());
   }
@@ -172,8 +178,9 @@ public class AccessToken2Test {
   @Test
   public void parse_TokenRtc() {
     AccessToken2 accessToken = new AccessToken2();
-    boolean res = accessToken.parse(
-        "007eJxTYBBbsMMnKq7p9Hf/HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj");
+    boolean res = accessToken.parse("007eJxTYBBbsMMnKq7p9Hf/"
+        + "HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAw"
+        + "MoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxgDCaiTj");
     assertTrue(res);
     assertEquals(appId, accessToken.appId);
     assertEquals(expire, accessToken.expire);
@@ -212,8 +219,10 @@ public class AccessToken2Test {
   @Test
   public void parse_TokenRtc_Rtm_MultiService() {
     AccessToken2 accessToken = new AccessToken2();
-    boolean res = accessToken.parse(
-        "007eJxTYOAQsrQ5s3TfH+1tvy8zZZ46EpCc0V43JXdGd2jS8porKo4KDJbmBs6OxqYpqWYGySYmZiamSUmJqRaJRoamBmaGScbG7l8EGCKYGBgYGRgYmIAkCxCD+ExgkhlMsoBJBQbzFHMjYzPT1CRLC2MTC1NjS/NU41TjNMsUEzODpJSURC4GIwsLI2MTQyNzY5BZEJM4GUpSi0viS4tTiwAipyp4");
+    boolean res = accessToken.parse("007eJxTYOAQsrQ5s3TfH+"
+        + "1tvy8zZZ46EpCc0V43JXdGd2jS8porKo4KDJbmBs6OxqYpqWYGySYmZiamSUmJqRaJRoam"
+        + "BmaGScbG7l8EGCKYGBgYGRgYmIAkCxCD+ExgkhlMsoBJBQbzFHMjYzPT1CRLC2MTC1NjS/"
+        + "NU41TjNMsUEzODpJSURC4GIwsLI2MTQyNzY5BZEJM4GUpSi0viS4tTiwAipyp4");
     assertTrue(res);
     assertEquals(appId, accessToken.appId);
     assertEquals(expire, accessToken.expire);
@@ -246,8 +255,9 @@ public class AccessToken2Test {
   @Test
   public void parse_TokenRtm() {
     AccessToken2 accessToken = new AccessToken2();
-    boolean res = accessToken.parse(
-        "007eJxSYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhkbu38RYIhgYmBgZABhJgZGBkYwn5OhJLW4JL60OLUIEAAA//9ZVh6A");
+    boolean res = accessToken.parse("007eJxSYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/"
+        + "xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhk"
+        + "bu38RYIhgYmBgZABhJgZGBkYwn5OhJLW4JL60OLUIEAAA//9ZVh6A");
     assertTrue(res);
     assertEquals(appId, accessToken.appId);
     assertEquals(expire, accessToken.expire);

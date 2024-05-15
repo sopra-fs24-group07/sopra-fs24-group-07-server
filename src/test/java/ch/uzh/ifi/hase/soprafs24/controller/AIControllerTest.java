@@ -63,6 +63,7 @@ public class AIControllerTest {
     mockMvc.perform(postRequest)
         .andExpect(status().isOk())
         .andExpect(content().json(asJsonString(response)));
+    Mockito.verify(aiService, Mockito.times(1)).generateDescription(anyString());
   }
 
   /**
@@ -87,6 +88,7 @@ public class AIControllerTest {
 
     // Then the request should return Unauthorized status
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    Mockito.verify(aiService, Mockito.never()).generateDescription(anyString());
   }
 
   /**
@@ -99,26 +101,22 @@ public class AIControllerTest {
     User user = new User();
     user.setUserId(1L);
     user.setToken("token");
-
     // And a valid request body
     AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
     requestBody.setPromptParameter("The Warriors");
-
     // When the user is authorized but the AI Service fails
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
     given(aiService.generateDescription(anyString()))
-        .willThrow(new RuntimeException("AI Service failed"));
-
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "AI Service failed"));
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
                                                     .header("Authorization", "Bearer token")
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(asJsonString(requestBody));
-
     // Then the request should return Bad Gateway status
     mockMvc.perform(postRequest).andExpect(status().isBadGateway());
+    Mockito.verify(aiService, Mockito.times(1)).generateDescription(anyString());
   }
-
   /**
    * Test for callGpt35Instruct method with invalid input.
    * Ensures that the method returns Bad Gateway status.
@@ -129,23 +127,20 @@ public class AIControllerTest {
     User user = new User();
     user.setUserId(1L);
     user.setToken("token");
-
     // And an invalid request body
     AIPromptTeamDescriptionPostDTO requestBody = new AIPromptTeamDescriptionPostDTO();
     requestBody.setPromptParameter("The Warriors");
-
     // When the user is authorized but the request body is invalid
     given(authorizationService.isAuthorized(anyString())).willReturn(user);
     given(aiService.generateDescription(anyString()))
-        .willThrow(new IllegalArgumentException("Invalid input"));
-
+        .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input"));
     // Construct the POST request
     MockHttpServletRequestBuilder postRequest = post("/api/v1/ai/gpt-3.5-turbo-instruct")
                                                     .header("Authorization", "Bearer token")
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(asJsonString(requestBody));
-
     // Then the request should return Bad Gateway status
     mockMvc.perform(postRequest).andExpect(status().isBadGateway());
+    Mockito.verify(aiService, Mockito.times(1)).generateDescription(anyString());
   }
 }
