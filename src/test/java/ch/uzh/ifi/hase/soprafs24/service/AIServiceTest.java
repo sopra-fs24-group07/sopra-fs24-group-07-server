@@ -26,7 +26,6 @@ public class AIServiceTest {
 
   private AIService aiService;
   private ObjectMapper objectMapper;
-  private String openAiApiKey = "test_key";
 
   @BeforeEach
   private void setup() {
