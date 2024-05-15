@@ -318,4 +318,39 @@ public class DTOMapperTest {
 
     assertEquals(aiPrompt.getAnswer(), aiPromptGetDTO.getAnswer());
   }
+  // endregion
+
+  // region agora mappings
+  @Test
+  public void testCAgoraAuthPostDTO_toAgoraAuth_success() {
+    // create AgoraAuthPostDTO
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(1L);
+    agoraAuthPostDTO.setTeamId(42L);
+    agoraAuthPostDTO.setChannelName("channelName");
+
+    // MAP -> Create AgoraAuth
+    AgoraAuth agoraAuth = DTOMapper.INSTANCE.convertAgoraAuthPostDTOtoEntity(agoraAuthPostDTO);
+
+    // check content
+    assertEquals(agoraAuthPostDTO.getUserId(), agoraAuth.getUserId());
+    assertEquals(agoraAuthPostDTO.getTeamId(), agoraAuth.getTeamId());
+    assertEquals(agoraAuthPostDTO.getChannelName(), agoraAuth.getChannelName());
+  }
+
+  @Test
+  public void tokenString_toAgoraAuthGetDTO_success() {
+    // create token string
+    String rtcToken = "rtc";
+    String rtmToken = "rtm";
+
+    // MAP -> Create AgoraAuthGetDTO
+    AgoraAuthGetDTO agoraAuthGetDTO =
+        DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(rtcToken, rtmToken);
+
+    // check content
+    assertEquals(rtcToken, agoraAuthGetDTO.getRtcToken());
+    assertEquals(rtmToken, agoraAuthGetDTO.getRtmToken());
+  }
+  // endregion
 }
