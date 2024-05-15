@@ -78,6 +78,10 @@ jobs:
           echo "  AGORA_APP_ID: '${{ secrets.AGORA_APP_ID }}'" >> app.yaml
           echo "  AGORA_APP_CERTIFICATE: '${{ secrets.AGORA_APP_CERTIFICATE }}'" >> app.yaml
 
+      - name: Add OpenAI credentials
+        run: |
+          echo "  OPENAI_API_KEY: '${{ secrets.OPENAI_API_KEY }}'" >> app.yaml
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
