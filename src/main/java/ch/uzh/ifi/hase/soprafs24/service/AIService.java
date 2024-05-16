@@ -18,11 +18,13 @@ public class AIService {
 
   @Value("${OPENAI_API_KEY}") private String openAiApiKey;
 
+  // Constructor for the service with WebClient and ObjectMapper
   public AIService(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
     this.webClient = webClientBuilder.baseUrl("https://api.openai.com/v1").build();
     this.objectMapper = objectMapper;
   }
 
+  // Method to generate a description from a provided prompt
   public Optional<String> generateDescription(String prompt) {
     try {
       String requestBody = createRequestBody(prompt);
@@ -34,11 +36,13 @@ public class AIService {
     }
   }
 
+  // Method to create a request body for the POST request
   private String createRequestBody(String prompt) {
     return String.format(
         "{\"model\": \"gpt-3.5-turbo-instruct\", \"prompt\":\"%s\", \"max_tokens\": 50}", prompt);
   }
 
+  // Method to send the POST request to the OpenAI API
   private String sendPostRequest(String requestBody) {
     Mono<String> response = webClient.post()
                                 .uri("/completions")
@@ -51,10 +55,10 @@ public class AIService {
                                 .onStatus(HttpStatus::is5xxServerError,
                                     clientResponse -> Mono.error(new Exception("Server Error")))
                                 .bodyToMono(String.class);
-
     return response.block();
   }
 
+  // Method to parse the response body from the OpenAI API
   private String parseResponseBody(String responseBody) throws Exception {
     JsonNode rootNode = objectMapper.readTree(responseBody);
     JsonNode textNode = rootNode.path("choices").get(0).path("text");

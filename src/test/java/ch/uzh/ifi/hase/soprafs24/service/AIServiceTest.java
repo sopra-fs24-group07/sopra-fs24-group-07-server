@@ -31,11 +31,14 @@ public class AIServiceTest {
   private void setup() {
     MockitoAnnotations.openMocks(this);
     objectMapper = new ObjectMapper();
+
     when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
     when(webClientBuilder.build()).thenReturn(webClient);
-    aiService = new AIService(webClientBuilder, objectMapper); // manually initializing AIService
+
+    aiService = new AIService(webClientBuilder, objectMapper); // Manually initializing AIService
   }
 
+  // Test the generateDescription method with valid input
   @Test
   public void generateDescription_validInput_success() {
     String prompt = "test prompt";
@@ -63,6 +66,7 @@ public class AIServiceTest {
     assertEquals(expectedDescription, description.get());
   }
 
+  // Test the generateDescription method when the API throws an exception
   @Test
   public void generateDescription_apiException_throwsException() {
     String prompt = "test prompt";
@@ -78,6 +82,7 @@ public class AIServiceTest {
     assertThrows(ResponseStatusException.class, () -> aiService.generateDescription(prompt));
   }
 
+  // Test the generateDescription method with an invalid response
   @Test
   public void generateDescription_invalidResponse_throwsException() {
     String prompt = "test prompt";
