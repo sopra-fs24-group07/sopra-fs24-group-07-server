@@ -79,7 +79,8 @@ public class MailService {
     } catch (MailjetException ex) {
       log.error("Mail API Error: ", ex);
       throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-          "Mail API Exception. Did not send mail. Please check if correct email. Otherwise contact Administrator.");
+          "Mail API Exception. Did not send mail. Please check if correct email. Otherwise contact "
+              + "Administrator.");
     }
 
     return response;

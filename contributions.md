@@ -4,7 +4,7 @@
 
 ```mermaid
 timeline
-    title Production Milestone 3
+    title Production Milestone 1
     31.03.2024: Account Creation: Login: Auth : Team Creation
     07.04.2024: User Edit: Team Overview: Team Dashboard: Task Creation: Agora Voice Chat
     14.04.2024: Task Board: Task Details: Task Edit: Team Invitation: Session Start
@@ -240,17 +240,6 @@ timeline
   Integrated the pusher api to send signal to fetch new comments
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
-
-## Dynamically Planned Timeline
-
-```mermaid
-********timeline
-    title Production Milestone 4
-    to 05.05.2024: DB update: Refactor: VoiceChat Finish: Kanban Drag&Drop: Get Task Query: Session History
-    to 12.05.2024: Mail Invitations: Agora Token: Task Query Client: Icon Buttons: Client Refactoring
-    to 19.05.2024: Agora Token Client: Description Generating: Styling: Bugfixes
-    to 24.05.2024: Bugfixes: Abgabe
-```
 
 ## 27.04.2024 - 04.05.2024
 

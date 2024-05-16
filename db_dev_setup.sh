@@ -21,6 +21,7 @@ export MAILJET_SENDER_EMAIL=
 export AGORA_APP_ID=
 export AGORA_APP_KEY=
 export AGORA_APP_CERTIFICATE=
+export OPENAI_API_KEY=
 # ---------------------------------------------------------
 
 # ask the developer which profile to use and read the input
@@ -48,6 +49,7 @@ echo "MAILJET_SENDER_EMAIL=$MAILJET_SENDER_EMAIL"
 echo "AGORA_APP_ID=$AGORA_APP_ID"
 echo "AGORA_APP_KEY=$AGORA_APP_KEY"
 echo "AGORA_APP_CERTIFICATE=$AGORA_APP_CERTIFICATE"
+echo "OPENAI_API_KEY=$OPENAI_API_KEY"
 
 echo "---"
 echo "You can now run the application using the following command:"

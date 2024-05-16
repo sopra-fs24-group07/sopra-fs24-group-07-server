@@ -55,6 +55,7 @@ jobs:
           DB_UNM: postgres
           DB_PSW: test_password
           DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
 
       - name: Test report and analyze with sonarcloud
         run: ./gradlew jacocoTestReport sonar --info
@@ -66,6 +67,7 @@ jobs:
           DB_UNM: postgres
           DB_PSW: test_password
           DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
 
       - name: Build and analyze with sonarcloud
         env:
@@ -76,4 +78,5 @@ jobs:
           DB_UNM: postgres
           DB_PSW: test_password
           DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
         run: ./gradlew build sonar --info

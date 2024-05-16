@@ -292,6 +292,34 @@ public class DTOMapperTest {
   }
   // endregion
 
+  // region ai prompt mappings
+  @Test
+  public void testCreateAIPrompt_fromAIPromptTeamDescriptionPostDTO_toAIPrompt_success() {
+    // create AIPromptTeamDescriptionPostDTO
+    AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO =
+        new AIPromptTeamDescriptionPostDTO();
+    aiPromptTeamDescriptionPostDTO.setPromptParameter("team title");
+
+    // MAP -> Create AIPrompt
+    AIPrompt aiPrompt = DTOMapper.INSTANCE.convertAIPromptTeamDescriptionPostDTOtoEntity(
+        aiPromptTeamDescriptionPostDTO);
+
+    assertEquals(aiPromptTeamDescriptionPostDTO.getPromptParameter(), aiPrompt.getPrompt());
+  }
+
+  @Test
+  public void testGetAIPrompt_fromAIPrompt_toAIPromptGetDTO_success() {
+    // create AIPrompt
+    AIPrompt aiPrompt = new AIPrompt();
+    aiPrompt.setAnswer("answer");
+
+    // MAP -> Create AIPromptGetDTO
+    AIPromptGetDTO aiPromptGetDTO = DTOMapper.INSTANCE.convertEntityToAIPromptGetDTO(aiPrompt);
+
+    assertEquals(aiPrompt.getAnswer(), aiPromptGetDTO.getAnswer());
+  }
+  // endregion
+
   // region agora mappings
   @Test
   public void testCAgoraAuthPostDTO_toAgoraAuth_success() {

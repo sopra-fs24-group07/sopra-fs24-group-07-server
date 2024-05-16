@@ -37,6 +37,16 @@ jobs:
       - name: Set up Spring Boot Database URL
         run: echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/test_db" >> $GITHUB_ENV
 
+      - name: Test with Gradle and devRun profile
+        run: ./gradlew test
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          DB_URL: jdbc:postgresql://localhost:5432/test_db
+          DB_UNM: postgres
+          DB_PSW: test_password
+          DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
+
       - name: Build with Gradle
         run: ./gradlew build
         env:
@@ -45,20 +55,7 @@ jobs:
           DB_UNM: postgres
           DB_PSW: test_password
           DB_DDL_AUTO: create-drop
-
-      - name: Test with Gradle and devRun profile
-        run: ./gradlew test
-        env:
-          SPRING_PROFILES_ACTIVE: devRun
-          DB_URL: jdbc:postgresql://localhost:5432/test_db
-          DB_UNM: postgres
-          DB_PSW: test_password
-          DB_DDL_AUTO: create-drop
-          PUSHER_APP_ID: 1787826
-          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
-          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
-          AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
-          AGORA_APP_CERTIFICATE: ${{ secrets.AGORA_APP_CERTIFICATE }}
+          OPENAI_API_KEY: 1234
 
       - name: Test DB like prod profile
         run: |
@@ -74,3 +71,4 @@ jobs:
           PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
           AGORA_APP_ID: ${{ secrets.AGORA_APP_ID }}
           AGORA_APP_CERTIFICATE: ${{ secrets.AGORA_APP_CERTIFICATE }}
+          OPENAI_API_KEY: 1234
