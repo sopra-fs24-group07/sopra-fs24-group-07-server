@@ -37,6 +37,7 @@ public class AIController {
     AIPrompt aiPrompt =
         DTOMapper.INSTANCE.convertAIPromptTeamDescriptionPostDTOtoEntity(requestBody);
     String promptParameter = aiPrompt.getPrompt();
+
     try {
       String prompt = "Please write a very short poem about a team named" + aiPrompt.getPrompt();
       // Call the AI service to generate a description
@@ -44,12 +45,11 @@ public class AIController {
       if (!description.isPresent()) {
         throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "AI Service failed");
       }
-      // System.out.println("The description has been generated: " + description.get());
       log.info("The description has been generated: {}", description.get());
       aiPrompt.setAnswer(description.get());
       return new ResponseEntity<>(
           DTOMapper.INSTANCE.convertEntityToAIPromptGetDTO(aiPrompt), HttpStatus.OK);
-    } catch (RuntimeException e) {
+    } catch (Exception e) {
       // Log the error message and return a 502 Bad Gateway response
       System.err.println(e.getMessage());
       throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "AI Service failed");
