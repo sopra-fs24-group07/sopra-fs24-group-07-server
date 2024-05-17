@@ -187,35 +187,16 @@ If you want to avoid running all tests with every change, use the following comm
 - Add secure login
 - Add spring boot security
 
-## Debugging
+## Authors & Acknowledgement
 
-If something is not working and/or you don't know what is going on. We recommend using a debugger and step-through the process step-by-step.
+- Derboven, Timon (@Monti934)
+- Furrer, Basil (@B1s9l)
+- Greuter, Sven (@5v3nn)
+- Karatasli, Alihan (@Alihan26)
 
-To configure a debugger for SpringBoot's Tomcat servlet (i.e. the process you start with `./gradlew bootRun` command), do the following:
+Based on
+[HASEL-UZH/sopra-fs24-template-server](https://github.com/HASEL-UZH/sopra-fs24-template-server)
 
-1. Open Tab: **Run**/Edit Configurations
-1. Add a new Remote Configuration and name it properly
-1. Start the Server in Debug mode: `./gradlew bootRun --debug-jvm`
-1. Press `Shift + F9` or the use **Run**/Debug "Name of your task"
-1. Set breakpoints in the application where you need it
-1. Step through the process one step at a time
+## License
 
-## Testing
-
-Have a look here: https://www.baeldung.com/spring-boot-testing
-
-```plaintext
-$ git push
-Enumerating objects: 5, done.
-Counting objects: 100% (5/5), done.
-Delta compression using up to 16 threads
-Compressing objects: 100% (3/3), done.
-Writing objects: 100% (3/3), 283 bytes | 283.00 KiB/s, done.
-Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
-remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
-remote: error: GH006: Protected branch update failed for refs/heads/main.
-remote: error: Changes must be made through a pull request. Cannot change this locked branch
-To github.com:sopra-fs24-group07/sopra-fs24-group-07-server
- ! [remote rejected] main -> main (protected branch hook declined)
-error: failed to push some refs to 'github.com:sopra-fs24-group07/sopra-fs24-group-07-server
-```
+See [LICENSE](./LICENSE)
