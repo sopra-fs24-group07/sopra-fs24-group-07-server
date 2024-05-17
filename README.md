@@ -37,8 +37,9 @@ track their previous session and see how long they have worked on each.
 
 ## Launch and Development
 
-Note: More details can be found in the documentation on confluence (Wiki ->
-Backend).
+**Note**: More details can be found in the documentation on Confluence (Wiki ->
+Backend). If you start contributing, you will get invited to the Confluence
+project.
 
 ### 1. Clone Project
 
