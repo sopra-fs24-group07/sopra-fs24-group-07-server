@@ -80,6 +80,7 @@ uniform code formatting accross all contributors.
 
 - (*Not tested*) Take a look a the [setup.sh](setup.sh) script and manually set
   the environment variables in the system settings
+  - [www.alphr.com/environment-variables-windows-10](https://www.alphr.com/environment-variables-windows-10/)
 - Alternative setup:
   - Edit the "run configuration" in IntelliJ or VS Code by adding there the
     environment variables
