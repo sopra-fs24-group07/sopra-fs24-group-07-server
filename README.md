@@ -30,7 +30,7 @@ track their previous session and see how long they have worked on each.
   - App Engine
   - Cloud SQL (Postgresql, persistent)
 - [Agora.io](https://www.agora.io/en/) Voicechat
-- [Puhser](https://pusher.com/)
+- [Pusher](https://pusher.com/)
 - [Mailjet](https://www.mailjet.com/)
 - [OpenAI ChatGPT
   API](https://openai.com/index/introducing-chatgpt-and-whisper-apis/)
