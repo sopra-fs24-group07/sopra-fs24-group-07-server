@@ -326,3 +326,14 @@ timeline
   Implement Query Calls to get Tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
   Fix Drag and Drop Issue
+
+## 13.05.2024 - 19.05.2024
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/199:
+  Write tests for new AI service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/142:
+  Tutorial popups
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/146:
+  implement tutorial popup content
