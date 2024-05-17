@@ -171,6 +171,58 @@ command instead:
 
 ## High-Level Components
 
+### Authorization Service
+
+[AuthorizationService.java](src/main/java/ch/uzh/ifi/hase/soprafs24/service/AuthorizationService.java)
+
+- Because we have teams, we do not want to allow all users to see or modify
+  other teams which they are not part of
+- This is why for every endpont we first check, if a users is allowed to do the
+  requested action
+- The follwing scopes are used
+  - `isAuthorized`: If the passed `userToken` exists
+    - E.g. Create a new team
+  - `isExistingAndAuthorized`: Checks if the passed `userToken` exists and is
+    the same as the token for the requested user
+    - E.g. Modify the username of a user
+  - `isAuthorizedAndBelongsToTeam`: Checks if the passed `userToken` exists and
+    is the same as the token for the requested user\` and is part of the
+    requested team
+    - E.g. Create/Get/Modify/Delete tasks in a team
+
+This is a core component, because for every request, the corresponding
+permissions are checked this way.
+
+### Team User Service
+
+[TeamUserService.java](src/main/java/ch/uzh/ifi/hase/soprafs24/service/TeamUserService.java)
+
+- Is responsible to manage the links between a users and a teams
+- Creating a new link entry means a user joins the team
+  - This will happen automatically when creating a team, meaning the user that
+    creates the team will automatically join
+  - When a new user joins with an invitation link, we only get the UUID of the
+    team, thus first need to get the team with that UUID
+- It can retrieve all users of a team
+- It can retrieve all teams of a user
+- It can delete a user from a team, which will be called if the users leaves
+  the team
+
+### Pusher Service
+
+[PusherService.java](src/main/java/ch/uzh/ifi/hase/soprafs24/service/PusherService.java)
+
+- This is responsible to ensure the real time interaction between users, such
+  that every user can see what other users modified something
+  - E.g. When one user creates a new task, the other users can see the new task
+    popping up immediately
+- For this we have multiple channels, where the clients subscribe to, and get
+  notfied when an update occurs
+  - If they get notified of an update, they will call this server to fetch the
+    most recent data
+
+Although this is a small service class, it is one of the most important one
+
 ## Roadmap
 
 **Session Statistics**
