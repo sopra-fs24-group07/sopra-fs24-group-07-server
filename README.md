@@ -78,15 +78,15 @@ uniform code formatting accross all contributors.
 
 **Windows**
 
-- Take a look a the [setup.sh](setup.sh) script and manually set the
-  environment variables in the system settings
+- (not tested) Take a look a the [setup.sh](setup.sh) script and manually set
+  the environment variables in the system settings
 - **TODO**
-
-Alternative setup:
-
-- Edit the "run configuration" in IntelliJ or VS Code by adding there the
-  environment variables
-- In this case you cannot build it via the terminal
+- Alternative setup:
+  - Edit the "run configuration" in IntelliJ or VS Code by adding there the
+    environment variables
+  - In this case you cannot build it via the terminal
+- Alternative setup:
+  - Use the git bash and follow instructions for Linux/MacOS
 
 ### 4. Setup Local Postgresql Docker Container
 
