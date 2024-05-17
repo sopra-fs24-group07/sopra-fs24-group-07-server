@@ -94,6 +94,22 @@ public interface DTOMapper {
   SessionGetDTO
   convertEntityToSessionGetDTO(Session session);
 
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "channelName", target = "channelName")
+  AgoraAuth convertAgoraAuthPostDTOtoEntity(AgoraAuthPostDTO agoraAuthPostDTO);
+
+  @Mapping(source = "rtcToken", target = "rtcToken")
+  @Mapping(source = "rtmToken", target = "rtmToken")
+  AgoraAuthGetDTO convertEntityToAgoraAuthGetDTO(String rtcToken, String rtmToken);
+
+  @Mapping(source = "promptParameter", target = "prompt")
+  AIPrompt convertAIPromptTeamDescriptionPostDTOtoEntity(
+      AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO);
+
+  @Mapping(source = "answer", target = "answer")
+  AIPromptGetDTO convertEntityToAIPromptGetDTO(AIPrompt aiPrompt);
+
   default String formatLocalDateTime(LocalDateTime localDateTime) {
     return localDateTime == null
         ? null

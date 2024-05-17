@@ -73,6 +73,15 @@ jobs:
           echo "  MAILJET_SECRET: '${{ secrets.MAILJET_SECRET }}'" >> app.yaml
           echo "  MAILJET_SENDER_EMAIL: '${{ secrets.MAILJET_SENDER_EMAIL }}'" >> app.yaml
 
+      - name: Add Agora credentials
+        run: |
+          echo "  AGORA_APP_ID: '${{ secrets.AGORA_APP_ID }}'" >> app.yaml
+          echo "  AGORA_APP_CERTIFICATE: '${{ secrets.AGORA_APP_CERTIFICATE }}'" >> app.yaml
+
+      - name: Add OpenAI credentials
+        run: |
+          echo "  OPENAI_API_KEY: '${{ secrets.OPENAI_API_KEY }}'" >> app.yaml
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
