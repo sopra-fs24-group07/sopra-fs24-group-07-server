@@ -164,7 +164,8 @@ and in the other one:
 
 `./gradlew bootRun`
 
-If you want to avoid running all tests with every change, use the following command instead:
+If you want to avoid running all tests with every change, use the following
+command instead:
 
 `./gradlew build --continuous -xtest`
 
@@ -189,10 +190,10 @@ If you want to avoid running all tests with every change, use the following comm
 
 ## Authors & Acknowledgement
 
-- Derboven, Timon (@Monti934)
-- Furrer, Basil (@B1s9l)
-- Greuter, Sven (@5v3nn)
-- Karatasli, Alihan (@Alihan26)
+- Derboven, Timon ([@Monti934](https://github.com/Monti934))
+- Furrer, Basil ([@B1s9l](https://github.com/b1s9l))
+- Greuter, Sven ([@5v3nn](https://github.com/5v3nn))
+- Karatasli, Alihan ([@Alihan26](https://github.com/Alihan26))
 
 Based on
 [HASEL-UZH/sopra-fs24-template-server](https://github.com/HASEL-UZH/sopra-fs24-template-server)
