@@ -344,6 +344,21 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/173:
   Readme
 
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/99:
+  Refactoring and major restyling of the frontend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/140:
+  Created a FAQ popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/147:
+  Implemented the FAQ functionality including custom search tool
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/149:
+  Styled the FAQ component & wrote FAQ entries
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/195:
+  Implemented the OPENAI API dependencies and config
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/197:
+  Implemented the AI service
+
 ### Alihan26
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/199:
