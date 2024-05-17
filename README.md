@@ -78,9 +78,8 @@ uniform code formatting accross all contributors.
 
 **Windows**
 
-- (not tested) Take a look a the [setup.sh](setup.sh) script and manually set
+- (*Not tested*) Take a look a the [setup.sh](setup.sh) script and manually set
   the environment variables in the system settings
-- **TODO**
 - Alternative setup:
   - Edit the "run configuration" in IntelliJ or VS Code by adding there the
     environment variables
