@@ -54,6 +54,11 @@ pre-commit --version  # verify that pre-commit is installed correctly
 pre-commit install    # install the hooks
 ```
 
+Every time you make a commit, the pre-commit hooks will run through to ensure
+the formatting (possibly among other future things) is correct. If not it will
+reformat and you can add formatted files and commit again. This ensures a
+uniform code formatting accross all contributors.
+
 ### 3. Setup [setup.sh](setup.sh) Script
 
 **Linux/MacOS**
