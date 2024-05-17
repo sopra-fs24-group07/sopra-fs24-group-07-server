@@ -17,7 +17,7 @@ those.
 
 When planning a session, the members can set a time goal on how long they want
 to work in that session. During the session a voice chat is started with
-separate breakout rooms (separate voice channels) for each task wehere the
+separate breakout rooms (separate voice channels) for each task where the
 designated team members of that task can work without disturbance. Teams can
 track their previous session and see how long they have worked on each.
 
