@@ -40,30 +40,41 @@ track their previous session and see how long they have worked on each.
 Note: More details can be found in the documentation on confluence (Wiki ->
 Backend).
 
-1. Clone the project
-1. Setup with the IDE of choice (see below for InelliJ or VS Code)
-1. Install pre-commit hoocks:
-   - Install pre-commit [here](https://pre-commit.com/)
-   - Install pre-commit hoocks: `pre-commit install`
-1. Fill in the *Environment Variables* in the [setup.sh](setup.sh) script
-   - Obtain the credentials in the documentation on confluence (Wiki ->
-     Backend).
-1. Create a posgtres docker container
-   - `docker create --name productiviteam -e POSTGRES_PASSWORD=$DB_PSW -p 5432:5432 postgres:11.5-alpine`
-   - `docker start productiviteam`
-1. Source the [setup.sh](setup.sh) script (no windows support, need to be set
-   manually; works with git-bash)
-   - `. setup.sh`
-   - Choose the profile (description before prompt)
-     environment variables needed
-1. Build with gradle
+### 1. Clone Project
 
-- macOS: `./gradlew`
-- Linux: `./gradlew`
-- Windows: `./gradlew.bat`
-- More Information about [Gradle
-  Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) and
-  [Gradle](https://gradle.org/docs/).
+- `git clone <url>`
+
+### 2. Install Pre-Commit Hooks
+
+- Download [pre-commit](https://pre-commit.com/)
+- Execute the following commands in the root of the project
+
+```bash
+pre-commit --version  # verify that pre-commit is installed correctly
+pre-commit install    # install the hooks
+```
+
+### 3. Setup [setup.sh](setup.sh) Script
+
+**Linux/MacOS**
+
+- We have a helper shell script with loads all the needed environment variables
+  (credentials) which are needed
+- Credentials can be found on Confluence
+- Follow the following instructions, after setting the credentials in the
+  [setup.sh](setup.sh) script under *Environment Variables*
+  - This is interactive and you will be asked which profile to choose (more
+    information in the prompt)
+
+```bash
+. setup.sh
+```
+
+**Windows**
+
+- Take a look a the [setup.sh](setup.sh) script and manually set the
+  environment variables in the system settings
+- **TODO**
 
 Alternative setup:
 
@@ -71,7 +82,18 @@ Alternative setup:
   environment variables
 - In this case you cannot build it via the terminal
 
-### IntelliJ
+### 4. Setup Local Postgresql Docker Container
+
+- Install docker: [docs.docker.com](https://docs.docker.com/engine/install/)
+- If you have followed the credentials on Confluence, you can execute the
+  following commands
+
+```bash
+docker create --name productiviteam -e POSTGRES_PASSWORD=$DB_PSW -p 5432:5432 postgres:11.5-alpine
+docker start productiviteam
+```
+
+### 5. Variant 1: Setup Project with IntelliJ
 
 If you consider to use IntelliJ as your IDE of choice, you can make use of your
 free educational license
@@ -81,7 +103,7 @@ free educational license
 1. Accept to import the project as a `gradle project`
 1. To build right click the `build.gradle` file and choose `Run Build`
 
-### VS Code
+### 5. Variant 2: Setup Project with VS Code
 
 The following extensions can help you get started more easily:
 
