@@ -329,6 +329,21 @@ timeline
 
 ## 13.05.2024 - 19.05.2024
 
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/188:
+  Agora token setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/189:
+  Agora token service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/190:
+  Agora token endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/202:
+  Agora token RTM
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/214:
+  Task query sorting
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/173:
+  Readme
+
 ### Alihan26
 
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/199:
