@@ -337,3 +337,16 @@ timeline
   Tutorial popups
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/146:
   implement tutorial popup content
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/143:
+  Drag Drop restyling
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/141:
+  Make notifications for Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/112:
+  Integrate Token for Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/74:
+  Inspect Task bugfixes
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/67:
+  Pop Up styling
