@@ -175,6 +175,18 @@ command instead:
 
 `./gradlew build --continuous -xtest`
 
+### Contributing
+
+**Branches**
+
+- The `main` branch is protected and can only be modified via pull requst
+- The `dev` branch will be used for development, and merged only into `main` if
+  a milestone has been reached
+
+**Pull Requets**
+
+- The checkboxes serve as a reminder what should be done before a pull request
+
 ## High-Level Components
 
 ### Authorization Service
@@ -235,6 +247,7 @@ Although this is a small service class, it is one of the most important one
 
 - More detailed session statistics
 - Track how many tasks were completed during a session
+- Redo the database to save more information about each session
 
 **Team Member Roles**
 
