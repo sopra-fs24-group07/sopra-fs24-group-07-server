@@ -1,10 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Comment;
-import ch.uzh.ifi.hase.soprafs24.entity.Session;
-import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +54,10 @@ public interface DTOMapper {
   @Mapping(source = "description", target = "description")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
 
+  @Mapping(source = "teamUUID", target = "teamUUID")
+  @Mapping(source = "receiverEmail", target = "receiverEmail", defaultValue = "")
+  TeamInvitation convertTeamInvitationPostDTOtoEntity(TeamInvitationPostDTO teamInvitationPostDTO);
+
   @Mapping(target = "title", source = "title")
   @Mapping(target = "description", source = "description", defaultValue = "")
   Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
@@ -87,13 +87,28 @@ public interface DTOMapper {
   @Mapping(source = "goalMinutes", target = "goalMinutes")
   Session convertSessionPostDTOtoEntity(SessionPostDTO sessionPostDTO);
 
-  @Mapping(source = "sessionId", target = "sessionId")
   @Mapping(
       source = "startDateTime", target = "startDateTime", qualifiedByName = "formatLocalDateTime")
   @Mapping(source = "endDateTime", target = "endDateTime", qualifiedByName = "formatLocalDateTime")
   @Mapping(source = "goalMinutes", target = "goalMinutes")
   SessionGetDTO
   convertEntityToSessionGetDTO(Session session);
+
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "teamId", target = "teamId")
+  @Mapping(source = "channelName", target = "channelName")
+  AgoraAuth convertAgoraAuthPostDTOtoEntity(AgoraAuthPostDTO agoraAuthPostDTO);
+
+  @Mapping(source = "rtcToken", target = "rtcToken")
+  @Mapping(source = "rtmToken", target = "rtmToken")
+  AgoraAuthGetDTO convertEntityToAgoraAuthGetDTO(String rtcToken, String rtmToken);
+
+  @Mapping(source = "promptParameter", target = "prompt")
+  AIPrompt convertAIPromptTeamDescriptionPostDTOtoEntity(
+      AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO);
+
+  @Mapping(source = "answer", target = "answer")
+  AIPromptGetDTO convertEntityToAIPromptGetDTO(AIPrompt aiPrompt);
 
   default String formatLocalDateTime(LocalDateTime localDateTime) {
     return localDateTime == null

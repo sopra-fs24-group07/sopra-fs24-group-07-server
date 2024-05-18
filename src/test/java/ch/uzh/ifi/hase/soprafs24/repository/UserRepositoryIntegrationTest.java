@@ -38,5 +38,7 @@ public class UserRepositoryIntegrationTest {
     assertEquals(found.getUsername(), user.getUsername());
     assertEquals(found.getPassword(), user.getPassword());
     assertEquals(found.getToken(), user.getToken());
+    assertNotNull(found.getCreatedDate());
+    assertNotNull(found.getModifiedDate());
   }
 }

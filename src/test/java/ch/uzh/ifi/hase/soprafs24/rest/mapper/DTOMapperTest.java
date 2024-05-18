@@ -4,11 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ch.uzh.ifi.hase.soprafs24.constant.TaskStatus;
-import ch.uzh.ifi.hase.soprafs24.entity.Comment;
-import ch.uzh.ifi.hase.soprafs24.entity.Session;
-import ch.uzh.ifi.hase.soprafs24.entity.Task;
-import ch.uzh.ifi.hase.soprafs24.entity.Team;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -123,6 +119,36 @@ public class DTOMapperTest {
     assertEquals(team.getName(), teamGetDTO.getName());
     assertEquals(team.getDescription(), teamGetDTO.getDescription());
   }
+
+  /* team inviation */
+  @Test
+  public void testTeamInvitation_noMail_fromTeamInvitationPostDTO_toTeamInvitation_success() {
+    // create TeamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+
+    // map -> create TeamInvitation
+    TeamInvitation teamInvitation =
+        DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(teamInvitationPostDTO);
+
+    assertEquals(teamInvitationPostDTO.getTeamUUID(), teamInvitation.getTeamUUID());
+    assertEquals("", teamInvitation.getReceiverEmail());
+  }
+
+  @Test
+  public void testTeamInvitation_withMail_fromTeamInvitationPostDTO_toTeamInvitation_success() {
+    // create TeamInvitationPostDTO
+    TeamInvitationPostDTO teamInvitationPostDTO = new TeamInvitationPostDTO();
+    teamInvitationPostDTO.setTeamUUID("team-uuid");
+    teamInvitationPostDTO.setReceiverEmail("receiver@productiviteam.co");
+
+    // map -> create TeamInvitation
+    TeamInvitation teamInvitation =
+        DTOMapper.INSTANCE.convertTeamInvitationPostDTOtoEntity(teamInvitationPostDTO);
+
+    assertEquals(teamInvitationPostDTO.getTeamUUID(), teamInvitation.getTeamUUID());
+    assertEquals(teamInvitationPostDTO.getReceiverEmail(), teamInvitation.getReceiverEmail());
+  }
   // endregion
 
   // region create task
@@ -216,7 +242,6 @@ public class DTOMapperTest {
     System.out.println(sessionGetDTO.getStartDateTime()); // to verify in output
 
     // check content
-    assertEquals(session.getSessionId(), sessionGetDTO.getSessionId());
     assertEquals(
         session.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         sessionGetDTO.getStartDateTime());
@@ -264,6 +289,68 @@ public class DTOMapperTest {
     assertEquals(comment.getCreationDate(), commentGetDTO.getCreationDate());
     assertEquals(comment.getUser().getUserId(), commentGetDTO.getAuthorId());
     assertEquals(comment.getUser().getUsername(), commentGetDTO.getAuthorName());
+  }
+  // endregion
+
+  // region ai prompt mappings
+  @Test
+  public void testCreateAIPrompt_fromAIPromptTeamDescriptionPostDTO_toAIPrompt_success() {
+    // create AIPromptTeamDescriptionPostDTO
+    AIPromptTeamDescriptionPostDTO aiPromptTeamDescriptionPostDTO =
+        new AIPromptTeamDescriptionPostDTO();
+    aiPromptTeamDescriptionPostDTO.setPromptParameter("team title");
+
+    // MAP -> Create AIPrompt
+    AIPrompt aiPrompt = DTOMapper.INSTANCE.convertAIPromptTeamDescriptionPostDTOtoEntity(
+        aiPromptTeamDescriptionPostDTO);
+
+    assertEquals(aiPromptTeamDescriptionPostDTO.getPromptParameter(), aiPrompt.getPrompt());
+  }
+
+  @Test
+  public void testGetAIPrompt_fromAIPrompt_toAIPromptGetDTO_success() {
+    // create AIPrompt
+    AIPrompt aiPrompt = new AIPrompt();
+    aiPrompt.setAnswer("answer");
+
+    // MAP -> Create AIPromptGetDTO
+    AIPromptGetDTO aiPromptGetDTO = DTOMapper.INSTANCE.convertEntityToAIPromptGetDTO(aiPrompt);
+
+    assertEquals(aiPrompt.getAnswer(), aiPromptGetDTO.getAnswer());
+  }
+  // endregion
+
+  // region agora mappings
+  @Test
+  public void testCAgoraAuthPostDTO_toAgoraAuth_success() {
+    // create AgoraAuthPostDTO
+    AgoraAuthPostDTO agoraAuthPostDTO = new AgoraAuthPostDTO();
+    agoraAuthPostDTO.setUserId(1L);
+    agoraAuthPostDTO.setTeamId(42L);
+    agoraAuthPostDTO.setChannelName("channelName");
+
+    // MAP -> Create AgoraAuth
+    AgoraAuth agoraAuth = DTOMapper.INSTANCE.convertAgoraAuthPostDTOtoEntity(agoraAuthPostDTO);
+
+    // check content
+    assertEquals(agoraAuthPostDTO.getUserId(), agoraAuth.getUserId());
+    assertEquals(agoraAuthPostDTO.getTeamId(), agoraAuth.getTeamId());
+    assertEquals(agoraAuthPostDTO.getChannelName(), agoraAuth.getChannelName());
+  }
+
+  @Test
+  public void tokenString_toAgoraAuthGetDTO_success() {
+    // create token string
+    String rtcToken = "rtc";
+    String rtmToken = "rtm";
+
+    // MAP -> Create AgoraAuthGetDTO
+    AgoraAuthGetDTO agoraAuthGetDTO =
+        DTOMapper.INSTANCE.convertEntityToAgoraAuthGetDTO(rtcToken, rtmToken);
+
+    // check content
+    assertEquals(rtcToken, agoraAuthGetDTO.getRtcToken());
+    assertEquals(rtmToken, agoraAuthGetDTO.getRtmToken());
   }
   // endregion
 }

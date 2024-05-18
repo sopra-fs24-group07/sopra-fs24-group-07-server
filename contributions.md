@@ -240,3 +240,78 @@ timeline
   Integrated the pusher api to send signal to fetch new comments
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
+
+## 27.04.2024 - 04.05.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/148: DB lengths redo and testing
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/143: Send Mail setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/174: Remove session id from get dto
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/75:
+  Indicate who is Talking in the VoiceChat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/42:
+  Drag and Drop for KanbanBoard
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/183
+  Get Tasks with Query API Endpoints
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/108
+  Get Tasks with Query Services
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/76:
+  Created the files for the session history popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/77:
+  Added a button on the dashboard to open the session history popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/78:
+  Implemented the session history popup with all session data
+
+## 05.05.2024 - 12.05.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/141:
+  send mail service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/142:
+  send mail endpoint & ci/cd
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/175:
+  timestamp user created/modified
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/65:
+  implemented mail in frontend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/110:
+  Adjusted the input length validation according to backend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/113:
+  Fixed the bug where the session goal would sometimes not load properly
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/114:
+  Implemented the AI button for the team description
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/126:
+  implemented app-wide popup notifications
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/109:
+  Get Tasks with Query Test and Documentation
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/182:
+  Session ends after max 24h (users might forget to end session and close window, it never ends)
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/196:
+  Implement AI controller -> Worked on it this weekend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/198:
+  Write tests for AI controller -> Worked on it this weekend
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/68:
+  Change Buttons to Icons where it makes sense and coloring
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/109:
+  Implement Query Calls to get Tasks
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
+  Fix Drag and Drop Issue
