@@ -320,9 +320,8 @@ public class SessionServiceTest {
     // call the method to test on the spy
     spySessionService.endExpiredSessions();
 
-    // verify that endSession was called once (for the expired session) on the spy
-    Mockito.verify(spySessionService, Mockito.times(1))
-        .endSession(expiredSession.getTeam().getTeamId());
+    // verify that the save was called only once for the expired session
+    Mockito.verify(sessionRepository, Mockito.times(1)).save(Mockito.any(Session.class));
   }
   // endregion
 }
