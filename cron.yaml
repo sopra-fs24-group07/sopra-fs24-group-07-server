@@ -1,0 +1,8 @@
+cron:
+  - description: "end all expired sessions"
+    url: /api/v1/cron/end-expired-sessions
+#    schedule: every 1 hours
+    schedule: every 5 mins
+    retry_parameters:
+      job_retry_limit: 5
+      min_backoff_seconds: 300
