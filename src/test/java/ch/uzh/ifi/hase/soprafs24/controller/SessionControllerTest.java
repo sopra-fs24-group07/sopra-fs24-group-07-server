@@ -363,6 +363,23 @@ public class SessionControllerTest {
     // then
     mockMvc.perform(patchRequest).andExpect(status().isUnauthorized());
   }
+  // endregion
 
+  // region end expired session cronjob
+
+  @Test
+  public void endExpiredSessions_validInputs_success() throws Exception {
+    // mock session service call
+    Mockito.doNothing().when(sessionService).endExpiredSessions();
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder getRequest =
+        get("/api/v1/cron/end-expired-sessions").contentType(MediaType.APPLICATION_JSON);
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk());
+    // verify session call was made
+    Mockito.verify(sessionService, Mockito.times(1)).endExpiredSessions();
+  }
   // endregion
 }

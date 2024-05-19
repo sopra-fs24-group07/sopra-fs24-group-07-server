@@ -132,9 +132,14 @@ public class SessionService {
     return session.getStartDateTime().plusHours(24).isBefore(LocalDateTime.now());
   }
 
-  @Scheduled(fixedRate = 3600000) // runs every hour
+  /**
+   * End all sessions that are expired.
+   * This method is called by a cronjob every 24 hours.
+   * @see "cron.yaml"
+   * @see ch.uzh.ifi.hase.soprafs24.controller.SessionController#endSession(Long, String)
+   */
   public void endExpiredSessions() {
-    log.debug("Checking for expired sessions...");
+    log.info("Checking for expired sessions...");
     List<Session> sessions = sessionRepository.findByEndDateTimeIsNull();
     for (Session session : sessions) {
       if (isSessionExpired(session)) {
