@@ -323,5 +323,28 @@ public class SessionServiceTest {
     // verify that the save was called only once for the expired session
     Mockito.verify(sessionRepository, Mockito.times(1)).save(Mockito.any(Session.class));
   }
+
+  @Test
+  public void endExpiredSessions_failedToSaveSession_logsWarning() {
+    // given two sessions, one that expired and one that did not
+    Session expiredSession = new Session();
+    expiredSession.setSessionId(1L);
+    expiredSession.setStartDateTime(
+        LocalDateTime.now().minusDays(1).minusHours(1)); // add an extra hour to ensure it's expired
+    expiredSession.setTeam(testTeam);
+
+    // when sessionRepository.findByEndDateTimeIsNull() is called, return the list of sessions
+    Mockito.when(sessionRepository.findByEndDateTimeIsNull()).thenReturn(List.of(expiredSession));
+
+    Mockito.when(sessionRepository.save(Mockito.any()))
+        .thenThrow(new DataIntegrityViolationException(""));
+
+    // call the method to test on the spy
+    sessionService.endExpiredSessions();
+
+    // verify that the save was called only once for the expired session
+    Mockito.verify(sessionRepository, Mockito.times(1)).save(Mockito.any(Session.class));
+    Mockito.verify(sessionRepository, Mockito.never()).flush();
+  }
   // endregion
 }

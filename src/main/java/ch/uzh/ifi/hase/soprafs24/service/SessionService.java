@@ -143,10 +143,15 @@ public class SessionService {
     List<Session> sessions = sessionRepository.findByEndDateTimeIsNull();
     for (Session session : sessions) {
       if (isSessionExpired(session)) {
-        session.setEndDateTime(session.getStartDateTime().plusHours(24));
-        Session endedSession = sessionRepository.save(session);
-        sessionRepository.flush();
-        log.info("Ended expired session with id {}", session.getSessionId());
+        try {
+          session.setEndDateTime(session.getStartDateTime().plusHours(24));
+          Session endedSession = sessionRepository.save(session);
+          sessionRepository.flush();
+          log.info("Ended expired session with id {}", session.getSessionId());
+        } catch (Exception e) {
+          log.warn("Failed to end expired session with id {} due to unknown exception {}",
+              session.getSessionId(), e.getMessage());
+        }
       }
     }
   }
