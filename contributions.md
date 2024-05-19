@@ -380,3 +380,5 @@ timeline
   Inspect Task bugfixes
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/67:
   Pop Up styling
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/173:
+  Submit forms with enter
