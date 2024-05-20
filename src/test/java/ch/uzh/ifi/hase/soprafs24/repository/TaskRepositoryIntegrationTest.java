@@ -286,4 +286,43 @@ public class TaskRepositoryIntegrationTest {
     assertEquals(found.get(1).getTitle(), task3.getTitle());
     assertEquals(found.get(1).getStatus(), task3.getStatus());
   }
+
+  /* test for case-insensitive ordering */
+  @Test
+  public void findByTeamAndStatusOrderByTitleAsc_caseInsensitive() {
+    // given
+    Task task = new Task();
+    task.setTitle("a task");
+    task.setDescription("Task Description");
+    task.setStatus(TaskStatus.TODO);
+    task.setTeam(team);
+    entityManager.persist(task);
+    entityManager.flush();
+
+    Task task2 = new Task();
+    task2.setTitle("A task");
+    task2.setDescription("Task Description 2");
+    task2.setStatus(TaskStatus.TODO);
+    task2.setTeam(team);
+    entityManager.persist(task2);
+    entityManager.flush();
+
+    Task task3 = new Task();
+    task3.setTitle("z task");
+    task3.setDescription("Task Description 3");
+    task3.setStatus(TaskStatus.TODO);
+    task3.setTeam(team);
+    entityManager.persist(task3);
+    entityManager.flush();
+
+    // when
+    List<Task> found =
+        taskRepository.findByTeamAndStatusInOrderByTitleAsc(team, List.of(TaskStatus.TODO));
+
+    // then
+    assertEquals(3, found.size());
+    assertEquals(found.get(0).getTitle(), task.getTitle());
+    assertEquals(found.get(1).getTitle(), task2.getTitle());
+    assertEquals(found.get(2).getTitle(), task3.getTitle());
+  }
 }

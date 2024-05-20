@@ -45,35 +45,38 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Add database variables to application properties
-        run: |
-          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/test_db" >> src/main/resources/application.properties
-          echo "spring.datasource.password=test_password" >> src/main/resources/application.properties
-          cat src/main/resources/application.properties
-
       - name: Test and analyze with sonarcloud
         run: ./gradlew test sonar --info
         env:
+          SPRING_PROFILES_ACTIVE: dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          PUSHER_APP_ID: 1787826
-          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
-          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
+          DB_URL: jdbc:postgresql://localhost:5432/test_db
+          DB_UNM: postgres
+          DB_PSW: test_password
+          DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
 
       - name: Test report and analyze with sonarcloud
         run: ./gradlew jacocoTestReport sonar --info
         env:
+          SPRING_PROFILES_ACTIVE: dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          PUSHER_APP_ID: 1787826
-          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
-          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
+          DB_URL: jdbc:postgresql://localhost:5432/test_db
+          DB_UNM: postgres
+          DB_PSW: test_password
+          DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
 
       - name: Build and analyze with sonarcloud
         env:
+          SPRING_PROFILES_ACTIVE: dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          PUSHER_APP_ID: 1787826
-          PUSHER_KEY: ${{ secrets.PUSHER_KEY }}
-          PUSHER_SECRET: ${{ secrets.PUSHER_SECRET }}
+          DB_URL: jdbc:postgresql://localhost:5432/test_db
+          DB_UNM: postgres
+          DB_PSW: test_password
+          DB_DDL_AUTO: create-drop
+          OPENAI_API_KEY: 1234
         run: ./gradlew build sonar --info

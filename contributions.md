@@ -4,7 +4,7 @@
 
 ```mermaid
 timeline
-    title Production Milestone 3
+    title Production Milestone 1
     31.03.2024: Account Creation: Login: Auth : Team Creation
     07.04.2024: User Edit: Team Overview: Team Dashboard: Task Creation: Agora Voice Chat
     14.04.2024: Task Board: Task Details: Task Edit: Team Invitation: Session Start
