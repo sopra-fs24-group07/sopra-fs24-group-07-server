@@ -343,6 +343,8 @@ timeline
   Task query sorting
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/173:
   Readme
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/220:
+  Fix google cloud schedule to end expired sessions
 
 ### B1s9l
 
