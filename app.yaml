@@ -11,6 +11,9 @@ vpc_access_connector:
   name: projects/sopra-fs24-group-07-server/locations/europe-west6/connectors/db-connector
 #  egress-setting: all-traffic
 
+inbound_services:
+  - warmup
+
 # env variables (psw) will be added in pipeline
 env_variables:
   PUSHER_APP_ID: "1787826"

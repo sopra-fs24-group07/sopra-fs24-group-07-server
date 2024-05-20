@@ -114,4 +114,14 @@ public class SessionController {
     // convert internal representation of session back to API
     return DTOMapper.INSTANCE.convertEntityToSessionGetDTO(endedSession);
   }
+
+  /**
+   * End session cronjob endpoint
+   * @see "cron.yaml"
+   */
+  @GetMapping("/cron/end-expired-sessions")
+  @ResponseStatus(HttpStatus.OK)
+  public void endExpiredSessions() {
+    sessionService.endExpiredSessions();
+  }
 }
