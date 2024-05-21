@@ -384,3 +384,21 @@ timeline
   Pop Up styling
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/173:
   Submit forms with enter
+
+## 20.05.2024 - 26.05.2024
+
+### 5v3nn
+
+- Joker
+
+### B1s9l
+
+- Joker
+
+### Alihan26
+
+- Joker
+
+### Monti934
+
+- Joker
