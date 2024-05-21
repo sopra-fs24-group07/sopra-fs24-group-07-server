@@ -241,6 +241,17 @@ timeline
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/117:
   Implemented the pusher subscription for comments
 
+## Dynamically Planned Timeline
+
+```mermaid
+timeline
+    title Production Milestone 4
+    to 05.05.2024: DB update: Refactor: VoiceChat Finish: Kanban Drag&Drop: Get Task Query: Session History
+    to 12.05.2024: Mail Invitations: Agora Token: Task Query Client: Icon Buttons: Client Refactoring
+    to 19.05.2024: Agora Token Client: Description Generating: Styling: Bugfixes
+    to 24.05.2024: Bugfixes: Abgabe
+```
+
 ## 27.04.2024 - 04.05.2024
 
 ### 5v3nn
@@ -315,3 +326,79 @@ timeline
   Implement Query Calls to get Tasks
 - https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/130:
   Fix Drag and Drop Issue
+
+## 13.05.2024 - 19.05.2024
+
+### 5v3nn
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/188:
+  Agora token setup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/189:
+  Agora token service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/190:
+  Agora token endpoint
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/202:
+  Agora token RTM
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/214:
+  Task query sorting
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/173:
+  Readme
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/220:
+  Fix google cloud schedule to end expired sessions
+
+### B1s9l
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/99:
+  Refactoring and major restyling of the frontend
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/140:
+  Created a FAQ popup
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/147:
+  Implemented the FAQ functionality including custom search tool
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/149:
+  Styled the FAQ component & wrote FAQ entries
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/195:
+  Implemented the OPENAI API dependencies and config
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/197:
+  Implemented the AI service
+
+### Alihan26
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-server/issues/199:
+  Write tests for new AI service
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/142:
+  Tutorial popups
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/146:
+  implement tutorial popup content
+
+### Monti934
+
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/143:
+  Drag Drop restyling
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/141:
+  Make notifications for Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/112:
+  Integrate Token for Voice Chat
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/74:
+  Inspect Task bugfixes
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/67:
+  Pop Up styling
+- https://github.com/sopra-fs24-group07/sopra-fs24-group-07-client/issues/173:
+  Submit forms with enter
+
+## 20.05.2024 - 26.05.2024
+
+### 5v3nn
+
+- Joker
+
+### B1s9l
+
+- Joker
+
+### Alihan26
+
+- Joker
+
+### Monti934
+
+- Joker

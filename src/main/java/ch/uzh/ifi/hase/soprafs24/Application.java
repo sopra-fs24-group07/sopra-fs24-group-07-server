@@ -25,6 +25,16 @@ public class Application {
     return "The application is running.";
   }
 
+  /**
+   * Google cloud warmup handler
+   */
+  @GetMapping(value = "/_ah/warmup", produces = MediaType.TEXT_PLAIN_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public String warmup() {
+    return "Warmup successful";
+  }
+
   @Bean
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {
