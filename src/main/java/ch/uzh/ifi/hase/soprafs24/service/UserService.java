@@ -141,7 +141,7 @@ public class UserService {
         "The %s provided %s not unique. Therefore, the user could not be created!";
     if (userByUsername != null) {
       throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
+          HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
     }
   }
 }
